@@ -3,6 +3,9 @@
 # ---------------------------------------------------
 FROM node:22-alpine AS build
 
+# Instala suporte ao OpenSSL necessário para os motores do Prisma no Alpine
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # 1. Copia os manifestos de dependências e a pasta do Prisma
@@ -27,6 +30,9 @@ RUN npm run build
 # ---------------------------------------------------
 FROM node:22-alpine AS prod-dependencies
 
+# Instala suporte ao OpenSSL no estágio de dependências
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -42,6 +48,9 @@ RUN npx prisma generate --schema prisma/schema.prisma
 # Etapa 3: Imagem Final de Produção (Production)
 # ---------------------------------------------------
 FROM node:22-alpine AS production
+
+# Instala o suporte ao OpenSSL na imagem final que roda a aplicação
+RUN apk add --no-cache openssl
 
 WORKDIR /app
 
