@@ -7,39 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model TaskStatus {
-  id    Int    @id @default(autoincrement())
-  code  String @unique
-  label String
-  tasks Task[]
+model Turma {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  aulas     Aula[]
 
-  @@map("task_statuses")
+  @@map("turmas")
 }
 
-model TaskPriority {
-  id    Int    @id @default(autoincrement())
-  code  String @unique
-  label String
-  tasks Task[]
+model Aula {
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  date        DateTime
+  turma_id    String     @db.Uuid
+  turma       Turma      @relation(fields: [turma_id], references: [id], onDelete: Cascade)
+  presencas   Presenca[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
-  @@map("task_priorities")
+  @@index([turma_id])
+  @@map("aulas")
 }
 
-model Task {
-  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  description String?
-  statusId    Int
-  status      TaskStatus   @relation(fields: [statusId], references: [id])
-  priorityId  Int
-  priority    TaskPriority @relation(fields: [priorityId], references: [id])
-  dueDate     DateTime?
-  ownerId     String?      @db.Uuid
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+model Presenca {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  aula_id   String   @db.Uuid
+  aula      Aula     @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  user_id   String   @db.Uuid
+  present   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([ownerId])
-  @@index([statusId])
-  @@index([priorityId])
-  @@map("tasks")
+  @@index([aula_id])
+  @@index([user_id])
+  @@map("presencas")
 }
