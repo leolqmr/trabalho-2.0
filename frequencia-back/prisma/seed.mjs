@@ -2,40 +2,32 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const TASK_STATUSES = [
-  { code: 'PENDING', label: 'Pendente' },
-  { code: 'IN_PROGRESS', label: 'Em andamento' },
-  { code: 'COMPLETED', label: 'Concluída' },
-  { code: 'CANCELLED', label: 'Cancelada' },
-];
-
-const TASK_PRIORITIES = [
-  { code: 'LOW', label: 'Baixa' },
-  { code: 'MEDIUM', label: 'Média' },
-  { code: 'HIGH', label: 'Alta' },
-  { code: 'URGENT', label: 'Urgente' },
-];
-
-async function upsertLookup(model, rows) {
-  for (const row of rows) {
-    await model.upsert({
-      where: { code: row.code },
-      update: { label: row.label },
-      create: row,
-    });
-  }
-}
-
 async function main() {
-  await upsertLookup(prisma.taskStatus, TASK_STATUSES);
-  await upsertLookup(prisma.taskPriority, TASK_PRIORITIES);
+  // 1. Criar uma Turma de teste
+  const turma = await prisma.turma.create({
+    data: {
+      name: 'Engenharia de Software - 2026.1',
+    },
+  });
 
-  console.log('Seed da aplicação concluído.');
+  // 2. Criar uma Aula vinculada à Turma
+  const aula = await prisma.aula.create({
+    data: {
+      date: new Date(),
+      turma_id: turma.id,
+    },
+  });
+
+  console.log('Seed de Turma e Aula concluído com sucesso!');
+  console.log(`Turma ID: ${turma.id}`);
+  console.log(`Aula ID: ${aula.id}`);
 }
 
 main()
-  .catch((error) => {
-    console.error(error);
+  .catch((e) => {
+    console.error(e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
