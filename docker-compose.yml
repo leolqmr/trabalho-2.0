@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # ---------------------------------------------------
@@ -27,29 +27,53 @@ services:
   # ---------------------------------------------------
   # SERVIÇO DE AUTENTICAÇÃO (Keycloak)
   # ---------------------------------------------------
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    container_name: frequencia-keycloak
-    command: start-dev
+
+  keycloak-db:
+    image: postgres:15-alpine
+    restart: unless-stopped
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak_dev_password
+      POSTGRES_DB: keycloak
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - frequencia-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    container_name: frequencia-keycloak
+    command: ["start-dev", "--import-realm"]
+    restart: unless-stopped
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_RELATIVE_PATH: /auth
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/frequencia_db
-      KC_DB_USERNAME: postgres
-      KC_DB_PASSWORD: postgrespassword
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak_dev_password
+    volumes:
+      - ./frequencia-back/setup/realm.json:/opt/keycloak/data/import/realm.json:ro
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
+      keycloak-db:
         condition: service_healthy
     networks:
       - frequencia-net
+
 
   # ---------------------------------------------------
   # BACKEND (NestJS + Prisma)
   # ---------------------------------------------------
   backend:
+    profiles: ["app"]
     build:
       context: ./frequencia-back
       dockerfile: Dockerfile
@@ -73,6 +97,7 @@ services:
   # FRONTEND (React / Vite)
   # ---------------------------------------------------
   frontend:
+    profiles: ["app"]
     build:
       context: ./frequencia-front
       dockerfile: Dockerfile
@@ -94,3 +119,4 @@ networks:
 
 volumes:
   postgres_data:
+  keycloak_data:
