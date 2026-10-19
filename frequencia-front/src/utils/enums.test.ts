@@ -33,7 +33,7 @@ describe('ADMIN_ONLY_LINKS', () => {
     }
   });
 
-  it('a rota de gerenciamento de equipe é admin-only', () => {
-    expect(ADMIN_ONLY_LINKS).toContain(Links.TEAM);
+  it('a rota de logins é admin-only', () => {
+    expect(ADMIN_ONLY_LINKS).toContain(Links.USUARIOS);
   });
 });

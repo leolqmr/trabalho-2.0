@@ -23,6 +23,13 @@ desenvolvimento local — não use em produção.
 Os valores de `KEYCLOAK_*` no `.env.example` já apontam para esse realm e para o client
 `-back`.
 
+## Criar logins de professor e aluno
+
+Pela tela **Logins** do sistema (só professor). A API usa `KEYCLOAK_ADMIN_USER` /
+`KEYCLOAK_ADMIN_PASSWORD` (no `.env`, dev: `admin`/`admin`) para falar com o Keycloak.
+Professor = roles `sys_sistema-admin` + `sys_sistema-users`; aluno = só `sys_sistema-users`.
+O e-mail do login é o vínculo com o cadastro do aluno na turma.
+
 ## Console de administração
 
 http://localhost:8080/auth (usuário `admin` / senha `admin`, definidos em

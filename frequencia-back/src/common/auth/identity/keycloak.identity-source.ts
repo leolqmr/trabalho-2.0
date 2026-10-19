@@ -19,6 +19,8 @@ interface KeycloakTokenPayload extends JWTPayload {
   // `azp` (authorized party) = client que solicitou o token. O Keycloak costuma
   // colocar o clientId aqui e deixar `aud` como "account", então validamos os dois.
   azp?: string;
+  email?: string;
+  email_verified?: boolean;
   realm_access?: { roles?: string[] };
 }
 
@@ -104,6 +106,9 @@ export class KeycloakIdentitySource implements IdentitySource {
     return {
       userId: payload.sub,
       role,
+      // Só confiamos no e-mail se o Keycloak o marcou como verificado: ele é a
+      // chave que liga o login ao cadastro do aluno na turma.
+      email: payload.email_verified && payload.email ? payload.email.toLowerCase() : undefined,
     };
   }
 

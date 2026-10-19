@@ -8,6 +8,25 @@ vi.mock('react-oidc-context', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
+// Mock turma service to avoid network calls during router tests
+vi.mock('./modules/turmas/turma.service', () => ({
+  turmaService: {
+    getAll: vi.fn().mockResolvedValue([]),
+    getById: vi.fn().mockResolvedValue(null),
+    create: vi.fn().mockResolvedValue({}),
+    update: vi.fn().mockResolvedValue({}),
+    remove: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
+// Mock frequencia service (área do aluno) to avoid network calls during router tests
+vi.mock('./modules/frequencia/frequencia.service', () => ({
+  frequenciaService: {
+    getMinha: vi.fn().mockResolvedValue([]),
+    getDoAluno: vi.fn().mockResolvedValue(null),
+  },
+}));
+
 // Mock todo service to avoid network calls during router tests
 vi.mock('./modules/todos/todo.service', () => ({
   todoService: {
@@ -65,7 +84,7 @@ describe('<RouteMap>', () => {
     expect(mockSigninRedirect).not.toHaveBeenCalled();
   });
 
-  it('redireciona para /todos e exibe a página de tarefas quando o usuário ESTÁ autenticado', async () => {
+  it('redireciona o ALUNO (role users) para /minha-frequencia quando está autenticado', async () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
@@ -86,10 +105,51 @@ describe('<RouteMap>', () => {
     render(<RouteMap />);
 
     expect(
-      await screen.findByText(/Módulo de Exemplo \(Tarefas\)/i),
+      await screen.findByRole('heading', { name: 'Minha frequência' }),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^entrar$/i })).toBeNull();
     expect(mockSigninRedirect).not.toHaveBeenCalled();
+  });
+
+  it('redireciona o PROFESSOR (role admin) para /turmas quando está autenticado', async () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      activeNavigator: undefined,
+      user: {
+        access_token: fakeToken(['sys_sistema-admin']),
+        profile: { email: 'prof@cin.ufpe.br' },
+      },
+      signinRedirect: mockSigninRedirect,
+      signinSilent: vi.fn().mockResolvedValue(null),
+      events: mockEvents,
+    } as unknown as AuthContextProps);
+
+    render(<RouteMap />);
+
+    expect(await screen.findByRole('heading', { name: 'Turmas' })).toBeInTheDocument();
+  });
+
+  it('bloqueia a área do professor (/turmas) para o aluno e mostra a ForbiddenPage', async () => {
+    window.history.pushState({}, 'Test', '/turmas');
+
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      activeNavigator: undefined,
+      user: {
+        access_token: fakeToken(['sys_sistema-users']),
+        profile: { email: 'aluno@cin.ufpe.br' },
+      },
+      signinRedirect: mockSigninRedirect,
+      signinSilent: vi.fn().mockResolvedValue(null),
+      events: mockEvents,
+    } as unknown as AuthContextProps);
+
+    render(<RouteMap />);
+
+    expect(await screen.findByText(/You are logged in as/i)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Turmas' })).toBeNull();
   });
 
   it('chama signinRedirect ao clicar no botão Entrar na tela de login', () => {
@@ -110,8 +170,8 @@ describe('<RouteMap>', () => {
     expect(mockSigninRedirect).toHaveBeenCalledTimes(1);
   });
 
-  it('bloqueia /team para usuário autenticado sem a role ADMIN (mostra ForbiddenPage)', async () => {
-    window.history.pushState({}, 'Test', '/team');
+  it('bloqueia /usuarios para usuário autenticado sem a role ADMIN (mostra ForbiddenPage)', async () => {
+    window.history.pushState({}, 'Test', '/usuarios');
 
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
@@ -129,11 +189,11 @@ describe('<RouteMap>', () => {
     render(<RouteMap />);
 
     expect(await screen.findByText(/You are logged in as/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Gerenciamento de Equipe/i)).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'Logins' })).toBeNull();
   });
 
-  it('libera /team para usuário ADMIN', async () => {
-    window.history.pushState({}, 'Test', '/team');
+  it('libera /usuarios para usuário ADMIN', async () => {
+    window.history.pushState({}, 'Test', '/usuarios');
 
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
@@ -151,7 +211,7 @@ describe('<RouteMap>', () => {
     render(<RouteMap />);
 
     expect(
-      await screen.findByRole('heading', { name: /Gerenciamento de Equipe/i }),
+      await screen.findByRole('heading', { name: 'Logins' }),
     ).toBeInTheDocument();
   });
 

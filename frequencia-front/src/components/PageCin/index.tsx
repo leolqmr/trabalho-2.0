@@ -3,7 +3,7 @@ import { Outlet, Navigate, Link as RouterLink, useLocation } from "react-router-
 import type { AuthContextProps } from "react-oidc-context";
 import { sidebar } from "../../utils/sidebar";
 import { useAuthorization } from "../../hooks/useAuthorization";
-import { ADMIN_ONLY_LINKS, Links } from "../../utils/enums";
+import { ADMIN_ONLY_LINKS, Links, STUDENT_ONLY_LINKS } from "../../utils/enums";
 // Named import: lets the bundler drop the rest of package.json.
 import { version as appVersion } from "../../../package.json";
 
@@ -28,9 +28,12 @@ export default function PageCin({ auth, permittedRoles, children }: PageCinProps
   const { isAdmin } = useAuthorization();
   const { pathname } = useLocation();
 
-  // Admin-only items stay hidden from every other profile.
-  const visibleNavMain = sidebar.navMain.filter(
-    (link) => isAdmin || !ADMIN_ONLY_LINKS.includes(link.href ?? ""),
+  // Admin-only items stay hidden from every other profile, and student-only
+  // items (Minha Frequência) stay hidden from the admin.
+  const visibleNavMain = sidebar.navMain.filter((link) =>
+    isAdmin
+      ? !STUDENT_ONLY_LINKS.includes(link.href ?? "")
+      : !ADMIN_ONLY_LINKS.includes(link.href ?? ""),
   );
 
   // Título do header: nome da página atual (ex: "Tarefas de Exemplo"), não o
