@@ -7,12 +7,15 @@ import ForbiddenPageCin from './components/ForbiddenPageCin';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ErrorScreen, httpErrors } from '@cincoders/cinnamon';
 import { ALL_ROLES, Links, Roles } from './utils/enums';
+import { useAuthorization } from './hooks/useAuthorization';
 import TodosPage from './pages/todos';
 import TeamPage from './pages/team';
 import TurmasPage from './pages/turmas';
 import AulasPage from './pages/aulas';
 import PresencasPage from './pages/presencas';
 import AlunosPage from './pages/alunos';
+import AlunoDetalhePage from './pages/aluno-detalhe';
+import MinhaFrequenciaPage from './pages/minha-frequencia';
 import LoginPage from './pages/login';
 
 /**
@@ -32,6 +35,7 @@ function RouteErrorBoundary() {
 
 function RouteMap() {
   const auth = useAuth();
+  const { isAdmin } = useAuthorization();
   const hasCheckedSession = useRef(false);
 
   useEffect(() => {
@@ -110,12 +114,13 @@ function RouteMap() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
-        {/* Rota raiz /: se autenticado vai para /turmas, caso contrário exibe tela de login */}
+        {/* Rota raiz /: autenticado vai para a área do seu perfil (professor: /turmas,
+            aluno: /minha-frequencia); caso contrário exibe a tela de login */}
         <Route
           path={Links.HOME}
           element={
             auth.isAuthenticated ? (
-              <Navigate to={Links.TURMAS} replace />
+              <Navigate to={isAdmin ? Links.TURMAS : Links.MINHA_FREQUENCIA} replace />
             ) : (
               <LoginPage auth={auth} />
             )
@@ -129,10 +134,7 @@ function RouteMap() {
             RouteErrorBoundary isola falhas de renderização por página. */}
         <Route element={<PageCin auth={auth} permittedRoles={ALL_ROLES} />}>
           <Route element={<RouteErrorBoundary />}>
-            <Route path={Links.TURMAS} element={<TurmasPage />} />
-            <Route path="/turmas/:turmaId/aulas" element={<AulasPage />} />
-            <Route path="/turmas/:turmaId/alunos" element={<AlunosPage />} />
-            <Route path="/aulas/:aulaId/presencas" element={<PresencasPage />} />
+            <Route path={Links.MINHA_FREQUENCIA} element={<MinhaFrequenciaPage />} />
             <Route path={Links.TODOS} element={<TodosPage />} />
             {/* Rota desconhecida: componente de erro pronto da cinnamon (404). */}
             <Route path="*" element={<ErrorScreen errorType={httpErrors.NOTFOUND_404} />} />
@@ -145,6 +147,12 @@ function RouteMap() {
         <Route element={<PageCin auth={auth} permittedRoles={[Roles.ADMIN]} />}>
           <Route element={<RouteErrorBoundary />}>
             <Route path={Links.TEAM} element={<TeamPage />} />
+            {/* Área do professor: turmas, alunos, aulas e chamada. */}
+            <Route path={Links.TURMAS} element={<TurmasPage />} />
+            <Route path="/turmas/:turmaId/aulas" element={<AulasPage />} />
+            <Route path="/turmas/:turmaId/alunos" element={<AlunosPage />} />
+            <Route path="/turmas/:turmaId/alunos/:alunoId" element={<AlunoDetalhePage />} />
+            <Route path="/aulas/:aulaId/presencas" element={<PresencasPage />} />
           </Route>
         </Route>
       </Routes>

@@ -9,6 +9,7 @@ const query = { page: 1, limit: 20, skip: 0, take: 20 };
 function createPrismaMock() {
   return {
     turma: { findUnique: vi.fn().mockResolvedValue({ id: TURMA_ID }) },
+    aula: { count: vi.fn().mockResolvedValue(4) },
     aluno: {
       findMany: vi.fn(),
       count: vi.fn(),
@@ -22,9 +23,15 @@ function createPrismaMock() {
 }
 
 describe('TurmaService (alunos da turma)', () => {
-  it('lista os alunos da turma por ordem de nome', async () => {
+  it('lista os alunos da turma por ordem de nome, com o resumo de faltas de cada um', async () => {
     const prisma = createPrismaMock();
-    prisma.aluno.findMany.mockResolvedValue([{ id: ALUNO_ID, name: 'Ana' }]);
+    prisma.aluno.findMany.mockResolvedValue([
+      {
+        id: ALUNO_ID,
+        name: 'Ana',
+        presencas: [{ present: true }, { present: true }, { present: true }, { present: false }],
+      },
+    ]);
     prisma.aluno.count.mockResolvedValue(1);
     const service = new TurmaService(prisma as never);
 
@@ -34,6 +41,15 @@ describe('TurmaService (alunos da turma)', () => {
       expect.objectContaining({ where: { turma_id: TURMA_ID }, orderBy: { name: 'asc' } }),
     );
     expect(result.items).toHaveLength(1);
+    // 1 falta em 4 aulas realizadas = 25% => no limite, situação crítica.
+    expect(result.items[0].resumo).toMatchObject({
+      aulas_realizadas: 4,
+      presencas: 3,
+      faltas: 1,
+      percentual_faltas: 25,
+      nivel: 'CRITICO',
+    });
+    expect(result.items[0]).not.toHaveProperty('presencas');
     expect(result.meta.total).toBe(1);
   });
 
@@ -57,7 +73,7 @@ describe('TurmaService (alunos da turma)', () => {
 
     const erro = await service
       .createAluno(TURMA_ID, { name: 'Ana', email: 'ana@x.com' })
-      .catch((e) => e);
+      .catch((e: AppException) => e);
 
     expect(erro).toBeInstanceOf(AppException);
     expect(erro.getStatus()).toBe(409);

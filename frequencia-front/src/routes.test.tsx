@@ -19,6 +19,14 @@ vi.mock('./modules/turmas/turma.service', () => ({
   },
 }));
 
+// Mock frequencia service (área do aluno) to avoid network calls during router tests
+vi.mock('./modules/frequencia/frequencia.service', () => ({
+  frequenciaService: {
+    getMinha: vi.fn().mockResolvedValue([]),
+    getDoAluno: vi.fn().mockResolvedValue(null),
+  },
+}));
+
 // Mock todo service to avoid network calls during router tests
 vi.mock('./modules/todos/todo.service', () => ({
   todoService: {
@@ -76,7 +84,7 @@ describe('<RouteMap>', () => {
     expect(mockSigninRedirect).not.toHaveBeenCalled();
   });
 
-  it('redireciona para /turmas e exibe a página de turmas quando o usuário ESTÁ autenticado', async () => {
+  it('redireciona o ALUNO (role users) para /minha-frequencia quando está autenticado', async () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
@@ -97,10 +105,51 @@ describe('<RouteMap>', () => {
     render(<RouteMap />);
 
     expect(
-      await screen.findByRole('heading', { name: 'Turmas' }),
+      await screen.findByRole('heading', { name: 'Minha frequência' }),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^entrar$/i })).toBeNull();
     expect(mockSigninRedirect).not.toHaveBeenCalled();
+  });
+
+  it('redireciona o PROFESSOR (role admin) para /turmas quando está autenticado', async () => {
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      activeNavigator: undefined,
+      user: {
+        access_token: fakeToken(['sys_sistema-admin']),
+        profile: { email: 'prof@cin.ufpe.br' },
+      },
+      signinRedirect: mockSigninRedirect,
+      signinSilent: vi.fn().mockResolvedValue(null),
+      events: mockEvents,
+    } as unknown as AuthContextProps);
+
+    render(<RouteMap />);
+
+    expect(await screen.findByRole('heading', { name: 'Turmas' })).toBeInTheDocument();
+  });
+
+  it('bloqueia a área do professor (/turmas) para o aluno e mostra a ForbiddenPage', async () => {
+    window.history.pushState({}, 'Test', '/turmas');
+
+    mockUseAuth.mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      activeNavigator: undefined,
+      user: {
+        access_token: fakeToken(['sys_sistema-users']),
+        profile: { email: 'aluno@cin.ufpe.br' },
+      },
+      signinRedirect: mockSigninRedirect,
+      signinSilent: vi.fn().mockResolvedValue(null),
+      events: mockEvents,
+    } as unknown as AuthContextProps);
+
+    render(<RouteMap />);
+
+    expect(await screen.findByText(/You are logged in as/i)).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Turmas' })).toBeNull();
   });
 
   it('chama signinRedirect ao clicar no botão Entrar na tela de login', () => {

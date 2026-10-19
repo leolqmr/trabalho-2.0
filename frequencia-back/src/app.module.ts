@@ -9,6 +9,7 @@ import keycloakConfig from './config/keycloak.config';
 import swaggerConfig from './config/swagger.config';
 import { PrismaModule } from './database/prisma.module';
 import { AulaModule } from './modules/aula/aula.module';
+import { FrequenciaModule } from './modules/frequencia/frequencia.module';
 import { HealthModule } from './modules/health/health.module';
 import { TurmaModule } from './modules/turma/turma.module';
 
@@ -24,6 +25,7 @@ import { TurmaModule } from './modules/turma/turma.module';
     HealthModule,
     TurmaModule,
     AulaModule,
+    FrequenciaModule,
   ],
   providers: [{ provide: APP_PIPE, useClass: ZodValidationPipe }],
 })

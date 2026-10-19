@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Plus, RefreshCw, UserX } from 'lucide-react';
 import {
   Frame,
+  SimpleSelect,
   Table,
   TableBody,
   TableHead,
@@ -12,7 +13,7 @@ import {
   TableSkeletonRows,
   toast,
 } from '@cincoders/cinnamon';
-import type { Aluno, CreateAlunoDto } from '../../modules/alunos/aluno.types';
+import type { AlunoComResumo, CreateAlunoDto } from '../../modules/alunos/aluno.types';
 import { AlunoModal } from '../../modules/alunos/components/AlunoModal';
 import { AlunoRow } from '../../modules/alunos/components/AlunoRow';
 import { useAlunos } from '../../modules/alunos/useAlunos';
@@ -28,13 +29,25 @@ export default function AlunosPage() {
   const { turmaId = '' } = useParams<{ turmaId: string }>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [alunoToEdit, setAlunoToEdit] = useState<Aluno | null>(null);
+  const [alunoToEdit, setAlunoToEdit] = useState<AlunoComResumo | null>(null);
   const [newAlunoKey, setNewAlunoKey] = useState(0);
-  const [alunoToDelete, setAlunoToDelete] = useState<Aluno | null>(null);
+  const [alunoToDelete, setAlunoToDelete] = useState<AlunoComResumo | null>(null);
+  const [ordem, setOrdem] = useState<'nome' | 'faltas'>('nome');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { data: turma } = useAsync(() => turmaService.getById(turmaId).catch(() => null), [turmaId]);
   const { alunos, isLoading, error, reload, create, update, remove } = useAlunos(turmaId);
+
+  const ordenados = useMemo(
+    () =>
+      ordem === 'faltas'
+        ? [...alunos].sort((a, b) => b.resumo.percentual_faltas - a.resumo.percentual_faltas)
+        : alunos,
+    [alunos, ordem],
+  );
+  const aulasComChamada = alunos[0]?.resumo.aulas_realizadas ?? 0;
+  const emAtencao = alunos.filter((a) => a.resumo.nivel === 'ATENCAO').length;
+  const criticos = alunos.filter((a) => a.resumo.nivel === 'CRITICO').length;
 
   const handleSave = async (dto: CreateAlunoDto) => {
     try {
@@ -83,7 +96,7 @@ export default function AlunosPage() {
             Alunos{turma ? ` — ${turma.name}` : ''}
           </h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Cadastre os alunos uma vez. Em cada aula, eles já aparecem na chamada para marcar presente ou falta.
+            Cadastre os alunos uma vez e acompanhe o nível de faltas de cada um. Em cada aula, eles já aparecem na chamada.
           </p>
         </div>
 
@@ -108,24 +121,55 @@ export default function AlunosPage() {
         </div>
       </div>
 
+      {alunos.length > 0 && (
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            ['Alunos', alunos.length, ''],
+            ['Aulas com chamada', aulasComChamada, ''],
+            ['Em atenção', emAtencao, emAtencao > 0 ? 'text-yellow-700 dark:text-yellow-400' : ''],
+            ['Situação crítica', criticos, criticos > 0 ? 'text-red-700 dark:text-red-400' : ''],
+          ].map(([titulo, valor, cor]) => (
+            <div key={titulo} className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
+              <div className="text-xs font-medium text-gray-500 dark:text-gray-400">{titulo}</div>
+              <div className={`mt-1 text-2xl font-bold text-gray-900 dark:text-gray-100 ${cor}`}>{valor}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="mb-4 flex items-center justify-end gap-3">
+        <label className="text-xs font-medium text-gray-500 dark:text-gray-400">Ordenar por:</label>
+        <SimpleSelect
+          value={ordem}
+          onValueChange={(value) => setOrdem(value === 'faltas' ? 'faltas' : 'nome')}
+          items={[
+            { value: 'nome', label: 'Nome' },
+            { value: 'faltas', label: 'Mais faltas' },
+          ]}
+        />
+      </div>
+
       <Frame className="w-full">
         <Table variant="card" exportEnabled={!isLoading && !error && alunos.length > 0}>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>E-mail</TableHead>
+              <TableHead>Aluno</TableHead>
+              <TableHead>Presenças</TableHead>
+              <TableHead>Faltas</TableHead>
+              <TableHead>% faltas</TableHead>
+              <TableHead>Situação</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableSkeletonRows columns={3} />
+              <TableSkeletonRows columns={6} />
             ) : error ? (
-              <TableMessageRow colSpan={3}>
+              <TableMessageRow colSpan={6}>
                 <TableError error={error} onRetry={reload} />
               </TableMessageRow>
             ) : alunos.length === 0 ? (
-              <TableMessageRow colSpan={3}>
+              <TableMessageRow colSpan={6}>
                 <EmptyState
                   icon={UserX}
                   title="Nenhum aluno cadastrado"
@@ -133,10 +177,11 @@ export default function AlunosPage() {
                 />
               </TableMessageRow>
             ) : (
-              alunos.map((aluno) => (
+              ordenados.map((aluno) => (
                 <AlunoRow
                   key={aluno.id}
                   aluno={aluno}
+                  detalheHref={`/turmas/${turmaId}/alunos/${aluno.id}`}
                   onEdit={(a) => {
                     setAlunoToEdit(a);
                     setIsModalOpen(true);

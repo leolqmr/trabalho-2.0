@@ -21,11 +21,12 @@ import { RegistrarPresencasDto } from './dto/registrar-presencas.dto';
 import { UpdateAulaDto } from './dto/update-aula.dto';
 
 /**
- * Leitura: qualquer usuário autenticado (AuthGuard global). Escrita e registro
- * de chamada: somente ADMIN (`@Roles`), validado pelo RolesGuard global.
+ * Aulas e chamada são do professor: somente ADMIN (`@Roles` na classe),
+ * validado pelo RolesGuard global.
  */
 @ApiTags('Aulas')
 @ApiBearerAuth()
+@Roles(AccessRole.ADMIN)
 @Controller('aulas')
 export class AulaController {
   constructor(private readonly aulaService: AulaService) {}
@@ -44,21 +45,18 @@ export class AulaController {
   }
 
   @Post()
-  @Roles(AccessRole.ADMIN)
   @ApiOperation({ summary: 'Cria uma aula (ADMIN)' })
   create(@Body() dto: CreateAulaDto) {
     return this.aulaService.create(dto);
   }
 
   @Patch(':id')
-  @Roles(AccessRole.ADMIN)
   @ApiOperation({ summary: 'Atualiza a data de uma aula (ADMIN)' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateAulaDto) {
     return this.aulaService.update(id, dto);
   }
 
   @Delete(':id')
-  @Roles(AccessRole.ADMIN)
   @HttpCode(204)
   @ApiOperation({ summary: 'Remove uma aula e suas presenças (ADMIN)' })
   remove(@Param('id', ParseUUIDPipe) id: string) {
@@ -74,7 +72,6 @@ export class AulaController {
   }
 
   @Post(':id/presencas')
-  @Roles(AccessRole.ADMIN)
   @HttpCode(201)
   @ApiOperation({
     summary: 'Registra a chamada da aula: presenças e faltas (ADMIN)',

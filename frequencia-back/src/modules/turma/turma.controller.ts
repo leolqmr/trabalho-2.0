@@ -22,11 +22,13 @@ import { TurmaService } from './turma.service';
 
 /**
  * Segurança: o AuthGuard global exige um JWT válido do Keycloak em todas as
- * rotas (exceto as marcadas com @Public). Leitura: qualquer usuário autenticado.
- * Escrita: `@Roles(AccessRole.ADMIN)`.
+ * rotas (exceto as marcadas com @Public). Gestão de turmas e alunos é do
+ * professor: `@Roles(AccessRole.ADMIN)` na classe. O aluno só enxerga os
+ * próprios dados, em `GET /me/frequencia`.
  */
 @ApiTags('Turmas')
 @ApiBearerAuth()
+@Roles(AccessRole.ADMIN)
 @Controller('turmas')
 export class TurmaController {
   constructor(private readonly turmaService: TurmaService) {}
@@ -52,7 +54,6 @@ export class TurmaController {
   }
 
   @Post(':id/alunos')
-  @Roles(AccessRole.ADMIN)
   @ApiOperation({ summary: 'Cadastra um aluno na turma (ADMIN)' })
   @ApiResponse({ status: 409, description: 'E-mail já cadastrado nesta turma' })
   createAluno(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CreateAlunoDto) {
@@ -60,7 +61,6 @@ export class TurmaController {
   }
 
   @Patch(':id/alunos/:alunoId')
-  @Roles(AccessRole.ADMIN)
   @ApiOperation({ summary: 'Atualiza nome/e-mail de um aluno da turma (ADMIN)' })
   updateAluno(
     @Param('id', ParseUUIDPipe) id: string,
@@ -71,7 +71,6 @@ export class TurmaController {
   }
 
   @Delete(':id/alunos/:alunoId')
-  @Roles(AccessRole.ADMIN)
   @HttpCode(204)
   @ApiOperation({ summary: 'Remove um aluno da turma e suas presenças (ADMIN)' })
   removeAluno(
@@ -82,21 +81,18 @@ export class TurmaController {
   }
 
   @Post()
-  @Roles(AccessRole.ADMIN)
   @ApiOperation({ summary: 'Cria uma turma (ADMIN)' })
   create(@Body() dto: CreateTurmaDto) {
     return this.turmaService.create(dto);
   }
 
   @Patch(':id')
-  @Roles(AccessRole.ADMIN)
   @ApiOperation({ summary: 'Atualiza uma turma (ADMIN)' })
   update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateTurmaDto) {
     return this.turmaService.update(id, dto);
   }
 
   @Delete(':id')
-  @Roles(AccessRole.ADMIN)
   @HttpCode(204)
   @ApiOperation({ summary: 'Remove uma turma e suas aulas/presenças (ADMIN)' })
   remove(@Param('id', ParseUUIDPipe) id: string) {

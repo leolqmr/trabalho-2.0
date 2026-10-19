@@ -5,6 +5,7 @@ import { ResourceNotFoundException } from '@/common/exceptions/resource-not-foun
 import { PaginatedResponseDto } from '@/common/pagination/paginated-response.dto';
 import type { PaginationQueryDto } from '@/common/pagination/pagination-query.dto';
 import { PrismaService } from '@/database/prisma.service';
+import { calcularResumo } from '../frequencia/frequencia.util';
 import type { CreateAlunoDto } from './dto/create-aluno.dto';
 import type { CreateTurmaDto } from './dto/create-turma.dto';
 import type { UpdateAlunoDto } from './dto/update-aluno.dto';
@@ -51,15 +52,22 @@ export class TurmaService {
   async findAlunos(turmaId: string, query: PaginationQueryDto) {
     await this.findOne(turmaId);
     const where = { turma_id: turmaId };
-    const [items, total] = await Promise.all([
+    const [alunos, total, aulasRealizadas] = await Promise.all([
       this.prisma.aluno.findMany({
         where,
         orderBy: { name: 'asc' },
         skip: query.skip,
         take: query.take,
+        include: { presencas: { select: { present: true } } },
       }),
       this.prisma.aluno.count({ where }),
+      this.prisma.aula.count({ where: { turma_id: turmaId, presencas: { some: {} } } }),
     ]);
+
+    const items = alunos.map(({ presencas, ...aluno }) => ({
+      ...aluno,
+      resumo: calcularResumo(presencas, aulasRealizadas),
+    }));
     return PaginatedResponseDto.of(items, total, query);
   }
 

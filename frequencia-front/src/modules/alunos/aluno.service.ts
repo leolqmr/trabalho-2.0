@@ -1,9 +1,9 @@
 import { request, requestList } from '../../services/http';
-import type { Aluno, CreateAlunoDto, UpdateAlunoDto } from './aluno.types';
+import type { Aluno, AlunoComResumo, CreateAlunoDto, UpdateAlunoDto } from './aluno.types';
 
 export class AlunoService {
-  getByTurma(turmaId: string): Promise<Aluno[]> {
-    return requestList<Aluno>(`/turmas/${turmaId}/alunos`, 'Erro ao buscar alunos');
+  getByTurma(turmaId: string): Promise<AlunoComResumo[]> {
+    return requestList<AlunoComResumo>(`/turmas/${turmaId}/alunos`, 'Erro ao buscar alunos');
   }
 
   create(turmaId: string, dto: CreateAlunoDto): Promise<Aluno> {

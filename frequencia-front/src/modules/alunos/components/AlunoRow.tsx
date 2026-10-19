@@ -1,22 +1,47 @@
 import { Edit2, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { TableCell, TableRow } from '@cincoders/cinnamon';
-import type { Aluno } from '../aluno.types';
+import type { AlunoComResumo } from '../aluno.types';
 import { Can } from '../../../components/auth/Can';
+import { NivelBadge } from '../../../components/frequencia/NivelBadge';
+import { formatPercentual } from '../../../components/frequencia/format';
 import { WRITE_ROLES } from '../../../utils/enums';
 
 interface AlunoRowProps {
-  aluno: Aluno;
-  onEdit: (aluno: Aluno) => void;
-  onDelete: (aluno: Aluno) => void;
+  aluno: AlunoComResumo;
+  /** Link para o detalhe de frequência do aluno (montado pela página). */
+  detalheHref: string;
+  onEdit: (aluno: AlunoComResumo) => void;
+  onDelete: (aluno: AlunoComResumo) => void;
 }
 
-export function AlunoRow({ aluno, onEdit, onDelete }: AlunoRowProps) {
+export function AlunoRow({ aluno, detalheHref, onEdit, onDelete }: AlunoRowProps) {
+  const { resumo } = aluno;
+
   return (
     <TableRow>
-      <TableCell className="font-semibold text-gray-900 dark:text-gray-100">{aluno.name}</TableCell>
-      <TableCell className="text-sm text-gray-600 dark:text-gray-400">{aluno.email}</TableCell>
+      <TableCell>
+        <Link to={detalheHref} className="font-semibold text-gray-900 hover:text-red-600 dark:text-gray-100">
+          {aluno.name}
+        </Link>
+        <div className="text-xs text-gray-500 dark:text-gray-400">{aluno.email}</div>
+      </TableCell>
+      <TableCell className="text-sm text-gray-700 dark:text-gray-300">{resumo.presencas}</TableCell>
+      <TableCell className="text-sm font-medium text-gray-900 dark:text-gray-100">{resumo.faltas}</TableCell>
+      <TableCell className="text-sm text-gray-700 dark:text-gray-300">
+        {formatPercentual(resumo.percentual_faltas)}
+      </TableCell>
+      <TableCell>
+        <NivelBadge nivel={resumo.nivel} />
+      </TableCell>
       <TableCell className="text-right">
         <div className="flex items-center justify-end gap-2">
+          <Link
+            to={detalheHref}
+            className="rounded-lg px-2 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+          >
+            Ver faltas
+          </Link>
           <Can roles={WRITE_ROLES}>
             <button
               onClick={() => onEdit(aluno)}

@@ -1,5 +1,5 @@
 import { type SidebarData } from '@cincoders/cinnamon';
-import { GraduationCap, ListChecks, Users } from 'lucide-react';
+import { CalendarCheck, GraduationCap, Users } from 'lucide-react';
 import { Links } from './enums';
 import cincodersLogo from '../assets/icons/logo_cincoders-icon.svg';
 
@@ -21,10 +21,10 @@ export const sidebar: SidebarData = {
       IconComponent: GraduationCap,
     },
     {
-      id: 'todos',
-      title: 'Tarefas de Exemplo',
-      href: Links.TODOS,
-      IconComponent: ListChecks,
+      id: 'minha-frequencia',
+      title: 'Minha Frequência',
+      href: Links.MINHA_FREQUENCIA,
+      IconComponent: CalendarCheck,
     },
     {
       // Só ADMIN vê este item: `Links.TEAM` está em `ADMIN_ONLY_LINKS` e o

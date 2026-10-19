@@ -1,6 +1,6 @@
 import { useAsync } from '../../hooks/useAsync';
 import { alunoService } from './aluno.service';
-import type { Aluno, CreateAlunoDto, UpdateAlunoDto } from './aluno.types';
+import type { AlunoComResumo, CreateAlunoDto, UpdateAlunoDto } from './aluno.types';
 
 export function useAlunos(turmaId: string) {
   const { data: alunos = [], isLoading, error, reload } = useAsync(
@@ -18,7 +18,7 @@ export function useAlunos(turmaId: string) {
     reload();
   };
 
-  const remove = async (aluno: Aluno) => {
+  const remove = async (aluno: AlunoComResumo) => {
     await alunoService.remove(turmaId, aluno.id);
     reload();
   };
