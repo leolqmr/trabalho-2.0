@@ -9,6 +9,9 @@ import { ErrorScreen, httpErrors } from '@cincoders/cinnamon';
 import { ALL_ROLES, Links, Roles } from './utils/enums';
 import TodosPage from './pages/todos';
 import TeamPage from './pages/team';
+import TurmasPage from './pages/turmas';
+import AulasPage from './pages/aulas';
+import PresencasPage from './pages/presencas';
 import LoginPage from './pages/login';
 
 /**
@@ -106,12 +109,12 @@ function RouteMap() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
-        {/* Rota raiz /: se autenticado vai para /todos, caso contrário exibe tela de login */}
+        {/* Rota raiz /: se autenticado vai para /turmas, caso contrário exibe tela de login */}
         <Route
           path={Links.HOME}
           element={
             auth.isAuthenticated ? (
-              <Navigate to={Links.TODOS} replace />
+              <Navigate to={Links.TURMAS} replace />
             ) : (
               <LoginPage auth={auth} />
             )
@@ -125,6 +128,9 @@ function RouteMap() {
             RouteErrorBoundary isola falhas de renderização por página. */}
         <Route element={<PageCin auth={auth} permittedRoles={ALL_ROLES} />}>
           <Route element={<RouteErrorBoundary />}>
+            <Route path={Links.TURMAS} element={<TurmasPage />} />
+            <Route path="/turmas/:turmaId/aulas" element={<AulasPage />} />
+            <Route path="/aulas/:aulaId/presencas" element={<PresencasPage />} />
             <Route path={Links.TODOS} element={<TodosPage />} />
             {/* Rota desconhecida: componente de erro pronto da cinnamon (404). */}
             <Route path="*" element={<ErrorScreen errorType={httpErrors.NOTFOUND_404} />} />

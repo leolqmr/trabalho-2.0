@@ -4,6 +4,7 @@ export enum Links {
   HOME = '/',
   FORBIDDEN = '/forbidden',
   TODOS = '/todos',
+  TURMAS = '/turmas',
   TEAM = '/team',
 }
 

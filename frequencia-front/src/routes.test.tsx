@@ -8,6 +8,17 @@ vi.mock('react-oidc-context', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
+// Mock turma service to avoid network calls during router tests
+vi.mock('./modules/turmas/turma.service', () => ({
+  turmaService: {
+    getAll: vi.fn().mockResolvedValue([]),
+    getById: vi.fn().mockResolvedValue(null),
+    create: vi.fn().mockResolvedValue({}),
+    update: vi.fn().mockResolvedValue({}),
+    remove: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 // Mock todo service to avoid network calls during router tests
 vi.mock('./modules/todos/todo.service', () => ({
   todoService: {
@@ -65,7 +76,7 @@ describe('<RouteMap>', () => {
     expect(mockSigninRedirect).not.toHaveBeenCalled();
   });
 
-  it('redireciona para /todos e exibe a página de tarefas quando o usuário ESTÁ autenticado', async () => {
+  it('redireciona para /turmas e exibe a página de turmas quando o usuário ESTÁ autenticado', async () => {
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
@@ -86,7 +97,7 @@ describe('<RouteMap>', () => {
     render(<RouteMap />);
 
     expect(
-      await screen.findByText(/Módulo de Exemplo \(Tarefas\)/i),
+      await screen.findByRole('heading', { name: 'Turmas' }),
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^entrar$/i })).toBeNull();
     expect(mockSigninRedirect).not.toHaveBeenCalled();
