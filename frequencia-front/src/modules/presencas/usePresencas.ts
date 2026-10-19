@@ -9,17 +9,17 @@ export function usePresencas(aulaId: string) {
   );
 
   const add = async (userId: string, present: boolean) => {
-    await presencaService.create({ aula_id: aulaId, user_id: userId, present });
+    await presencaService.registrar(aulaId, [{ user_id: userId, present }]);
     reload();
   };
 
   const setPresent = async (presenca: Presenca, present: boolean) => {
-    await presencaService.setPresent(presenca.id, present);
+    await presencaService.registrar(aulaId, [{ user_id: presenca.user_id, present }]);
     reload();
   };
 
   const remove = async (presenca: Presenca) => {
-    await presencaService.remove(presenca.id);
+    await presencaService.remove(aulaId, presenca.id);
     reload();
   };
 

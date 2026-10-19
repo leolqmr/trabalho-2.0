@@ -8,8 +8,8 @@ export interface Presenca {
   updatedAt: string;
 }
 
-export interface CreatePresencaDto {
-  aula_id: string;
+/** Uma marcação da chamada (corpo do POST /aulas/:id/presencas). */
+export interface MarcacaoPresenca {
   user_id: string;
   present: boolean;
 }

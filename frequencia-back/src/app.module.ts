@@ -8,7 +8,9 @@ import { validateEnv } from './config/env.validation';
 import keycloakConfig from './config/keycloak.config';
 import swaggerConfig from './config/swagger.config';
 import { PrismaModule } from './database/prisma.module';
+import { AulaModule } from './modules/aula/aula.module';
 import { HealthModule } from './modules/health/health.module';
+import { TurmaModule } from './modules/turma/turma.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { HealthModule } from './modules/health/health.module';
     PrismaModule,
     AuthModule,
     HealthModule,
+    TurmaModule,
+    AulaModule,
   ],
   providers: [{ provide: APP_PIPE, useClass: ZodValidationPipe }],
 })

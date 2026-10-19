@@ -1,0 +1,99 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AccessRole } from '@/common/auth/access-role.enum';
+import { Roles } from '@/common/auth/decorators/roles.decorator';
+import { PaginationQueryDto } from '@/common/pagination/pagination-query.dto';
+import { AulaService } from './aula.service';
+import { CreateAulaDto } from './dto/create-aula.dto';
+import { ListAulasQueryDto } from './dto/list-aulas-query.dto';
+import { RegistrarPresencasDto } from './dto/registrar-presencas.dto';
+import { UpdateAulaDto } from './dto/update-aula.dto';
+
+/**
+ * Leitura: qualquer usuário autenticado (AuthGuard global). Escrita e registro
+ * de chamada: somente ADMIN (`@Roles`), validado pelo RolesGuard global.
+ */
+@ApiTags('Aulas')
+@ApiBearerAuth()
+@Controller('aulas')
+export class AulaController {
+  constructor(private readonly aulaService: AulaService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Lista aulas (paginado), opcionalmente de uma turma' })
+  findAll(@Query() query: ListAulasQueryDto) {
+    return this.aulaService.findAll(query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Busca uma aula pelo id' })
+  @ApiResponse({ status: 404, description: 'Aula não encontrada' })
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.aulaService.findOne(id);
+  }
+
+  @Post()
+  @Roles(AccessRole.ADMIN)
+  @ApiOperation({ summary: 'Cria uma aula (ADMIN)' })
+  create(@Body() dto: CreateAulaDto) {
+    return this.aulaService.create(dto);
+  }
+
+  @Patch(':id')
+  @Roles(AccessRole.ADMIN)
+  @ApiOperation({ summary: 'Atualiza a data de uma aula (ADMIN)' })
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateAulaDto) {
+    return this.aulaService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @Roles(AccessRole.ADMIN)
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Remove uma aula e suas presenças (ADMIN)' })
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.aulaService.remove(id);
+  }
+
+  @Get(':id/presencas')
+  @ApiOperation({ summary: 'Lista as presenças registradas em uma aula' })
+  findPresencas(@Param('id', ParseUUIDPipe) id: string, @Query() query: PaginationQueryDto) {
+    return this.aulaService.findPresencas(id, query);
+  }
+
+  @Post(':id/presencas')
+  @Roles(AccessRole.ADMIN)
+  @HttpCode(201)
+  @ApiOperation({
+    summary: 'Registra a chamada da aula: presenças e faltas (ADMIN)',
+    description:
+      'Idempotente por aluno: se o aluno já tem registro nesta aula, o valor de `present` é atualizado.',
+  })
+  @ApiResponse({ status: 201, description: 'Chamada registrada' })
+  @ApiResponse({ status: 400, description: 'Corpo inválido' })
+  @ApiResponse({ status: 404, description: 'Aula não encontrada' })
+  registrarPresencas(@Param('id', ParseUUIDPipe) id: string, @Body() dto: RegistrarPresencasDto) {
+    return this.aulaService.registrarPresencas(id, dto);
+  }
+
+  @Delete(':id/presencas/:presencaId')
+  @Roles(AccessRole.ADMIN)
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Remove um aluno da chamada da aula (ADMIN)' })
+  removePresenca(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('presencaId', ParseUUIDPipe) presencaId: string,
+  ) {
+    return this.aulaService.removePresenca(id, presencaId);
+  }
+}
