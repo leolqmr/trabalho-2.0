@@ -37,4 +37,22 @@ export class UsuarioService {
     }
     return { id, name: dto.name, email: dto.email, perfil: dto.perfil, turma_id: turmaId ?? null };
   }
+
+  async findAll() {
+    const users = await this.keycloak.listUsers([...new Set([...ROLE_PROFESSOR, ...ROLE_ALUNO])]);
+    return users
+      .map((u) => ({
+        id: u.id,
+        name: u.name,
+        username: u.username,
+        email: u.email,
+        enabled: u.enabled,
+        perfil: u.roles.includes('sys_sistema-admin')
+          ? ('PROFESSOR' as const)
+          : u.roles.includes('sys_sistema-users')
+            ? ('ALUNO' as const)
+            : ('SEM_PERFIL' as const),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  }
 }

@@ -15,6 +15,15 @@ export interface NovoUsuarioKeycloak {
   roles: string[];
 }
 
+export interface KeycloakUserResumo {
+  id: string;
+  username: string;
+  email: string | null;
+  name: string;
+  enabled: boolean;
+  roles: string[];
+}
+
 /** Cliente mínimo da Admin REST API do Keycloak (cria usuário + atribui roles de realm). */
 @Injectable()
 export class KeycloakAdminService {
@@ -113,5 +122,43 @@ export class KeycloakAdminService {
     }).catch(() => null);
     if (!map?.ok) throw this.unavailable('Usuário criado, mas falhou ao atribuir o perfil.');
     return { id };
+  }
+
+  /** Lista os usuários do realm com o conjunto de roles de realm relevantes de cada um. */
+  async listUsers(roleNames: string[]): Promise<KeycloakUserResumo[]> {
+    const token = await this.adminToken();
+    const { url, realm } = this.base;
+    const admin = `${url}/admin/realms/${encodeURIComponent(realm)}`;
+    const headers = { Authorization: `Bearer ${token}` };
+    const get = async <T>(path: string): Promise<T> => {
+      const r = await fetch(`${admin}${path}`, { headers }).catch(() => null);
+      if (!r?.ok) throw this.unavailable('Não foi possível listar os usuários do Keycloak.');
+      return (await r.json()) as T;
+    };
+
+    const users =
+      await get<
+        {
+          id: string;
+          username: string;
+          email?: string;
+          firstName?: string;
+          lastName?: string;
+          enabled: boolean;
+        }[]
+      >('/users?max=500');
+    const membros = new Map<string, Set<string>>();
+    for (const name of roleNames) {
+      const list = await get<{ id: string }[]>(`/roles/${encodeURIComponent(name)}/users?max=500`);
+      membros.set(name, new Set(list.map((u) => u.id)));
+    }
+    return users.map((u) => ({
+      id: u.id,
+      username: u.username,
+      email: u.email ?? null,
+      name: [u.firstName, u.lastName].filter(Boolean).join(' ') || u.username,
+      enabled: u.enabled,
+      roles: roleNames.filter((r) => membros.get(r)?.has(u.id)),
+    }));
   }
 }

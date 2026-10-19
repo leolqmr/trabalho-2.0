@@ -8,7 +8,28 @@ function setup(turmaExists = true) {
     turma: { findUnique: vi.fn().mockResolvedValue(turmaExists ? { id: TURMA_ID } : null) },
     aluno: { upsert: vi.fn().mockResolvedValue({}) },
   };
-  const keycloak = { createUser: vi.fn().mockResolvedValue({ id: 'kc-1' }) };
+  const keycloak = {
+    createUser: vi.fn().mockResolvedValue({ id: 'kc-1' }),
+    listUsers: vi.fn().mockResolvedValue([
+      {
+        id: '2',
+        username: 'user',
+        email: 'user@dev.local',
+        name: 'Zed',
+        enabled: true,
+        roles: ['sys_sistema-users'],
+      },
+      {
+        id: '1',
+        username: 'admin',
+        email: 'admin@dev.local',
+        name: 'Admin',
+        enabled: true,
+        roles: ['sys_sistema-admin', 'sys_sistema-users'],
+      },
+      { id: '3', username: 'x', email: null, name: 'Nada', enabled: false, roles: [] },
+    ]),
+  };
   // biome-ignore lint/suspicious/noExplicitAny: mocks
   const service = new UsuarioService(prisma as any, keycloak as any);
   return { prisma, keycloak, service };
@@ -50,5 +71,15 @@ describe('UsuarioService', () => {
     const { service, prisma } = setup();
     await service.create({ ...base, perfil: 'PROFESSOR', turma_id: TURMA_ID });
     expect(prisma.aluno.upsert).not.toHaveBeenCalled();
+  });
+
+  it('lista os logins classificando por perfil e ordenando por nome', async () => {
+    const { service } = setup();
+    const r = await service.findAll();
+    expect(r.map((u) => [u.name, u.perfil])).toEqual([
+      ['Admin', 'PROFESSOR'],
+      ['Nada', 'SEM_PERFIL'],
+      ['Zed', 'ALUNO'],
+    ]);
   });
 });

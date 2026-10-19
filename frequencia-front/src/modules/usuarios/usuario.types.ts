@@ -15,3 +15,12 @@ export interface UsuarioCriado {
   perfil: Perfil;
   turma_id: string | null;
 }
+
+export interface UsuarioKeycloak {
+  id: string;
+  name: string;
+  username: string;
+  email: string | null;
+  enabled: boolean;
+  perfil: Perfil | 'SEM_PERFIL';
+}
