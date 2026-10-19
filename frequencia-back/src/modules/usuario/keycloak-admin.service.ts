@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppException } from '@/common/exceptions/app.exception';
 import { ErrorCode } from '@/common/exceptions/error-code.enum';
+import { ResourceNotFoundException } from '@/common/exceptions/resource-not-found.exception';
 
 interface RoleRepresentation {
   id: string;
@@ -160,5 +161,40 @@ export class KeycloakAdminService {
       enabled: u.enabled,
       roles: roleNames.filter((r) => membros.get(r)?.has(u.id)),
     }));
+  }
+
+  private async userCall(
+    id: string,
+    path: string,
+    init: { method: string; body?: unknown },
+    falha: string,
+  ): Promise<void> {
+    const token = await this.adminToken();
+    const { url, realm } = this.base;
+    const res = await fetch(
+      `${url}/admin/realms/${encodeURIComponent(realm)}/users/${encodeURIComponent(id)}${path}`,
+      {
+        method: init.method,
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: init.body === undefined ? undefined : JSON.stringify(init.body),
+      },
+    ).catch(() => null);
+    if (!res) throw this.unavailable('Keycloak indisponível.');
+    if (res.status === 404) throw new ResourceNotFoundException('Usuário', id);
+    if (!res.ok) throw this.unavailable(`${falha} (${res.status}).`);
+  }
+
+  deleteUser(id: string): Promise<void> {
+    return this.userCall(id, '', { method: 'DELETE' }, 'Keycloak não apagou o login');
+  }
+
+  /** O Keycloak guarda só o hash da senha: não dá para ler a atual, apenas definir uma nova. */
+  resetPassword(id: string, password: string): Promise<void> {
+    return this.userCall(
+      id,
+      '/reset-password',
+      { method: 'PUT', body: { type: 'password', value: password, temporary: false } },
+      'Keycloak não alterou a senha',
+    );
   }
 }

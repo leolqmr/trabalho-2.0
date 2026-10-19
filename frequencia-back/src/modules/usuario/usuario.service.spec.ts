@@ -1,3 +1,4 @@
+import { AppException } from '@/common/exceptions/app.exception';
 import { ResourceNotFoundException } from '@/common/exceptions/resource-not-found.exception';
 import { UsuarioService } from './usuario.service';
 
@@ -10,6 +11,8 @@ function setup(turmaExists = true) {
   };
   const keycloak = {
     createUser: vi.fn().mockResolvedValue({ id: 'kc-1' }),
+    deleteUser: vi.fn().mockResolvedValue(undefined),
+    resetPassword: vi.fn().mockResolvedValue(undefined),
     listUsers: vi.fn().mockResolvedValue([
       {
         id: '2',
@@ -81,5 +84,23 @@ describe('UsuarioService', () => {
       ['Nada', 'SEM_PERFIL'],
       ['Zed', 'ALUNO'],
     ]);
+  });
+
+  it('apaga o login de outra pessoa', async () => {
+    const { service, keycloak } = setup();
+    await service.remove('outro', 'eu');
+    expect(keycloak.deleteUser).toHaveBeenCalledWith('outro');
+  });
+
+  it('não deixa o professor apagar o próprio login', async () => {
+    const { service, keycloak } = setup();
+    await expect(service.remove('eu', 'eu')).rejects.toBeInstanceOf(AppException);
+    expect(keycloak.deleteUser).not.toHaveBeenCalled();
+  });
+
+  it('redefine a senha', async () => {
+    const { service, keycloak } = setup();
+    await service.resetPassword('u1', 'nova123');
+    expect(keycloak.resetPassword).toHaveBeenCalledWith('u1', 'nova123');
   });
 });
