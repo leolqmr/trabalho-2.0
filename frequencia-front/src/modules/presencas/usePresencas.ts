@@ -8,13 +8,13 @@ export function usePresencas(aulaId: string) {
     [aulaId],
   );
 
-  const add = async (userId: string, present: boolean) => {
-    await presencaService.registrar(aulaId, [{ user_id: userId, present }]);
+  const add = async (email: string, present: boolean) => {
+    await presencaService.registrar(aulaId, [{ email, present }]);
     reload();
   };
 
   const setPresent = async (presenca: Presenca, present: boolean) => {
-    await presencaService.registrar(aulaId, [{ user_id: presenca.user_id, present }]);
+    await presencaService.registrar(aulaId, [{ email: presenca.email ?? '', present }]);
     reload();
   };
 

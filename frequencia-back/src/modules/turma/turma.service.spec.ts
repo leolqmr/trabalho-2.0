@@ -10,10 +10,11 @@ describe('TurmaService.findAlunos', () => {
       turma: { findUnique: vi.fn().mockResolvedValue({ id: TURMA_ID }) },
       presenca: {
         findMany: vi.fn().mockResolvedValue([
-          { user_id: 'b', present: true },
-          { user_id: 'a', present: true },
-          { user_id: 'a', present: false },
-          { user_id: 'a', present: true },
+          { email: 'b@x.com', present: true },
+          { email: 'a@x.com', present: true },
+          { email: 'a@x.com', present: false },
+          { email: 'a@x.com', present: true },
+          { email: null, present: true },
         ]),
       },
     };
@@ -25,8 +26,8 @@ describe('TurmaService.findAlunos', () => {
       expect.objectContaining({ where: { aula: { turma_id: TURMA_ID } } }),
     );
     expect(result.items).toEqual([
-      { user_id: 'a', total_aulas: 3, presencas: 2, faltas: 1 },
-      { user_id: 'b', total_aulas: 1, presencas: 1, faltas: 0 },
+      { email: 'a@x.com', total_aulas: 3, presencas: 2, faltas: 1 },
+      { email: 'b@x.com', total_aulas: 1, presencas: 1, faltas: 0 },
     ]);
     expect(result.meta.total).toBe(2);
   });

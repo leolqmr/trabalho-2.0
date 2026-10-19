@@ -33,12 +33,14 @@ model Presenca {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   aula_id   String   @db.Uuid
   aula      Aula     @relation(fields: [aula_id], references: [id], onDelete: Cascade)
-  user_id   String   @db.Uuid
+  user_id   String?  @db.Uuid
+  email     String?
   present   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([aula_id])
   @@index([user_id])
+  @@index([email])
   @@map("presencas")
 }

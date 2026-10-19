@@ -2,8 +2,8 @@ import { ResourceNotFoundException } from '@/common/exceptions/resource-not-foun
 import { AulaService } from './aula.service';
 
 const AULA_ID = '11111111-1111-4111-8111-111111111111';
-const ALUNO_A = '22222222-2222-4222-8222-222222222222';
-const ALUNO_B = '33333333-3333-4333-8333-333333333333';
+const ALUNO_A = 'ana@cin.ufpe.br';
+const ALUNO_B = 'bruno@cin.ufpe.br';
 
 function createPrismaMock() {
   const tx = {
@@ -27,14 +27,14 @@ describe('AulaService.registrarPresencas', () => {
     prisma.aula.findUnique.mockResolvedValue({ id: AULA_ID });
     // ALUNO_A já tem registro; ALUNO_B não.
     tx.presenca.findMany
-      .mockResolvedValueOnce([{ id: 'p-a', user_id: ALUNO_A }])
+      .mockResolvedValueOnce([{ id: 'p-a', email: ALUNO_A }])
       .mockResolvedValueOnce([{ id: 'p-a' }, { id: 'p-b' }]);
 
     const service = new AulaService(prisma as never);
     const result = await service.registrarPresencas(AULA_ID, {
       presencas: [
-        { user_id: ALUNO_A, present: false },
-        { user_id: ALUNO_B, present: true },
+        { email: ALUNO_A, present: false },
+        { email: ALUNO_B, present: true },
       ],
     });
 
@@ -43,7 +43,7 @@ describe('AulaService.registrarPresencas', () => {
       data: { present: false },
     });
     expect(tx.presenca.create).toHaveBeenCalledWith({
-      data: { aula_id: AULA_ID, user_id: ALUNO_B, present: true },
+      data: { aula_id: AULA_ID, email: ALUNO_B, present: true },
     });
     expect(tx.presenca.create).toHaveBeenCalledTimes(1);
     expect(result).toHaveLength(2);
@@ -56,7 +56,7 @@ describe('AulaService.registrarPresencas', () => {
     const service = new AulaService(prisma as never);
 
     await expect(
-      service.registrarPresencas(AULA_ID, { presencas: [{ user_id: ALUNO_A, present: true }] }),
+      service.registrarPresencas(AULA_ID, { presencas: [{ email: ALUNO_A, present: true }] }),
     ).rejects.toBeInstanceOf(ResourceNotFoundException);
     expect(prisma.$transaction).not.toHaveBeenCalled();
   });
@@ -69,9 +69,9 @@ describe('AulaService.removePresenca', () => {
 
     const service = new AulaService(prisma as never);
 
-    await expect(service.removePresenca(AULA_ID, ALUNO_A)).rejects.toBeInstanceOf(
-      ResourceNotFoundException,
-    );
+    await expect(
+      service.removePresenca(AULA_ID, '33333333-3333-4333-8333-333333333333'),
+    ).rejects.toBeInstanceOf(ResourceNotFoundException);
     expect(prisma.presenca.delete).not.toHaveBeenCalled();
   });
 });

@@ -41,9 +41,9 @@ export default function PresencasPage() {
   const handleAdd = async (userId: string, present: boolean) => {
     try {
       await add(userId, present);
-      toast.success('Participante adicionado!');
+      toast.success('Aluno adicionado!');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Falha ao adicionar participante.');
+      toast.error(err instanceof Error ? err.message : 'Falha ao adicionar aluno.');
       throw err;
     }
   };
@@ -60,9 +60,9 @@ export default function PresencasPage() {
     if (!toDelete) return;
     try {
       await remove(toDelete);
-      toast.success('Participante removido da chamada.');
+      toast.success('Aluno removido da chamada.');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Falha ao remover participante.');
+      toast.error(err instanceof Error ? err.message : 'Falha ao remover aluno.');
     }
   };
 
@@ -84,8 +84,8 @@ export default function PresencasPage() {
           </h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             {presencas.length > 0
-              ? `${presentes} presente(s) de ${presencas.length} participante(s).`
-              : 'Adicione os participantes e marque quem esteve presente.'}
+              ? `${presentes} presente(s) e ${presencas.length - presentes} falta(s), de ${presencas.length} aluno(s).`
+              : 'Adicione os alunos pelo e-mail e marque presente ou falta.'}
           </p>
         </div>
 
@@ -107,7 +107,7 @@ export default function PresencasPage() {
               className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white shadow-xs transition hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none cursor-pointer"
             >
               <Plus className="h-4 w-4" />
-              Adicionar Participante
+              Adicionar Aluno
             </button>
           </Can>
         </div>
@@ -117,7 +117,7 @@ export default function PresencasPage() {
         <Table variant="card" exportEnabled={!isLoading && !error && presencas.length > 0}>
           <TableHeader>
             <TableRow>
-              <TableHead>Participante (ID)</TableHead>
+              <TableHead>Aluno (e-mail)</TableHead>
               <TableHead>Situação</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
@@ -133,8 +133,8 @@ export default function PresencasPage() {
               <TableMessageRow colSpan={3}>
                 <EmptyState
                   icon={Users}
-                  title="Nenhum participante na chamada"
-                  description="Adicione participantes para registrar a presença desta aula."
+                  title="Nenhum aluno na chamada"
+                  description="Adicione alunos pelo e-mail para registrar presença ou falta nesta aula."
                 />
               </TableMessageRow>
             ) : (
@@ -165,8 +165,8 @@ export default function PresencasPage() {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         onConfirm={handleConfirmDelete}
-        title="Remover participante"
-        description="Deseja remover este participante da chamada?"
+        title="Remover aluno"
+        description="Deseja remover este aluno da chamada?"
         confirmLabel="Remover"
       />
     </div>

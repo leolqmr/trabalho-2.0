@@ -1,6 +1,6 @@
-/** Aluno de uma turma, derivado das presenças registradas nas aulas dela. */
+/** Aluno de uma turma, identificado pelo e-mail, derivado das presenças registradas nas aulas dela. */
 export interface AlunoDaTurma {
-  user_id: string;
+  email: string;
   total_aulas: number;
   presencas: number;
   faltas: number;

@@ -1,30 +1,28 @@
 import { RegistrarPresencasSchema } from './registrar-presencas.dto';
 
-const ID_A = '22222222-2222-4222-8222-222222222222';
-const ID_B = '33333333-3333-4333-8333-333333333333';
-
 describe('RegistrarPresencasSchema', () => {
-  it('aceita uma chamada válida', () => {
+  it('aceita uma chamada válida e normaliza o e-mail', () => {
     const result = RegistrarPresencasSchema.safeParse({
       presencas: [
-        { user_id: ID_A, present: true },
-        { user_id: ID_B, present: false },
+        { email: '  Ana@CIn.UFPE.br ', present: true },
+        { email: 'bruno@cin.ufpe.br', present: false },
       ],
     });
     expect(result.success).toBe(true);
+    if (result.success) expect(result.data.presencas[0].email).toBe('ana@cin.ufpe.br');
   });
 
   it.each([
     ['lista vazia', { presencas: [] }],
     ['sem o campo presencas', {}],
-    ['user_id que não é UUID', { presencas: [{ user_id: 'abc', present: true }] }],
-    ['present que não é boolean', { presencas: [{ user_id: ID_A, present: 'sim' }] }],
+    ['e-mail inválido', { presencas: [{ email: 'abc', present: true }] }],
+    ['present que não é boolean', { presencas: [{ email: 'a@b.com', present: 'sim' }] }],
     [
-      'aluno repetido',
+      'aluno repetido (mesmo e-mail, mesmo com caixa diferente)',
       {
         presencas: [
-          { user_id: ID_A, present: true },
-          { user_id: ID_A, present: false },
+          { email: 'a@b.com', present: true },
+          { email: 'A@B.com', present: false },
         ],
       },
     ],

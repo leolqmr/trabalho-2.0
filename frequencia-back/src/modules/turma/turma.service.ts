@@ -45,7 +45,7 @@ export class TurmaService {
 
   /**
    * Alunos da turma. O schema não tem tabela de matrícula, então o aluno é
-   * quem aparece (`user_id`) em alguma presença das aulas da turma, com o
+   * quem aparece (`email`) em alguma presença das aulas da turma, com o
    * resumo de presenças/faltas.
    */
   async findAlunos(turmaId: string, query: PaginationQueryDto) {
@@ -53,13 +53,15 @@ export class TurmaService {
 
     const registros = await this.prisma.presenca.findMany({
       where: { aula: { turma_id: turmaId } },
-      select: { user_id: true, present: true },
+      select: { email: true, present: true },
     });
 
     const porAluno = new Map<string, AlunoDaTurma>();
-    for (const { user_id, present } of registros) {
-      const aluno = porAluno.get(user_id) ?? {
-        user_id,
+    for (const { email, present } of registros) {
+      // Registros antigos, de antes do e-mail, não têm como identificar o aluno.
+      if (!email) continue;
+      const aluno = porAluno.get(email) ?? {
+        email,
         total_aulas: 0,
         presencas: 0,
         faltas: 0,
@@ -67,10 +69,10 @@ export class TurmaService {
       aluno.total_aulas += 1;
       if (present) aluno.presencas += 1;
       else aluno.faltas += 1;
-      porAluno.set(user_id, aluno);
+      porAluno.set(email, aluno);
     }
 
-    const alunos = [...porAluno.values()].sort((a, b) => a.user_id.localeCompare(b.user_id));
+    const alunos = [...porAluno.values()].sort((a, b) => a.email.localeCompare(b.email));
     return PaginatedResponseDto.of(
       alunos.slice(query.skip, query.skip + query.take),
       alunos.length,

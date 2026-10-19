@@ -64,33 +64,33 @@ export class AulaService {
   }
 
   /**
-   * Grava a chamada. Idempotente por (aula, aluno): quem já tem registro nesta
+   * Grava a chamada. Idempotente por (aula, e-mail do aluno): quem já tem registro nesta
    * aula é atualizado, os demais são criados — reenviar a chamada corrigida não
    * duplica presenças. Tudo numa transação: ou grava a chamada inteira ou nada.
    */
   async registrarPresencas(aulaId: string, dto: RegistrarPresencasDto) {
     await this.findOne(aulaId);
 
-    const userIds = dto.presencas.map((m) => m.user_id);
+    const emails = dto.presencas.map((m) => m.email);
 
     return this.prisma.$transaction(async (tx) => {
       const existentes = await tx.presenca.findMany({
-        where: { aula_id: aulaId, user_id: { in: userIds } },
-        select: { id: true, user_id: true },
+        where: { aula_id: aulaId, email: { in: emails } },
+        select: { id: true, email: true },
       });
-      const idPorUsuario = new Map(existentes.map((p) => [p.user_id, p.id]));
+      const idPorEmail = new Map(existentes.map((p) => [p.email, p.id]));
 
-      for (const { user_id, present } of dto.presencas) {
-        const existenteId = idPorUsuario.get(user_id);
+      for (const { email, present } of dto.presencas) {
+        const existenteId = idPorEmail.get(email);
         if (existenteId) {
           await tx.presenca.update({ where: { id: existenteId }, data: { present } });
         } else {
-          await tx.presenca.create({ data: { aula_id: aulaId, user_id, present } });
+          await tx.presenca.create({ data: { aula_id: aulaId, email, present } });
         }
       }
 
       return tx.presenca.findMany({
-        where: { aula_id: aulaId, user_id: { in: userIds } },
+        where: { aula_id: aulaId, email: { in: emails } },
         orderBy: { createdAt: 'asc' },
       });
     });

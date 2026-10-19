@@ -1,4 +1,4 @@
-import { CheckCircle2, Trash2, XCircle } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { TableCell, TableRow } from '@cincoders/cinnamon';
 import type { Presenca } from '../presenca.types';
 import { Can } from '../../../components/auth/Can';
@@ -10,45 +10,66 @@ interface PresencaRowProps {
   onDelete: (presenca: Presenca) => void;
 }
 
+const BASE = 'px-3 py-1 text-xs font-medium transition';
+
 export function PresencaRow({ presenca, onToggle, onDelete }: PresencaRowProps) {
   return (
     <TableRow>
-      <TableCell className="font-mono text-xs text-gray-900 dark:text-gray-100">
-        {presenca.user_id}
+      <TableCell className="text-sm text-gray-900 dark:text-gray-100">
+        {presenca.email ?? presenca.user_id ?? '—'}
       </TableCell>
       <TableCell>
-        {presenca.present ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-950/40 dark:text-green-400">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            Presente
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 dark:bg-red-950/40 dark:text-red-400">
-            <XCircle className="h-3.5 w-3.5" />
-            Ausente
-          </span>
-        )}
+        {/* Marcação direta: clicar em "Presente" ou "Falta" define a situação do aluno. */}
+        <Can
+          roles={WRITE_ROLES}
+          fallback={
+            <span
+              className={
+                presenca.present
+                  ? 'text-xs font-medium text-green-700 dark:text-green-400'
+                  : 'text-xs font-medium text-red-700 dark:text-red-400'
+              }
+            >
+              {presenca.present ? 'Presente' : 'Falta'}
+            </span>
+          }
+        >
+          <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 dark:border-gray-700">
+            <button
+              onClick={() => !presenca.present && onToggle(presenca, true)}
+              aria-pressed={presenca.present}
+              className={`${BASE} cursor-pointer ${
+                presenca.present
+                  ? 'bg-green-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+              }`}
+            >
+              Presente
+            </button>
+            <button
+              onClick={() => presenca.present && onToggle(presenca, false)}
+              aria-pressed={!presenca.present}
+              className={`${BASE} cursor-pointer border-l border-gray-300 dark:border-gray-700 ${
+                !presenca.present
+                  ? 'bg-red-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+              }`}
+            >
+              Falta
+            </button>
+          </div>
+        </Can>
       </TableCell>
       <TableCell className="text-right">
-        <div className="flex items-center justify-end gap-2">
-          <Can roles={WRITE_ROLES}>
-            <button
-              onClick={() => onToggle(presenca, !presenca.present)}
-              className="rounded-lg border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 cursor-pointer"
-            >
-              Marcar {presenca.present ? 'ausente' : 'presente'}
-            </button>
-          </Can>
-          <Can roles={WRITE_ROLES}>
-            <button
-              onClick={() => onDelete(presenca)}
-              title="Remover"
-              className="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/30 cursor-pointer"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </Can>
-        </div>
+        <Can roles={WRITE_ROLES}>
+          <button
+            onClick={() => onDelete(presenca)}
+            title="Remover da chamada"
+            className="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/30 cursor-pointer"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </Can>
       </TableCell>
     </TableRow>
   );
