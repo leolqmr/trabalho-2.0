@@ -48,8 +48,13 @@ export class KeycloakAdminService {
         password,
       }),
     }).catch(() => null);
-    if (!res?.ok) {
-      throw this.unavailable('Não foi possível autenticar na Admin API do Keycloak.');
+    if (!res) {
+      throw this.unavailable(`Não consegui falar com o Keycloak em ${this.base.url}.`);
+    }
+    if (!res.ok) {
+      throw this.unavailable(
+        `Keycloak recusou o login admin (${res.status}). Confira KEYCLOAK_ADMIN_USER/PASSWORD no .env.`,
+      );
     }
     return ((await res.json()) as { access_token: string }).access_token;
   }
@@ -83,9 +88,10 @@ export class KeycloakAdminService {
       );
     }
     if (!create.ok) {
+      const detalhe = await create.text().catch(() => '');
       throw new AppException(
         ErrorCode.VALIDATION_FAILED,
-        `Keycloak recusou o cadastro (${create.status}). Verifique e-mail e senha.`,
+        `Keycloak recusou o cadastro (${create.status}): ${detalhe.slice(0, 200)}`,
         HttpStatus.BAD_REQUEST,
       );
     }
