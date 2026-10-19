@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { AppException } from '@/common/exceptions/app.exception';
+import { ErrorCode } from '@/common/exceptions/error-code.enum';
 import { ResourceNotFoundException } from '@/common/exceptions/resource-not-found.exception';
 import { PrismaService } from '@/database/prisma.service';
 import type { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -54,5 +56,21 @@ export class UsuarioService {
             : ('SEM_PERFIL' as const),
       }))
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+  }
+
+  /** Apaga o login. O cadastro do aluno na turma e o histórico de presenças são mantidos. */
+  async remove(id: string, currentUserId?: string): Promise<void> {
+    if (id === currentUserId) {
+      throw new AppException(
+        ErrorCode.VALIDATION_FAILED,
+        'Você não pode apagar o próprio login.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    await this.keycloak.deleteUser(id);
+  }
+
+  async resetPassword(id: string, password: string): Promise<void> {
+    await this.keycloak.resetPassword(id, password);
   }
 }
