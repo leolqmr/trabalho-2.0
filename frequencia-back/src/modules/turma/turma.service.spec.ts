@@ -41,13 +41,13 @@ describe('TurmaService (alunos da turma)', () => {
       expect.objectContaining({ where: { turma_id: TURMA_ID }, orderBy: { name: 'asc' } }),
     );
     expect(result.items).toHaveLength(1);
-    // 1 falta em 4 aulas realizadas = 25% => no limite, situação crítica.
+    // 1 falta em 4 aulas realizadas = 25% => ainda no limite (atenção); acima disso é crítico.
     expect(result.items[0].resumo).toMatchObject({
       aulas_realizadas: 4,
       presencas: 3,
       faltas: 1,
       percentual_faltas: 25,
-      nivel: 'CRITICO',
+      nivel: 'ATENCAO',
     });
     expect(result.items[0]).not.toHaveProperty('presencas');
     expect(result.meta.total).toBe(1);

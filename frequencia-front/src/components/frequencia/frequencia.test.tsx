@@ -16,9 +16,9 @@ describe('<ResumoFrequenciaCards>', () => {
       <ResumoFrequenciaCards
         resumo={{
           aulas_realizadas: 8,
-          presencas: 6,
-          faltas: 2,
-          percentual_faltas: 25,
+          presencas: 5,
+          faltas: 3,
+          percentual_faltas: 30,
           nivel: 'CRITICO',
           limite_percentual: 25,
         }}

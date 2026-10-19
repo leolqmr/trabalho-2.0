@@ -37,7 +37,9 @@ describe('nivelDeFalta', () => {
     [14.9, 'REGULAR'],
     [15, 'ATENCAO'],
     [24.9, 'ATENCAO'],
-    [25, 'CRITICO'],
+    [25, 'ATENCAO'],
+    [25.1, 'CRITICO'],
+    [26, 'CRITICO'],
     [60, 'CRITICO'],
   ])('%s%% de faltas => %s', (percentual, nivel) => {
     expect(nivelDeFalta(percentual)).toBe(nivel);

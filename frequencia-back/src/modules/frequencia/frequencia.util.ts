@@ -1,7 +1,7 @@
-/** Limite de faltas (% das aulas realizadas) a partir do qual o aluno está em situação crítica. */
+/** Limite de faltas (% das aulas realizadas): acima dele o aluno está em situação crítica. */
 export const LIMITE_FALTAS_PERCENTUAL = 25;
 
-/** A partir deste percentual o aluno entra em atenção (60% do limite). */
+/** A partir deste percentual (inclusive) o aluno entra em atenção. */
 export const ATENCAO_FALTAS_PERCENTUAL = 15;
 
 export type NivelFalta = 'REGULAR' | 'ATENCAO' | 'CRITICO';
@@ -17,8 +17,12 @@ export interface ResumoFrequencia {
   limite_percentual: number;
 }
 
+/**
+ * Regular: menos de 15% de faltas. Atenção: de 15% a 25%. Crítico: acima de 25%
+ * (a partir de 26%; 25,5% já passa do limite, então também é crítico).
+ */
 export function nivelDeFalta(percentualFaltas: number): NivelFalta {
-  if (percentualFaltas >= LIMITE_FALTAS_PERCENTUAL) return 'CRITICO';
+  if (percentualFaltas > LIMITE_FALTAS_PERCENTUAL) return 'CRITICO';
   if (percentualFaltas >= ATENCAO_FALTAS_PERCENTUAL) return 'ATENCAO';
   return 'REGULAR';
 }
