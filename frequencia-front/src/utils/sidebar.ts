@@ -1,5 +1,5 @@
 import { type SidebarData } from '@cincoders/cinnamon';
-import { CalendarCheck, GraduationCap, Users } from 'lucide-react';
+import { CalendarCheck, GraduationCap, UserPlus, Users } from 'lucide-react';
 import { Links } from './enums';
 import cincodersLogo from '../assets/icons/logo_cincoders-icon.svg';
 
@@ -19,6 +19,12 @@ export const sidebar: SidebarData = {
       title: 'Turmas',
       href: Links.TURMAS,
       IconComponent: GraduationCap,
+    },
+    {
+      id: 'usuarios',
+      title: 'Logins',
+      href: Links.USUARIOS,
+      IconComponent: UserPlus,
     },
     {
       id: 'minha-frequencia',

@@ -4,6 +4,7 @@ import { ROLES_KEY } from '@/common/auth/decorators/roles.decorator';
 import { AulaController } from './aula/aula.controller';
 import { FrequenciaController } from './frequencia/frequencia.controller';
 import { TurmaController } from './turma/turma.controller';
+import { UsuarioController } from './usuario/usuario.controller';
 
 const classRoles = (controller: object): AccessRole[] | undefined =>
   Reflect.getMetadata(ROLES_KEY, controller);
@@ -15,6 +16,7 @@ describe('Proteção das rotas (guards globais + @Roles)', () => {
   it.each([
     ['TurmaController', TurmaController],
     ['AulaController', AulaController],
+    ['UsuarioController', UsuarioController],
   ])('%s inteiro é restrito ao professor (ADMIN)', (_nome, controller) => {
     expect(classRoles(controller)).toEqual([AccessRole.ADMIN]);
   });

@@ -12,6 +12,7 @@ import { AulaModule } from './modules/aula/aula.module';
 import { FrequenciaModule } from './modules/frequencia/frequencia.module';
 import { HealthModule } from './modules/health/health.module';
 import { TurmaModule } from './modules/turma/turma.module';
+import { UsuarioModule } from './modules/usuario/usuario.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TurmaModule } from './modules/turma/turma.module';
     AuthModule,
     HealthModule,
     TurmaModule,
+    UsuarioModule,
     AulaModule,
     FrequenciaModule,
   ],

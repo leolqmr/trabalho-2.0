@@ -11,6 +11,7 @@ import { useAuthorization } from './hooks/useAuthorization';
 import TodosPage from './pages/todos';
 import TeamPage from './pages/team';
 import TurmasPage from './pages/turmas';
+import UsuariosPage from './pages/usuarios';
 import AulasPage from './pages/aulas';
 import PresencasPage from './pages/presencas';
 import AlunosPage from './pages/alunos';
@@ -149,6 +150,7 @@ function RouteMap() {
             <Route path={Links.TEAM} element={<TeamPage />} />
             {/* Área do professor: turmas, alunos, aulas e chamada. */}
             <Route path={Links.TURMAS} element={<TurmasPage />} />
+            <Route path={Links.USUARIOS} element={<UsuariosPage />} />
             <Route path="/turmas/:turmaId/aulas" element={<AulasPage />} />
             <Route path="/turmas/:turmaId/alunos" element={<AlunosPage />} />
             <Route path="/turmas/:turmaId/alunos/:alunoId" element={<AlunoDetalhePage />} />
