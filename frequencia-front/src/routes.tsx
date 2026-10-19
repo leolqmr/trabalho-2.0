@@ -9,7 +9,6 @@ import { ErrorScreen, httpErrors } from '@cincoders/cinnamon';
 import { ALL_ROLES, Links, Roles } from './utils/enums';
 import { useAuthorization } from './hooks/useAuthorization';
 import TodosPage from './pages/todos';
-import TeamPage from './pages/team';
 import TurmasPage from './pages/turmas';
 import UsuariosPage from './pages/usuarios';
 import AulasPage from './pages/aulas';
@@ -147,7 +146,6 @@ function RouteMap() {
             para /forbidden pelo RequireAuth do cinnamon. */}
         <Route element={<PageCin auth={auth} permittedRoles={[Roles.ADMIN]} />}>
           <Route element={<RouteErrorBoundary />}>
-            <Route path={Links.TEAM} element={<TeamPage />} />
             {/* Área do professor: turmas, alunos, aulas e chamada. */}
             <Route path={Links.TURMAS} element={<TurmasPage />} />
             <Route path={Links.USUARIOS} element={<UsuariosPage />} />

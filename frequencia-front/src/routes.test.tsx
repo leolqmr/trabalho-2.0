@@ -170,8 +170,8 @@ describe('<RouteMap>', () => {
     expect(mockSigninRedirect).toHaveBeenCalledTimes(1);
   });
 
-  it('bloqueia /team para usuário autenticado sem a role ADMIN (mostra ForbiddenPage)', async () => {
-    window.history.pushState({}, 'Test', '/team');
+  it('bloqueia /usuarios para usuário autenticado sem a role ADMIN (mostra ForbiddenPage)', async () => {
+    window.history.pushState({}, 'Test', '/usuarios');
 
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
@@ -189,11 +189,11 @@ describe('<RouteMap>', () => {
     render(<RouteMap />);
 
     expect(await screen.findByText(/You are logged in as/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Gerenciamento de Equipe/i)).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'Logins' })).toBeNull();
   });
 
-  it('libera /team para usuário ADMIN', async () => {
-    window.history.pushState({}, 'Test', '/team');
+  it('libera /usuarios para usuário ADMIN', async () => {
+    window.history.pushState({}, 'Test', '/usuarios');
 
     mockUseAuth.mockReturnValue({
       isAuthenticated: true,
@@ -211,7 +211,7 @@ describe('<RouteMap>', () => {
     render(<RouteMap />);
 
     expect(
-      await screen.findByRole('heading', { name: /Gerenciamento de Equipe/i }),
+      await screen.findByRole('heading', { name: 'Logins' }),
     ).toBeInTheDocument();
   });
 

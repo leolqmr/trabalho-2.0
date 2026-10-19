@@ -1,5 +1,5 @@
 import { type SidebarData } from '@cincoders/cinnamon';
-import { CalendarCheck, GraduationCap, UserPlus, Users } from 'lucide-react';
+import { CalendarCheck, GraduationCap, UserPlus } from 'lucide-react';
 import { Links } from './enums';
 import cincodersLogo from '../assets/icons/logo_cincoders-icon.svg';
 
@@ -31,14 +31,6 @@ export const sidebar: SidebarData = {
       title: 'Minha Frequência',
       href: Links.MINHA_FREQUENCIA,
       IconComponent: CalendarCheck,
-    },
-    {
-      // Só ADMIN vê este item: `Links.TEAM` está em `ADMIN_ONLY_LINKS` e o
-      // `PageCin` filtra o menu por isso. A rota em si também exige a role.
-      id: 'team',
-      title: 'Gerenciar Equipe',
-      href: Links.TEAM,
-      IconComponent: Users,
     },
   ],
 };

@@ -7,7 +7,6 @@ export enum Links {
   TURMAS = '/turmas',
   MINHA_FREQUENCIA = '/minha-frequencia',
   USUARIOS = '/usuarios',
-  TEAM = '/team',
 }
 
 /**
@@ -15,7 +14,7 @@ export enum Links {
  * A restrição de verdade é o `permittedRoles` da rota em `routes.tsx`; esta
  * lista só evita mostrar um link que levaria a `/forbidden`.
  */
-export const ADMIN_ONLY_LINKS: string[] = [Links.TEAM, Links.TURMAS, Links.USUARIOS];
+export const ADMIN_ONLY_LINKS: string[] = [Links.TURMAS, Links.USUARIOS];
 
 /** Itens só para quem não é professor: o admin não tem "frequência própria". */
 export const STUDENT_ONLY_LINKS: string[] = [Links.MINHA_FREQUENCIA];
