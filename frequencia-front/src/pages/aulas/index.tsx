@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Plus, RefreshCw, CalendarX } from 'lucide-react';
+import { ArrowLeft, Plus, RefreshCw, CalendarX, Users } from 'lucide-react';
 import {
   Frame,
   Table,
@@ -100,6 +100,13 @@ export default function AulasPage() {
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
+          <Link
+            to={`/turmas/${turmaId}/alunos`}
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          >
+            <Users className="h-4 w-4" />
+            Alunos
+          </Link>
           <Can roles={WRITE_ROLES}>
             <button
               onClick={handleOpenCreate}

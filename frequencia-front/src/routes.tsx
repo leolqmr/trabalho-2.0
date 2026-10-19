@@ -12,6 +12,7 @@ import TeamPage from './pages/team';
 import TurmasPage from './pages/turmas';
 import AulasPage from './pages/aulas';
 import PresencasPage from './pages/presencas';
+import AlunosPage from './pages/alunos';
 import LoginPage from './pages/login';
 
 /**
@@ -130,6 +131,7 @@ function RouteMap() {
           <Route element={<RouteErrorBoundary />}>
             <Route path={Links.TURMAS} element={<TurmasPage />} />
             <Route path="/turmas/:turmaId/aulas" element={<AulasPage />} />
+            <Route path="/turmas/:turmaId/alunos" element={<AlunosPage />} />
             <Route path="/aulas/:aulaId/presencas" element={<PresencasPage />} />
             <Route path={Links.TODOS} element={<TodosPage />} />
             {/* Rota desconhecida: componente de erro pronto da cinnamon (404). */}

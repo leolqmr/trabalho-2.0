@@ -143,6 +143,7 @@ export default function TurmasPage() {
                   key={turma.id}
                   turma={turma}
                   aulasHref={`/turmas/${turma.id}/aulas`}
+                  alunosHref={`/turmas/${turma.id}/alunos`}
                   onEdit={(t) => {
                     setTurmaToEdit(t);
                     setIsModalOpen(true);

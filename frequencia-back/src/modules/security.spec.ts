@@ -12,11 +12,13 @@ describe('Proteção das rotas (guards globais + @Roles)', () => {
     [TurmaController, 'create'],
     [TurmaController, 'update'],
     [TurmaController, 'remove'],
+    [TurmaController, 'createAluno'],
+    [TurmaController, 'updateAluno'],
+    [TurmaController, 'removeAluno'],
     [AulaController, 'create'],
     [AulaController, 'update'],
     [AulaController, 'remove'],
     [AulaController, 'registrarPresencas'],
-    [AulaController, 'removePresenca'],
   ])('%o.%s exige ADMIN', (controller, handler) => {
     expect(rolesOf(controller, handler)).toEqual([AccessRole.ADMIN]);
   });

@@ -12,6 +12,7 @@ model Turma {
   name      String
   createdAt DateTime @default(now())
   aulas     Aula[]
+  alunos    Aluno[]
 
   @@map("turmas")
 }
@@ -29,18 +30,30 @@ model Aula {
   @@map("aulas")
 }
 
+model Aluno {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  email     String
+  turma_id  String     @db.Uuid
+  turma     Turma      @relation(fields: [turma_id], references: [id], onDelete: Cascade)
+  presencas Presenca[]
+  createdAt DateTime   @default(now())
+
+  @@unique([turma_id, email])
+  @@map("alunos")
+}
+
 model Presenca {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   aula_id   String   @db.Uuid
   aula      Aula     @relation(fields: [aula_id], references: [id], onDelete: Cascade)
-  user_id   String?  @db.Uuid
-  email     String?
+  aluno_id  String   @db.Uuid
+  aluno     Aluno    @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
   present   Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([aula_id, aluno_id])
   @@index([aula_id])
-  @@index([user_id])
-  @@index([email])
   @@map("presencas")
 }

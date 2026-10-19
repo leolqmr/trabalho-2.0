@@ -1,27 +1,26 @@
 import { useAsync } from '../../hooks/useAsync';
 import { presencaService } from './presenca.service';
-import type { Presenca } from './presenca.types';
+import type { ChamadaItem } from './presenca.types';
 
 export function usePresencas(aulaId: string) {
-  const { data: presencas = [], isLoading, error, reload } = useAsync(
-    () => presencaService.getByAula(aulaId),
+  const { data: chamada = [], isLoading, error, reload } = useAsync(
+    () => presencaService.getChamada(aulaId),
     [aulaId],
   );
 
-  const add = async (email: string, present: boolean) => {
-    await presencaService.registrar(aulaId, [{ email, present }]);
+  const marcar = async (item: ChamadaItem, present: boolean) => {
+    await presencaService.registrar(aulaId, [{ aluno_id: item.aluno_id, present }]);
     reload();
   };
 
-  const setPresent = async (presenca: Presenca, present: boolean) => {
-    await presencaService.registrar(aulaId, [{ email: presenca.email ?? '', present }]);
+  /** Marca a mesma situação para todos os alunos da turma de uma vez. */
+  const marcarTodos = async (present: boolean) => {
+    await presencaService.registrar(
+      aulaId,
+      chamada.map((item) => ({ aluno_id: item.aluno_id, present })),
+    );
     reload();
   };
 
-  const remove = async (presenca: Presenca) => {
-    await presencaService.remove(aulaId, presenca.id);
-    reload();
-  };
-
-  return { presencas, isLoading, error, reload, add, setPresent, remove };
+  return { chamada, isLoading, error, reload, marcar, marcarTodos };
 }

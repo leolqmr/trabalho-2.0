@@ -66,7 +66,9 @@ export class AulaController {
   }
 
   @Get(':id/presencas')
-  @ApiOperation({ summary: 'Lista as presenças registradas em uma aula' })
+  @ApiOperation({
+    summary: 'Chamada da aula: alunos da turma com presente/falta (ou null se não marcado)',
+  })
   findPresencas(@Param('id', ParseUUIDPipe) id: string, @Query() query: PaginationQueryDto) {
     return this.aulaService.findPresencas(id, query);
   }
@@ -77,23 +79,12 @@ export class AulaController {
   @ApiOperation({
     summary: 'Registra a chamada da aula: presenças e faltas (ADMIN)',
     description:
-      'Idempotente por aluno: se o aluno já tem registro nesta aula, o valor de `present` é atualizado.',
+      'Idempotente por aluno: se o aluno já foi marcado nesta aula, o valor de `present` é atualizado. Só aceita alunos da turma da aula.',
   })
   @ApiResponse({ status: 201, description: 'Chamada registrada' })
   @ApiResponse({ status: 400, description: 'Corpo inválido' })
   @ApiResponse({ status: 404, description: 'Aula não encontrada' })
   registrarPresencas(@Param('id', ParseUUIDPipe) id: string, @Body() dto: RegistrarPresencasDto) {
     return this.aulaService.registrarPresencas(id, dto);
-  }
-
-  @Delete(':id/presencas/:presencaId')
-  @Roles(AccessRole.ADMIN)
-  @HttpCode(204)
-  @ApiOperation({ summary: 'Remove um aluno da chamada da aula (ADMIN)' })
-  removePresenca(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Param('presencaId', ParseUUIDPipe) presencaId: string,
-  ) {
-    return this.aulaService.removePresenca(id, presencaId);
   }
 }

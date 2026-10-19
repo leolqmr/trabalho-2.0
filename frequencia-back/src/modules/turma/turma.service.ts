@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { AppException } from '@/common/exceptions/app.exception';
+import { ErrorCode } from '@/common/exceptions/error-code.enum';
 import { ResourceNotFoundException } from '@/common/exceptions/resource-not-found.exception';
 import { PaginatedResponseDto } from '@/common/pagination/paginated-response.dto';
 import type { PaginationQueryDto } from '@/common/pagination/pagination-query.dto';
 import { PrismaService } from '@/database/prisma.service';
+import type { CreateAlunoDto } from './dto/create-aluno.dto';
 import type { CreateTurmaDto } from './dto/create-turma.dto';
+import type { UpdateAlunoDto } from './dto/update-aluno.dto';
 import type { UpdateTurmaDto } from './dto/update-turma.dto';
-import type { AlunoDaTurma } from './turma.type';
 
 @Injectable()
 export class TurmaService {
@@ -43,40 +46,60 @@ export class TurmaService {
     await this.prisma.turma.delete({ where: { id } });
   }
 
-  /**
-   * Alunos da turma. O schema não tem tabela de matrícula, então o aluno é
-   * quem aparece (`email`) em alguma presença das aulas da turma, com o
-   * resumo de presenças/faltas.
-   */
+  // ---------- Alunos (matrícula) da turma ----------
+
   async findAlunos(turmaId: string, query: PaginationQueryDto) {
     await this.findOne(turmaId);
+    const where = { turma_id: turmaId };
+    const [items, total] = await Promise.all([
+      this.prisma.aluno.findMany({
+        where,
+        orderBy: { name: 'asc' },
+        skip: query.skip,
+        take: query.take,
+      }),
+      this.prisma.aluno.count({ where }),
+    ]);
+    return PaginatedResponseDto.of(items, total, query);
+  }
 
-    const registros = await this.prisma.presenca.findMany({
-      where: { aula: { turma_id: turmaId } },
-      select: { email: true, present: true },
+  async createAluno(turmaId: string, dto: CreateAlunoDto) {
+    await this.findOne(turmaId);
+    await this.assertEmailLivre(turmaId, dto.email);
+    return this.prisma.aluno.create({
+      data: { turma_id: turmaId, name: dto.name, email: dto.email },
     });
+  }
 
-    const porAluno = new Map<string, AlunoDaTurma>();
-    for (const { email, present } of registros) {
-      // Registros antigos, de antes do e-mail, não têm como identificar o aluno.
-      if (!email) continue;
-      const aluno = porAluno.get(email) ?? {
-        email,
-        total_aulas: 0,
-        presencas: 0,
-        faltas: 0,
-      };
-      aluno.total_aulas += 1;
-      if (present) aluno.presencas += 1;
-      else aluno.faltas += 1;
-      porAluno.set(email, aluno);
+  async updateAluno(turmaId: string, alunoId: string, dto: UpdateAlunoDto) {
+    const aluno = await this.findAluno(turmaId, alunoId);
+    if (dto.email && dto.email !== aluno.email) {
+      await this.assertEmailLivre(turmaId, dto.email);
     }
+    return this.prisma.aluno.update({ where: { id: alunoId }, data: dto });
+  }
 
-    const alunos = [...porAluno.values()].sort((a, b) => a.email.localeCompare(b.email));
-    return PaginatedResponseDto.of(
-      alunos.slice(query.skip, query.skip + query.take),
-      alunos.length,
-      query,
-    );
+  async removeAluno(turmaId: string, alunoId: string): Promise<void> {
+    await this.findAluno(turmaId, alunoId);
+    await this.prisma.aluno.delete({ where: { id: alunoId } });
+  }
+
+  private async findAluno(turmaId: string, alunoId: string) {
+    const aluno = await this.prisma.aluno.findFirst({ where: { id: alunoId, turma_id: turmaId } });
+    if (!aluno) throw new ResourceNotFoundException('Aluno', alunoId);
+    return aluno;
+  }
+
+  private async assertEmailLivre(turmaId: string, email: string) {
+    const existente = await this.prisma.aluno.findUnique({
+      where: { turma_id_email: { turma_id: turmaId, email } },
+    });
+    if (existente) {
+      throw new AppException(
+        ErrorCode.CONFLICT,
+        `Já existe um aluno com o e-mail ${email} nesta turma.`,
+        HttpStatus.CONFLICT,
+      );
+    }
   }
 }

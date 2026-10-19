@@ -1,4 +1,4 @@
-import { CalendarDays, Edit2, Trash2 } from 'lucide-react';
+import { CalendarDays, Edit2, Trash2, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { TableCell, TableRow } from '@cincoders/cinnamon';
 import type { Turma } from '../turma.types';
@@ -9,11 +9,13 @@ interface TurmaRowProps {
   turma: Turma;
   /** Link para as aulas da turma (montado pela página, módulos não se importam). */
   aulasHref: string;
+  /** Link para os alunos da turma (montado pela página). */
+  alunosHref: string;
   onEdit: (turma: Turma) => void;
   onDelete: (turma: Turma) => void;
 }
 
-export function TurmaRow({ turma, aulasHref, onEdit, onDelete }: TurmaRowProps) {
+export function TurmaRow({ turma, aulasHref, alunosHref, onEdit, onDelete }: TurmaRowProps) {
   return (
     <TableRow>
       <TableCell>
@@ -29,6 +31,14 @@ export function TurmaRow({ turma, aulasHref, onEdit, onDelete }: TurmaRowProps) 
       </TableCell>
       <TableCell className="text-right">
         <div className="flex items-center justify-end gap-2">
+          <Link
+            to={alunosHref}
+            title="Ver alunos"
+            className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+          >
+            <Users className="h-4 w-4" />
+            Alunos
+          </Link>
           <Link
             to={aulasHref}
             title="Ver aulas"

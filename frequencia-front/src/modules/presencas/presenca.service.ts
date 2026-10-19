@@ -1,30 +1,21 @@
 import { request, requestList } from '../../services/http';
-import type { MarcacaoPresenca, Presenca } from './presenca.types';
+import type { ChamadaItem, MarcacaoPresenca } from './presenca.types';
 
 export class PresencaService {
-  /** GET /aulas/:id/presencas */
-  getByAula(aulaId: string): Promise<Presenca[]> {
-    return requestList<Presenca>(`/aulas/${aulaId}/presencas`, 'Erro ao buscar presenças');
+  /** GET /aulas/:id/presencas — alunos da turma com a situação nesta aula. */
+  getChamada(aulaId: string): Promise<ChamadaItem[]> {
+    return requestList<ChamadaItem>(`/aulas/${aulaId}/presencas`, 'Erro ao buscar a chamada');
   }
 
   /**
-   * POST /aulas/:id/presencas — registra a chamada. Idempotente por aluno: quem
-   * já tem registro na aula é atualizado, então serve para marcar e corrigir.
+   * POST /aulas/:id/presencas — registra a chamada. Idempotente por aluno:
+   * quem já foi marcado é atualizado, então serve para marcar e corrigir.
    */
-  registrar(aulaId: string, marcacoes: MarcacaoPresenca[]): Promise<Presenca[]> {
-    return request<Presenca[]>(`/aulas/${aulaId}/presencas`, 'Erro ao registrar presença', {
+  registrar(aulaId: string, marcacoes: MarcacaoPresenca[]): Promise<unknown> {
+    return request<unknown>(`/aulas/${aulaId}/presencas`, 'Erro ao registrar presença', {
       method: 'POST',
       json: { presencas: marcacoes },
     });
-  }
-
-  /** DELETE /aulas/:aulaId/presencas/:presencaId */
-  remove(aulaId: string, presencaId: string): Promise<void> {
-    return request<void>(
-      `/aulas/${aulaId}/presencas/${presencaId}`,
-      'Erro ao remover participante',
-      { method: 'DELETE' },
-    );
   }
 }
 

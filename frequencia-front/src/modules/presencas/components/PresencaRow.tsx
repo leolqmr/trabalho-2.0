@@ -1,74 +1,53 @@
-import { Trash2 } from 'lucide-react';
 import { TableCell, TableRow } from '@cincoders/cinnamon';
-import type { Presenca } from '../presenca.types';
+import type { ChamadaItem } from '../presenca.types';
 import { Can } from '../../../components/auth/Can';
 import { WRITE_ROLES } from '../../../utils/enums';
 
 interface PresencaRowProps {
-  presenca: Presenca;
-  onToggle: (presenca: Presenca, present: boolean) => void;
-  onDelete: (presenca: Presenca) => void;
+  item: ChamadaItem;
+  onMarcar: (item: ChamadaItem, present: boolean) => void;
 }
 
-const BASE = 'px-3 py-1 text-xs font-medium transition';
+const BASE = 'px-3 py-1 text-xs font-medium transition cursor-pointer';
+const IDLE = 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800';
 
-export function PresencaRow({ presenca, onToggle, onDelete }: PresencaRowProps) {
+function SituacaoTexto({ present }: { present: boolean | null }) {
+  if (present === null) return <span className="text-xs text-gray-400">Não marcado</span>;
+  return present ? (
+    <span className="text-xs font-medium text-green-700 dark:text-green-400">Presente</span>
+  ) : (
+    <span className="text-xs font-medium text-red-700 dark:text-red-400">Falta</span>
+  );
+}
+
+export function PresencaRow({ item, onMarcar }: PresencaRowProps) {
   return (
     <TableRow>
-      <TableCell className="text-sm text-gray-900 dark:text-gray-100">
-        {presenca.email ?? presenca.user_id ?? '—'}
-      </TableCell>
       <TableCell>
-        {/* Marcação direta: clicar em "Presente" ou "Falta" define a situação do aluno. */}
-        <Can
-          roles={WRITE_ROLES}
-          fallback={
-            <span
-              className={
-                presenca.present
-                  ? 'text-xs font-medium text-green-700 dark:text-green-400'
-                  : 'text-xs font-medium text-red-700 dark:text-red-400'
-              }
-            >
-              {presenca.present ? 'Presente' : 'Falta'}
-            </span>
-          }
-        >
+        <div className="font-semibold text-gray-900 dark:text-gray-100">{item.name}</div>
+        <div className="text-xs text-gray-500 dark:text-gray-400">{item.email}</div>
+      </TableCell>
+      <TableCell className="text-right">
+        {/* Clicar em "Presente" ou "Falta" grava na hora a situação do aluno nesta aula. */}
+        <Can roles={WRITE_ROLES} fallback={<SituacaoTexto present={item.present} />}>
           <div className="inline-flex overflow-hidden rounded-lg border border-gray-300 dark:border-gray-700">
             <button
-              onClick={() => !presenca.present && onToggle(presenca, true)}
-              aria-pressed={presenca.present}
-              className={`${BASE} cursor-pointer ${
-                presenca.present
-                  ? 'bg-green-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
-              }`}
+              onClick={() => item.present !== true && onMarcar(item, true)}
+              aria-pressed={item.present === true}
+              className={`${BASE} ${item.present === true ? 'bg-green-600 text-white' : IDLE}`}
             >
               Presente
             </button>
             <button
-              onClick={() => presenca.present && onToggle(presenca, false)}
-              aria-pressed={!presenca.present}
-              className={`${BASE} cursor-pointer border-l border-gray-300 dark:border-gray-700 ${
-                !presenca.present
-                  ? 'bg-red-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+              onClick={() => item.present !== false && onMarcar(item, false)}
+              aria-pressed={item.present === false}
+              className={`${BASE} border-l border-gray-300 dark:border-gray-700 ${
+                item.present === false ? 'bg-red-600 text-white' : IDLE
               }`}
             >
               Falta
             </button>
           </div>
-        </Can>
-      </TableCell>
-      <TableCell className="text-right">
-        <Can roles={WRITE_ROLES}>
-          <button
-            onClick={() => onDelete(presenca)}
-            title="Remover da chamada"
-            className="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950/30 cursor-pointer"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
         </Can>
       </TableCell>
     </TableRow>

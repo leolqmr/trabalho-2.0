@@ -14,7 +14,9 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 import { AccessRole } from '@/common/auth/access-role.enum';
 import { Roles } from '@/common/auth/decorators/roles.decorator';
 import { PaginationQueryDto } from '@/common/pagination/pagination-query.dto';
+import { CreateAlunoDto } from './dto/create-aluno.dto';
 import { CreateTurmaDto } from './dto/create-turma.dto';
+import { UpdateAlunoDto } from './dto/update-aluno.dto';
 import { UpdateTurmaDto } from './dto/update-turma.dto';
 import { TurmaService } from './turma.service';
 
@@ -43,10 +45,40 @@ export class TurmaController {
   }
 
   @Get(':id/alunos')
-  @ApiOperation({ summary: 'Lista os alunos de uma turma, com resumo de presenças' })
+  @ApiOperation({ summary: 'Lista os alunos matriculados na turma (paginado)' })
   @ApiResponse({ status: 404, description: 'Turma não encontrada' })
   findAlunos(@Param('id', ParseUUIDPipe) id: string, @Query() query: PaginationQueryDto) {
     return this.turmaService.findAlunos(id, query);
+  }
+
+  @Post(':id/alunos')
+  @Roles(AccessRole.ADMIN)
+  @ApiOperation({ summary: 'Cadastra um aluno na turma (ADMIN)' })
+  @ApiResponse({ status: 409, description: 'E-mail já cadastrado nesta turma' })
+  createAluno(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CreateAlunoDto) {
+    return this.turmaService.createAluno(id, dto);
+  }
+
+  @Patch(':id/alunos/:alunoId')
+  @Roles(AccessRole.ADMIN)
+  @ApiOperation({ summary: 'Atualiza nome/e-mail de um aluno da turma (ADMIN)' })
+  updateAluno(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('alunoId', ParseUUIDPipe) alunoId: string,
+    @Body() dto: UpdateAlunoDto,
+  ) {
+    return this.turmaService.updateAluno(id, alunoId, dto);
+  }
+
+  @Delete(':id/alunos/:alunoId')
+  @Roles(AccessRole.ADMIN)
+  @HttpCode(204)
+  @ApiOperation({ summary: 'Remove um aluno da turma e suas presenças (ADMIN)' })
+  removeAluno(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('alunoId', ParseUUIDPipe) alunoId: string,
+  ) {
+    return this.turmaService.removeAluno(id, alunoId);
   }
 
   @Post()
