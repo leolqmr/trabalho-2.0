@@ -1,6 +1,6 @@
 ## Infraestrutura local — Docker
 
-O projeto utiliza Docker Compose para executar os serviços necessários ao desenvolvimento.
+O projeto utiliza Docker Compose para executar os serviços necessários ao desenvolvimento
 
 ### Pré-requisitos
 - Docker Desktop instalado e em execução
