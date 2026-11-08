@@ -133,9 +133,8 @@ export class ChamadaCodigoService {
     }));
   }
 
-  async registrar(chamadaId: string, email: string | undefined, codigo: string) {
-    if (!email) throw new AccessDeniedException('Confirme seu e-mail no Keycloak para registrar presença.');
-
+  /** Busca do contexto e da matrícula, independente do registro transacional. */
+  private async buscarMatricula(chamadaId: string, email: string): Promise<{ aulaId: string; alunoId: string }> {
     const chamada = await this.prisma.chamadaCodigo.findUnique({
       where: { id: chamadaId },
       select: { aula_id: true, aula: { select: { turma_id: true } } },
@@ -147,38 +146,11 @@ export class ChamadaCodigoService {
       select: { id: true },
     });
     if (!aluno) throw new AccessDeniedException('Você não está matriculado nesta turma.');
+    return { aulaId: chamada.aula_id, alunoId: aluno.id };
+  }
 
-    // Resultados de erro são valores para que tentativas inválidas sejam COMMITADAS.
-    const resultado = await this.prisma.$transaction(async (tx) => {
-      await this.bloquearAula(tx, chamada.aula_id);
-      const atual = await tx.chamadaCodigo.findUnique({ where: { id: chamadaId } });
-      if (!atual || !this.estaAtiva(atual)) return 'expirada' as const;
-
-      const existente = await tx.presenca.findUnique({
-        where: { aula_id_aluno_id: { aula_id: atual.aula_id, aluno_id: aluno.id } },
-        select: { present: true },
-      });
-      if (existente?.present) return 'registrada' as const;
-
-      const tentativa = await tx.chamadaCodigoTentativa.upsert({
-        where: { chamada_id_aluno_id: { chamada_id: atual.id, aluno_id: aluno.id } },
-        create: { chamada_id: atual.id, aluno_id: aluno.id, total: 1 },
-        update: { total: { increment: 1 } },
-        select: { total: true },
-      });
-      if (tentativa.total > MAX_TENTATIVAS) return 'bloqueada' as const;
-      if (!codigoConfere(codigo.trim().toUpperCase(), atual.codigoHash, atual.salt)) {
-        return 'invalida' as const;
-      }
-
-      await tx.presenca.upsert({
-        where: { aula_id_aluno_id: { aula_id: atual.aula_id, aluno_id: aluno.id } },
-        create: { aula_id: atual.aula_id, aluno_id: aluno.id, present: true },
-        update: { present: true },
-      });
-      return 'registrada' as const;
-    });
-
+  /** Traduz estados persistidos pela transação em contrato HTTP da API. */
+  private interpretarRegistro(resultado: 'expirada' | 'bloqueada' | 'invalida' | 'registrada', aulaId: string) {
     if (resultado === 'expirada') {
       throw new AppException(ErrorCode.CONFLICT, 'A chamada foi encerrada ou expirou.', HttpStatus.CONFLICT);
     }
@@ -192,6 +164,44 @@ export class ChamadaCodigoService {
     if (resultado === 'invalida') {
       throw new AppException(ErrorCode.VALIDATION_FAILED, 'Código incorreto. Confira as letras.', HttpStatus.BAD_REQUEST);
     }
-    return { aula_id: chamada.aula_id, registrada: true };
+    return { aula_id: aulaId, registrada: true };
+  }
+
+  async registrar(chamadaId: string, email: string | undefined, codigo: string) {
+    if (!email) throw new AccessDeniedException('Confirme seu e-mail no Keycloak para registrar presença.');
+    const { aulaId, alunoId } = await this.buscarMatricula(chamadaId, email);
+
+    // Resultados de erro são valores para que tentativas inválidas sejam COMMITADAS.
+    const resultado = await this.prisma.$transaction(async (tx) => {
+      await this.bloquearAula(tx, aulaId);
+      const atual = await tx.chamadaCodigo.findUnique({ where: { id: chamadaId } });
+      if (!atual || !this.estaAtiva(atual)) return 'expirada' as const;
+
+      const existente = await tx.presenca.findUnique({
+        where: { aula_id_aluno_id: { aula_id: atual.aula_id, aluno_id: alunoId } },
+        select: { present: true },
+      });
+      if (existente?.present) return 'registrada' as const;
+
+      const tentativa = await tx.chamadaCodigoTentativa.upsert({
+        where: { chamada_id_aluno_id: { chamada_id: atual.id, aluno_id: alunoId } },
+        create: { chamada_id: atual.id, aluno_id: alunoId, total: 1 },
+        update: { total: { increment: 1 } },
+        select: { total: true },
+      });
+      if (tentativa.total > MAX_TENTATIVAS) return 'bloqueada' as const;
+      if (!codigoConfere(codigo.trim().toUpperCase(), atual.codigoHash, atual.salt)) {
+        return 'invalida' as const;
+      }
+
+      await tx.presenca.upsert({
+        where: { aula_id_aluno_id: { aula_id: atual.aula_id, aluno_id: alunoId } },
+        create: { aula_id: atual.aula_id, aluno_id: alunoId, present: true },
+        update: { present: true },
+      });
+      return 'registrada' as const;
+    });
+
+    return this.interpretarRegistro(resultado, aulaId);
   }
 }
