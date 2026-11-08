@@ -1,29 +1,26 @@
-# Sprint 3 Parte 2 — Inventário de dívida técnica
+# Sprint 3 — Inventário atualizado de dívida técnica
 
-Projeto P07 — Controle de Frequência. Inspeção em 08/11/2026 da funcionalidade de chamada por código, backend NestJS e frontend React. Versão-base: commit `d4c8050` (`main`). Os itens abaixo são **diagnósticos de manutenção**, não alegações de que o produto esteja funcionalmente quebrado.
+Projeto P07 — Controle de Frequência. O diagnóstico original foi registrado em `2919303c`; esta revisão consolida **os commits efetivamente presentes** na branch `sprint3/testes`, sem inventar ferramentas ou testes de integração.
 
-| ID | Local | Problema confirmado | Categoria | Consequência prática | Evidência/método | Status |
-|---|---|---|---|---|---|---|
-| DT-01 | `frequencia-back/src/modules/chamada-codigo/chamada-codigo.service.ts`, `registrar` (127–189) | Um método verifica identidade, matrícula, tempo, tentativas, segredo, grava presença e converte estados em exceções. | Long Method, baixa coesão, SRP | Qualquer mudança na política de tentativas toca o mesmo método que grava presenças; testes exigem mocks complexos. | Inspeção manual com auxílio de IA; sete etapas distintas no método. | Aberto |
-| DT-02 | Mesmo serviço, `abrir` (64–66), `encerrar` (86–88) e `registrar` (144–146) | Consulta de bloqueio `SELECT ... FOR UPDATE` repetida três vezes. | Duplicated Code, manutenção de consistência | Mudança no mecanismo de lock precisa ser replicada; omitir uma ocorrência altera concorrência. | Comparação dos três trechos SQL. | Aberto |
-| DT-03 | Mesmo serviço, construtor (30) e métodos que acessam `this.prisma` | Regras de negócio dependem diretamente de Prisma, suas transações e estruturas de consulta. | Acoplamento, DIP | Para testar casos simples de janela ou código é necessário emular várias interfaces de persistência; mudança de ORM repercute no serviço. | Inspeção manual; `PrismaService` concreto injetado. | Aberto |
-| DT-04 | Mesmo serviço, `estaAtiva` (32–34) e `listarAtivas` (100) | Uso direto de `Date.now()` e `new Date()` dificulta controle do relógio. | Acoplamento temporal, testabilidade | Testes de expiração e fronteira de minuto dependem do tempo global; podem ficar intermitentes. | Inspeção manual dos acessos ao relógio. | Aberto |
-| DT-05 | `registrar-codigo.dto.ts` e `chamada-codigo.service.ts` (163) | `trim().toUpperCase()` é repetido no DTO e no serviço, sem função compartilhada. | Duplicated Code, integridade conceitual | Alterar a normalização apenas em um ponto pode causar divergência entre validação HTTP e chamada do serviço. | Comparação literal dos dois trechos. | Aberto |
-| DT-06 | Backend `chamada-codigo.service.ts` (10–12), DTO `registrar-codigo.dto.ts` e frontend `ChamadaCodigoAluno.tsx` (14, 48–52) | Formato de 8 letras e alfabeto permitido são repetidos entre módulos. | Magic Literals, acoplamento entre camadas | Alterar a política do código exige mudanças sincronizadas; a UI pode rejeitar uma chave aceita no servidor. | Inspeção de regex, `maxLength` e `TAMANHO_CODIGO`. | Aberto |
-| DT-07 | `ChamadaCodigoProfessor.tsx` (10–123) | Componente concentra polling, contagem regressiva, estado de operações assíncronas, confirmação, exibição do segredo e layout. | Large Component, SRP, baixa coesão | A UI é mais trabalhosa de testar isoladamente; alterações de cronômetro e layout dividem o mesmo componente. | Inspeção manual do componente e seus efeitos. | Aberto |
-| DT-08 | `ChamadaCodigoProfessor.tsx` (30–39) e `ChamadaCodigoAluno.tsx` (9–10, 81–86) | Contagem regressiva e dois intervalos de atualização foram implementados em ambos os componentes. | Duplicated Code, coesão | Correções de temporização e política de polling precisam ocorrer nos dois lugares. | Comparação dos intervalos e do cálculo `min:seg`. | Aberto |
+| ID | Local | Categoria | Problema/consequência | Tratamento realizado | Status |
+|---|---|---|---|---|---|
+| DT-01 | `chamada-codigo.service.ts`, método `registrar` | Long Method / baixa coesão / SRP | Verificação de matrícula e conversão de resultados HTTP misturadas ao fluxo de registro. | `buscarMatricula` e `interpretarRegistro` extraídos; menor concentração de responsabilidades. | Refatorado (`e5136f6`) |
+| DT-02 | `chamada-codigo.service.ts`, `abrir`, `encerrar`, `registrar` | Duplicated Code / consistência | Consulta de bloqueio `SELECT ... FOR UPDATE` repetida em três métodos. | Método `bloquearAula(tx, aulaId)` reutilizado em todos os fluxos. | Refatorado (`aca6e77`) |
+| DT-03 | `chamada-codigo.service.ts`, serviço inteiro | Acoplamento / DIP | Domínio conhece o Prisma e seus detalhes de transação, o que amplia mocks e custo de troca de ORM. | Não abordado nesta sprint. | Aberto |
+| DT-04 | `chamada-codigo.service.ts`, métodos temporais | Acoplamento temporal / testabilidade | Leituras diretas de `new Date()`/`Date.now()` dispersas. | Método `agora()` centraliza a leitura temporal. | Refatorado (`95779b6`) |
+| DT-05 | `registrar-codigo.dto.ts` e serviço | Duplicated Code | Normalização `trim().toUpperCase()` duplicada. | Não abordado nesta sprint. | Aberto |
+| DT-06 | Backend, DTO, `ChamadaCodigoAluno.tsx` | Magic Literals / acoplamento | Tamanho e alfabeto de token representados em múltiplas camadas. | Não abordado nesta sprint. | Aberto |
+| DT-07 | `ChamadaCodigoProfessor.tsx` | Large Component / SRP | Componente concentra polling, cronômetro, requests, segredo e UI. | Não abordado nesta sprint. | Aberto |
+| DT-08 | `ChamadaCodigoProfessor.tsx`, `ChamadaCodigoAluno.tsx` | Duplicated Code | Temporização e polling aparecem em múltiplos componentes React. | Não abordado nesta sprint. | Aberto |
 
-## Escopo e confirmação
+## Evidências para as três refatorações
 
-- Arquivos inspecionados: serviço e DTOs de chamada por código; componentes React de professor e aluno; suíte existente do serviço.
-- Checagem inicial: `npm ci --ignore-scripts --no-audit --no-fund`, `npm run prisma:generate`, `npm test -- --reporter=dot`. Resultado: **10 arquivos, 58 testes aprovados**. Não houve evidência de falha funcional após gerar o cliente Prisma.
-- Ferramentas de análise estática especializadas ainda **não** foram executadas. Os diagnósticos acima são análise estrutural manual assistida por ChatGPT e precisam de confirmação pela equipe.
-- **Não alterar status para Refatorado sem commit associado e evidência de testes v2 antes/depois.**
+| Item | Commit | Testes v2 antes | Testes v2 depois | Build depois |
+|---|---|---|---|---|
+| DT-02 | [`aca6e77`](https://github.com/leolqmr/trabalho-2.0/commit/aca6e77cf9a2c54fd338a6aee9dbc298bba88a51) | Cobertura v2 histórica, sem log específico pré-DT02 | 48/48 | `nest build` sem erro no log |
+| DT-04 | [`95779b6`](https://github.com/leolqmr/trabalho-2.0/commit/95779b6e470a5fc69f6bb5ff64866a5c7989d7c9) | 48/48 | 48/48 | `nest build` sem erro no log |
+| DT-01 | [`e5136f6`](https://github.com/leolqmr/trabalho-2.0/commit/e5136f61452020ccdc9ef513b9a4adf57fd00dce) | 48/48 | 48/48 | `nest build` sem erro no log |
 
-## Priorização sugerida após concluir a suíte v2
+**Local:** `docs/qualidade/evidencias/`. Os logs de build registram a invocação `nest build` sem erros; na sessão de execução, o usuário mostrou código de saída `0` para a DT-02. Os logs em texto, isoladamente, não preservam `$LASTEXITCODE` em todos os casos. Isso deve ser exposto, não ocultado.
 
-1. **DT-02** — Extract Function para o bloqueio de aula, em três pontos: impacto mensurável e baixo risco se houver testes de abertura/encerramento/registro.
-2. **DT-04** — Introduce Clock/Extract Function para verificação temporal, permitindo teste determinístico do instante de expiração.
-3. **DT-08** — Extract Custom Hook / Extract Function para cronômetro nos componentes React, desde que testes de interface cubram a mudança; caso contrário, substituir por DT-05 após escrever teste de caracterização.
-
-As três refatorações **não foram realizadas** nesta etapa. A atividade exige executar primeiro a suíte v2 e confirmar resultados antes/depois de cada alteração.
+**Método:** leitura de código apoiada por ChatGPT, sem uso efetivo de `jscpd`, SonarQube, madge ou outras ferramentas especializadas de análise estática. Os itens ainda abertos continuam registrados para sprints posteriores. A equipe precisa revisar se concorda com os oito diagnósticos e com a escolha dos três.
