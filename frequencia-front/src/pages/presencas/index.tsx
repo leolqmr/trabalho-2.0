@@ -14,6 +14,7 @@ import {
 import type { ChamadaItem } from '../../modules/presencas/presenca.types';
 import { PresencaRow } from '../../modules/presencas/components/PresencaRow';
 import { usePresencas } from '../../modules/presencas/usePresencas';
+import { ChamadaCodigoProfessor } from '../../modules/chamada-codigo/components/ChamadaCodigoProfessor';
 import { aulaService } from '../../modules/aulas/aula.service';
 import { formatAulaDate } from '../../modules/aulas/aula.types';
 import { useAsync } from '../../hooks/useAsync';
@@ -101,6 +102,8 @@ export default function PresencasPage() {
           </Can>
         </div>
       </div>
+
+      <ChamadaCodigoProfessor aulaId={aulaId} onAlteracao={reload} />
 
       <Frame className="w-full">
         <Table variant="card" exportEnabled={!isLoading && !error && chamada.length > 0}>

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { AccessRole } from '@/common/auth/access-role.enum';
 import { ROLES_KEY } from '@/common/auth/decorators/roles.decorator';
 import { AulaController } from './aula/aula.controller';
+import { ChamadaCodigoAlunoController, ChamadaCodigoProfessorController } from './chamada-codigo/chamada-codigo.controller';
 import { FrequenciaController } from './frequencia/frequencia.controller';
 import { TurmaController } from './turma/turma.controller';
 import { UsuarioController } from './usuario/usuario.controller';
@@ -16,9 +17,15 @@ describe('Proteção das rotas (guards globais + @Roles)', () => {
   it.each([
     ['TurmaController', TurmaController],
     ['AulaController', AulaController],
+    ['ChamadaCodigoProfessorController', ChamadaCodigoProfessorController],
     ['UsuarioController', UsuarioController],
   ])('%s inteiro é restrito ao professor (ADMIN)', (_nome, controller) => {
     expect(classRoles(controller)).toEqual([AccessRole.ADMIN]);
+  });
+
+  it('permite registrar presença por código em rota autenticada, sem exigir ADMIN', () => {
+    expect(classRoles(ChamadaCodigoAlunoController)).toBeUndefined();
+    expect(handlerRoles(ChamadaCodigoAlunoController, 'registrar')).toBeUndefined();
   });
 
   it('o detalhe da frequência de um aluno é só do professor', () => {

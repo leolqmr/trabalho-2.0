@@ -23,6 +23,7 @@ model Aula {
   turma_id    String     @db.Uuid
   turma       Turma      @relation(fields: [turma_id], references: [id], onDelete: Cascade)
   presencas   Presenca[]
+  chamadaCodigo ChamadaCodigo?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -37,10 +38,37 @@ model Aluno {
   turma_id  String     @db.Uuid
   turma     Turma      @relation(fields: [turma_id], references: [id], onDelete: Cascade)
   presencas Presenca[]
+  tentativasCodigo ChamadaCodigoTentativa[]
   createdAt DateTime   @default(now())
 
   @@unique([turma_id, email])
   @@map("alunos")
+}
+
+model ChamadaCodigo {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  aula_id     String   @unique @db.Uuid
+  aula        Aula     @relation(fields: [aula_id], references: [id], onDelete: Cascade)
+  codigoHash  String
+  salt        String
+  iniciadoEm  DateTime @default(now())
+  expiraEm    DateTime
+  encerradoEm DateTime?
+  tentativas  ChamadaCodigoTentativa[]
+
+  @@map("chamadas_codigo")
+}
+
+model ChamadaCodigoTentativa {
+  id         String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  chamada_id String @db.Uuid
+  chamada    ChamadaCodigo @relation(fields: [chamada_id], references: [id], onDelete: Cascade)
+  aluno_id   String @db.Uuid
+  aluno      Aluno @relation(fields: [aluno_id], references: [id], onDelete: Cascade)
+  total      Int @default(0)
+
+  @@unique([chamada_id, aluno_id])
+  @@map("chamadas_codigo_tentativas")
 }
 
 model Presenca {

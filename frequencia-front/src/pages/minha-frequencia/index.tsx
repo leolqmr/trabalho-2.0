@@ -6,6 +6,7 @@ import { HistoricoFrequencia } from '../../components/frequencia/HistoricoFreque
 import { NivelBadge } from '../../components/frequencia/NivelBadge';
 import { ResumoFrequenciaCards } from '../../components/frequencia/ResumoFrequenciaCards';
 import { TableError } from '../../components/TableError';
+import { ChamadaCodigoAluno } from '../../modules/chamada-codigo/components/ChamadaCodigoAluno';
 
 /** Visão do aluno: as próprias faltas, o nível e as datas, por turma. */
 export default function MinhaFrequenciaPage() {
@@ -23,6 +24,8 @@ export default function MinhaFrequenciaPage() {
           Veja quantas faltas você tem, em que dias faltou e como está em relação ao limite.
         </p>
       </div>
+
+      <ChamadaCodigoAluno />
 
       {error ? (
         <TableError error={error} onRetry={reload} />
