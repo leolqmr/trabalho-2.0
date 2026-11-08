@@ -37,8 +37,13 @@ export class ChamadaCodigoService {
     `;
   }
 
+  /** Ponto único de leitura do relógio para permitir testes determinísticos. */
+  private agora(): Date {
+    return new Date();
+  }
+
   private estaAtiva(chamada: { expiraEm: Date; encerradoEm: Date | null }): boolean {
-    return chamada.encerradoEm === null && chamada.expiraEm.getTime() > Date.now();
+    return chamada.encerradoEm === null && chamada.expiraEm.getTime() > this.agora().getTime();
   }
 
   async status(aulaId: string) {
@@ -63,7 +68,7 @@ export class ChamadaCodigoService {
     const codigo = gerarCodigo();
     const salt = randomBytes(16).toString('hex');
     const codigoHash = hashCodigo(codigo, salt).toString('hex');
-    const agora = new Date();
+    const agora = this.agora();
     const expiraEm = new Date(agora.getTime() + dto.duracaoMinutos * 60_000);
 
     const chamada = await this.prisma.$transaction(async (tx) => {
@@ -93,7 +98,7 @@ export class ChamadaCodigoService {
       if (aulas.length === 0) throw new ResourceNotFoundException('Aula', aulaId);
       const chamada = await tx.chamadaCodigo.findUnique({ where: { aula_id: aulaId } });
       if (!chamada) throw new ResourceNotFoundException('Chamada por código', aulaId);
-      await tx.chamadaCodigo.update({ where: { id: chamada.id }, data: { encerradoEm: new Date() } });
+      await tx.chamadaCodigo.update({ where: { id: chamada.id }, data: { encerradoEm: this.agora() } });
     });
   }
 
@@ -101,7 +106,7 @@ export class ChamadaCodigoService {
     if (!email) return [];
     const chamadas = await this.prisma.chamadaCodigo.findMany({
       where: {
-        expiraEm: { gt: new Date() },
+        expiraEm: { gt: this.agora() },
         encerradoEm: null,
         aula: { turma: { alunos: { some: { email } } } },
       },
