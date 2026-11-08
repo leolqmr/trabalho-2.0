@@ -1,5 +1,6 @@
 import { createHash, randomBytes, randomInt, timingSafeEqual } from 'node:crypto';
 import { HttpStatus, Injectable } from '@nestjs/common';
+import type { Prisma } from '@prisma/client';
 import { AccessDeniedException } from '@/common/exceptions/access-denied.exception';
 import { AppException } from '@/common/exceptions/app.exception';
 import { ErrorCode } from '@/common/exceptions/error-code.enum';
@@ -28,6 +29,13 @@ function codigoConfere(codigo: string, hash: string, salt: string): boolean {
 @Injectable()
 export class ChamadaCodigoService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /** Centraliza o bloqueio usado em todas as operações concorrentes da mesma aula. */
+  private async bloquearAula(tx: Prisma.TransactionClient, aulaId: string): Promise<{ id: string }[]> {
+    return await tx.$queryRaw<{ id: string }[]>`
+      SELECT "id" FROM "aulas" WHERE "id" = ${aulaId}::uuid FOR UPDATE
+    `;
+  }
 
   private estaAtiva(chamada: { expiraEm: Date; encerradoEm: Date | null }): boolean {
     return chamada.encerradoEm === null && chamada.expiraEm.getTime() > Date.now();
@@ -61,9 +69,7 @@ export class ChamadaCodigoService {
     const chamada = await this.prisma.$transaction(async (tx) => {
       // Todas as operações por aula bloqueiam a mesma linha, evitando corrida
       // entre reabertura, encerramento e registro de um estudante.
-      const aulas = await tx.$queryRaw<{ id: string }[]>`
-        SELECT "id" FROM "aulas" WHERE "id" = ${aulaId}::uuid FOR UPDATE
-      `;
+      const aulas = await this.bloquearAula(tx, aulaId);
       if (aulas.length === 0) throw new ResourceNotFoundException('Aula', aulaId);
 
       const anterior = await tx.chamadaCodigo.findUnique({ where: { aula_id: aulaId } });
@@ -83,9 +89,7 @@ export class ChamadaCodigoService {
 
   async encerrar(aulaId: string): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
-      const aulas = await tx.$queryRaw<{ id: string }[]>`
-        SELECT "id" FROM "aulas" WHERE "id" = ${aulaId}::uuid FOR UPDATE
-      `;
+      const aulas = await this.bloquearAula(tx, aulaId);
       if (aulas.length === 0) throw new ResourceNotFoundException('Aula', aulaId);
       const chamada = await tx.chamadaCodigo.findUnique({ where: { aula_id: aulaId } });
       if (!chamada) throw new ResourceNotFoundException('Chamada por código', aulaId);
@@ -141,9 +145,7 @@ export class ChamadaCodigoService {
 
     // Resultados de erro são valores para que tentativas inválidas sejam COMMITADAS.
     const resultado = await this.prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`
-        SELECT "id" FROM "aulas" WHERE "id" = ${chamada.aula_id}::uuid FOR UPDATE
-      `;
+      await this.bloquearAula(tx, chamada.aula_id);
       const atual = await tx.chamadaCodigo.findUnique({ where: { id: chamadaId } });
       if (!atual || !this.estaAtiva(atual)) return 'expirada' as const;
 
