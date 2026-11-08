@@ -9,6 +9,7 @@ import keycloakConfig from './config/keycloak.config';
 import swaggerConfig from './config/swagger.config';
 import { PrismaModule } from './database/prisma.module';
 import { AulaModule } from './modules/aula/aula.module';
+import { ChamadaCodigoModule } from './modules/chamada-codigo/chamada-codigo.module';
 import { FrequenciaModule } from './modules/frequencia/frequencia.module';
 import { HealthModule } from './modules/health/health.module';
 import { TurmaModule } from './modules/turma/turma.module';
@@ -27,6 +28,7 @@ import { UsuarioModule } from './modules/usuario/usuario.module';
     TurmaModule,
     UsuarioModule,
     AulaModule,
+    ChamadaCodigoModule,
     FrequenciaModule,
   ],
   providers: [{ provide: APP_PIPE, useClass: ZodValidationPipe }],
