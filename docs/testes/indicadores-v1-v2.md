@@ -9,15 +9,15 @@ Ambas as configurações do Vitest/V8 incluem os mesmos **cinco arquivos**: `cha
 | Indicador | v1 oficial, 5 arquivos | v2 ampliada, 5 arquivos | Evolução |
 |---|---:|---:|---:|
 | Testes declarados | 117 | 59 | V2 +11 em relação aos seus 48 testes originais |
-| Testes aprovados | 117/117 na execução histórica (4 arquivos); resumo da nova execução não preservado no print | **59/59** na execução atual | Execução v2 confirmada no terminal |
+| Testes aprovados na nova execução, 5 arquivos | **117/117** (`v1-cinco-arquivos.txt`) | **59/59** (`v2-cinco-arquivos.txt`) | Ambas as suítes foram executadas e aprovadas |
 | Statements | **84,48%** | **100%** | **+15,52 p.p.** |
-| Branches | **87,03%** | **96,29%** | **+9,26 p.p.** |
+| Branches | **87,03% (47/54)** | **96,29% (52/54)** | **+9,26 p.p.; +5 branches** |
 | Funções | **74,19%** | **100%** | **+25,81 p.p.** |
 | Linhas | **83,50%** | **100%** | **+16,50 p.p.** |
 | `frequencia.service.ts` — linhas | **0%** | **100%** | **+100 p.p.** |
 | `frequencia.service.ts` — branches | **0%** | **83,33%** | **+83,33 p.p.** |
 
-**Fonte das métricas novas:** tabelas do Vitest/V8 exibidas na máquina da equipe em 09/11/2026; os números devem ser arquivados junto com os arquivos JSON/HTML sob `docs/testes/relatorios/evolucao-pos-v1/` quando disponíveis. **Fonte de aprovação da nova v2:** terminal com `Test Files 3 passed (3)` e `Tests 59 passed (59)`. A medição ampliada da v1 gerou sua tabela; o print disponível não inclui o resumo final de testes dessa execução. O log histórico `docs/testes/relatorios/execucao/v1-execucao.txt` comprova 117/117, mas foi medido no escopo anterior.
+**Fonte das métricas:** `docs/testes/relatorios/evolucao-pos-v1/v1/coverage-summary.json` e `.../v2/coverage-summary.json`, gerados pelo Vitest/V8 em 09/11/2026, sobre os mesmos cinco arquivos (97 linhas e 54 branches instrumentadas). **Fonte de aprovação:** `docs/testes/relatorios/execucao/evolucao-pos-v1/v1-cinco-arquivos.txt` (117/117; código 0), `v2-cinco-arquivos.txt` (59/59; código 0) e `build.txt` (NestJS; código 0). O resultado da **suíte geral** é registrado separadamente no `RESUMO.md` da mesma pasta, após a nova execução com `npm.exe test`. Logs com falhas anteriores de configuração não devem ser usados como evidência de suíte aprovada.
 
 ## 2. Histórico preservado — escopo original de quatro arquivos
 
@@ -38,9 +38,15 @@ A matriz manual inicial T01–T48 e seus 21 critérios continuam válidos. As su
 Execute no diretório `frequencia-back`:
 
 ```powershell
-npx vitest run --config vitest.sprint3.v1.config.ts --coverage
-npx vitest run --config vitest.sprint3.v2.config.ts --coverage
-npm run build
+npx.exe vitest run --config vitest.sprint3.v1.config.ts --coverage
+npx.exe vitest run --config vitest.sprint3.v2.config.ts --coverage
+npm.exe test
+npm.exe run build
 ```
 
 Para preservar logs e JSON **sem conflito com OneDrive**, execute sem redirecionar a saída para dentro do diretório de cobertura enquanto o Vitest está limpando esse diretório. Salve os logs após a execução ou use diretório separado de relatórios.
+
+
+## 5. Fechamento das evidências (branch atual)
+
+O commit `f42ba27` adicionou os logs de v1, v2 e build após os testes diretos passarem. O `RESUMO.md` desse commit ainda continha **códigos 1 antigos**, pois foi gerado antes de corrigir a forma de chamar os executáveis NVM (`npm.exe`/`npx.exe`). O pacote final corrige o resumo **sem reclassificar retroativamente** a execução falha como bem-sucedida. A suíte geral deve ser reexecutada localmente. O script de finalização só declara aprovação após obter código de saída zero e encontrar os totais esperados nos logs.

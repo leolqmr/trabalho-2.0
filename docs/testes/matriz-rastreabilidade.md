@@ -75,3 +75,28 @@ A matriz inicial foi commitada em `e2866be7` antes de qualquer suíte. Esta vers
 - "Coberto" mede **existência de um teste com a entrada e o resultado esperado do caso**, não a qualidade do oráculo. Os 15 testes da v1 com `rejects.toThrow()` genérico cobrem o caso, mas só verificam que *algum* erro ocorreu (ver `relatorio-analise-critica.md`).
 - Os testes da v1 e da v2 usam mocks do Prisma: a cobertura **não comprova** concorrência real, transações/locks nem prevenção de fraude presencial. O código de oito letras pode ser repassado dentro do prazo.
 - A matriz inicial ficou preservada no histórico do Git; este documento só acrescenta colunas.
+
+
+## Apêndice — Testes complementares da v2 posteriores à v1 oficial
+
+Este apêndice **não substitui nem altera** os 48 casos T01–T48 da matriz inicialmente commitada em `e2866be7`. Os novos casos **EVO-01 a EVO-11** foram acrescentados à v2 depois da geração da v1 de 117 testes. Eles ampliam o teste do fluxo de consulta e consolidação de frequência (`FrequenciaService`), que não é exercitado diretamente pela v1. A coluna **v1** se refere à suíte oficial inalterada e não aos testes preexistentes de `src/**/*.spec.ts`, excluídos pelas configurações isoladas.
+
+**Rastreabilidade:** o risco é classificado em CA04.1–CA04.3 e o percentual calculado conforme CA04.4; vários cenários de consulta por e-mail/turma, identidade e histórico são **comportamentos complementares à US04**, não critérios de aceitação previamente escritos. Não tratá-los como requisitos preexistentes nem inflar artificialmente a contagem de 21 critérios.
+
+| ID | Relação com os requisitos | Técnica / cenário | Oráculo da v2 | v1 direta? | v2? |
+|---|---|---|---|---|---|
+| EVO-01 | US04, consulta complementar | PE: e-mail `undefined` | `[]`, sem acesso ao Prisma | Não | Sim |
+| EVO-02 | US04, consulta complementar | PE: e-mail vazio | `[]`, sem busca de alunos | Não | Sim |
+| EVO-03 | US04, consulta complementar | PE: aluno sem matrícula | `[]`, filtra e-mail, não conta aulas | Não | Sim |
+| EVO-04 | US04 / CA04.3 e CA04.4 | PE: 1 falta em 2 aulas | 50%, `CRITICO`, conta aulas da turma | Não | Sim |
+| EVO-05 | US04, histórico complementar | Fluxo: presenças fora de ordem | Histórico decrescente, mantém `present` | Não | Sim |
+| EVO-06 | US04, consulta complementar | PE: duas turmas | Resumos e denominadores independentes | Não | Sim |
+| EVO-07 | US04 / CA04.4 | PE: ausência de marcações | 0 faltas, 0%, `REGULAR` | Não | Sim |
+| EVO-08 | US04 / CA04.4 | VL: zero aulas realizadas | 0% sem divisão por zero | Não | Sim |
+| EVO-09 | US04, consulta complementar | PE: aluno existente na turma | Busca por `alunoId` + `turmaId`, devolve resumo | Não | Sim |
+| EVO-10 | US04, consulta complementar | PE: aluno inexistente/fora da turma | `ResourceNotFoundException`, não conta aulas | Não | Sim |
+| EVO-11 | US04 / CA04.2 e CA04.4 | VL: 25% de faltas | `ATENCAO` com 1 falta/4 aulas | Não | Sim |
+
+**Local dos testes:** `frequencia-back/tests/v2/frequencia-service-v2.test.ts`; ordem dos `it(...)` corresponde a EVO-01 a EVO-11. Há cenários semelhantes para os cálculos no utilitário cobertos pela v1 (T40–T48); "v1 direta? Não" significa ausência de teste do **serviço de consolidação** para o cenário EVO, não ausência total de verificação da regra matemática.
+
+**Indicadores funcionais e estruturais distintos:** os 21 critérios originais e os 48 casos T01–T48 continuam cobertos pelas duas versões. Os EVO não devem ser somados a um novo total de critérios. A v2 ampliada tem 59 testes; as duas suítes têm cobertura calculada sobre os mesmos cinco arquivos (ver `indicadores-v1-v2.md`).

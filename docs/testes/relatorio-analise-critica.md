@@ -35,7 +35,7 @@ A **comparação foi feita com escopo ampliado idêntico** nas duas configuraç�
 | `FrequenciaService`: linhas | 0% | 100% | +100 p.p. |
 | `FrequenciaService`: branches | 0% | 83,33% | +83,33 p.p. |
 
-Os percentuais foram transcritos dos relatórios Vitest/V8 apresentados pela equipe em 09/11; a **v2 ampliada passou com 59/59 testes (3/3 arquivos)**. A v1 teve 117/117 na execução histórica de quatro arquivos; a tabela da execução ampliada da v1 foi mostrada, mas o print não contém seu resumo de aprovação. Deve-se arquivar esse resumo se a evidência instrumental for exigida.
+Os percentuais foram confirmados nos relatórios `coverage-summary.json` arquivados na branch: a v1 cobriu 47/54 branches e 81/97 linhas; a v2 cobriu 52/54 branches e 97/97 linhas. Os logs da nova rodada, em `docs/testes/relatorios/execucao/evolucao-pos-v1/`, confirmam **117/117 testes da v1**, **59/59 da v2** e **build NestJS com código 0**. A execução da suíte geral deve ser validada separadamente; consultar o `RESUMO.md` atualizado, sem usar o resumo antigo de quatro falhas.
 
 **Não misturar os escopos:** no histórico de quatro arquivos, v1 e v2 empatavam em 100% de linhas e 97,91% de branches. No escopo ampliado de cinco arquivos, a diferença positiva foi gerada pela cobertura adicional de `FrequenciaService` na v2, e não pela perda de testes anteriores na v1.
 
@@ -53,4 +53,4 @@ Os percentuais foram transcritos dos relatórios Vitest/V8 apresentados pela equ
 
 A nova rodada resolve a principal fragilidade demonstrável do protocolo: existe agora uma **melhoria posterior à v1**, com ganhos de **+9,26 pontos percentuais em branches** e **+16,50 em linhas**, sob o mesmo escopo de cinco arquivos. O histórico anterior não foi reescrito: a v2 de 08/11 continua sendo identificada como versão inicial; a v2 ampliada, como rodada de melhoria de 09/11. A extensão confirma a utilidade de gerar cenários com LLM, mas evidencia a necessidade de revisar oráculos, selecionar escopo justo e preservar logs instrumentados.
 
-**Apêndices no repositório:** `prompt-v1.md`, `llm-log.md`, `matriz-rastreabilidade.md`, `ADENDO-EVOLUCAO-V1-V2.md`, `PLANO-EVOLUCAO-V1-V2.md`, `indicadores-v1-v2.md` e saídas do Vitest. A equipe deverá confirmar a conformidade com o roteiro original da disciplina antes do merge.
+**Apêndices no repositório:** `prompt-v1.md`, `llm-log.md`, `matriz-rastreabilidade.md`, `ADENDO-EVOLUCAO-V1-V2.md`, `PLANO-EVOLUCAO-V1-V2.md`, `indicadores-v1-v2.md` e saídas do Vitest. A equipe deve consultar o `RESUMO.md` para verificar a suíte geral; a branch não deve ser integrada se essa etapa apresentar falha. O histórico inicial v2 (08/11) anterior à v1 (09/11) continua sendo uma limitação metodológica explicitada, não uma cronologia corrigida retroativamente. A equipe deverá confirmar a conformidade com o roteiro original antes do merge.
