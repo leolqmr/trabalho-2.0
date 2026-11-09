@@ -1,28 +1,38 @@
 # Sprint 3 — Indicadores comparativos v1 e v2
 
-**Fonte estrutural:** `docs/testes/relatorios/v1/coverage-summary.json` e `.../v2/coverage-summary.json`, versionados na branch `sprint3/testes`. Ambos medem os **mesmos quatro arquivos**: serviço e dois DTOs da chamada por código, além de `frequencia.util.ts`. **Fonte de execução v2:** logs `docs/qualidade/evidencias/dt04-antes-testes.txt`, `dt04-depois-testes.txt`, `dt01-antes-testes.txt`, `dt01-depois-testes.txt`.
+**Como foi medido.** Em 09/11/2026 as três suítes foram executadas **no mesmo código** (o da branch `sprint3/testes`, já com as três refatorações), com o **mesmo escopo** (quatro arquivos: `chamada-codigo.service.ts`, os dois DTOs da chamada e `frequencia.util.ts`) e a mesma ferramenta (Vitest 4.1.11 com `@vitest/coverage-v8`). Isso substitui a tabela de 08/11, que comparava suítes medidas em momentos diferentes do código.
 
-| Indicador | v1 (LLM) | v2 (melhorada) |
-|---|---:|---:|
-| Testes declarados no código | 14 | 48 |
-| Testes aprovados comprovados por log disponível | Não arquivado | 48/48 |
-| Testes falhos / que não compilaram | Não verificável apenas com o material salvo | 0 nos logs v2 consultados |
-| Cobertura de linhas | **43,42%** (33/76) | **100%** (76/76) |
-| Cobertura de branches | **39,58%** (19/48) | **97,91%** (47/48) |
-| Cobertura de statements | 44,08% (41/93) | 100% (93/93) |
-| Cobertura de funções | 52,63% (10/19) | 100% (19/19) |
-| Critérios com asserção identificada na suíte | 11/21 (52,38%) | 21/21 (100%) |
-| Partições identificadas na suíte | 10/25 (40%) | 25/25 (100%) |
-| Limites identificados na suíte | 3/16 (18,75%) | 16/16 (100%) |
-| Fluxos identificados | 0/7 | 7/7 |
-| Testes sem `expect` / `assert` (inspeção sintática) | 0/14 | 0/48 |
-| Testes com oráculo genérico | Ao menos 1 (sem e-mail: `toThrow()` genérico) | Nenhum identificado na inspeção dos nomes e asserções relevantes |
-| Defeitos reais de produção confirmados pelos testes | Nenhum documentado | Nenhum documentado |
+| Fonte | Arquivo |
+|---|---|
+| Relatório HTML e JSON da v1 oficial | `docs/testes/relatorios/v1/` |
+| Relatório HTML e JSON da v2 | `docs/testes/relatorios/v2/` |
+| Relatório da v1 anterior, no código atual | `docs/testes/relatorios/v1-anterior-codigo-atual/` |
+| Relatório da v1 anterior, medida em 08/11 (antes das refatorações) | `docs/testes/relatorios/v1-anterior-chatgpt-com-matriz/` |
+| Saída do executor de testes (aprovados/falhos) | `docs/testes/relatorios/execucao/*.txt` |
+
+| Indicador | v1 anterior (ChatGPT, com matriz) | **v1 oficial** (Claude, sem matriz) | **v2** (melhorada) |
+|---|---:|---:|---:|
+| Testes declarados no código | 14 | **117** | 48 |
+| Passando / falhando / não compilam | 14 / 0 / 0 | **117 / 0 / 0** | 48 / 0 / 0 |
+| Cobertura de linhas | 46,91% (38/81) | **100%** (81/81) | **100%** (81/81) |
+| Cobertura de branches | 39,58% (19/48) | **97,91%** (47/48) | **97,91%** (47/48) |
+| Cobertura de statements | 46,93% (46/98) | 100% (98/98) | 100% (98/98) |
+| Cobertura de funções | 60,86% (14/23) | 100% (23/23) | 100% (23/23) |
+| Cobertura de requisitos (critérios com teste) | 11/21 (52,38%) | **21/21 (100%)** | **21/21 (100%)** |
+| Partições cobertas | 10/25 (40,00%) | **25/25 (100%)** | **25/25 (100%)** |
+| Valores-limite cobertos | 3/16 (18,75%) | **16/16 (100%)** | **16/16 (100%)** |
+| Fluxos/estados cobertos | 0/7 | **7/7** | **7/7** |
+| Testes sem `expect` | 0/14 | 0/117 | 0/48 |
+| Oráculo genérico (`rejects.toThrow()` sem dizer o erro) | 1 | **15** | **0** |
+| Defeitos reais de produção encontrados | 0 | 0 | 0 |
+
+A medição funcional (requisitos, partições, limites e fluxos) vem de `matriz-rastreabilidade.md`: um caso conta como coberto quando existe um teste com a mesma entrada e o resultado esperado. A contagem de `expect` e de `toThrow()` genérico foi feita por script sobre os arquivos de teste, sem editá-los.
 
 ## Interpretação e limites
 
-- A v2 acrescentou **56,58 pontos percentuais de linhas** e **58,33 pontos percentuais de branches**.
-- Um branch permanece não percorrido no serviço (`41/42` branches do serviço); o conjunto total fica em `47/48`. O relatório de cobertura v2 indica a linha 28 do arquivo base. A leitura pontual no HTML é necessária para vincular a lacuna à condição correta; não inferir defeito.
-- **Medição histórica:** os JSON de cobertura são anteriores às três refatorações (arquivos fonte podem ter números de linha diferentes hoje). Essa é a comparação correta **v1 × v2**, mantido o escopo naquele momento. Os logs após as refatorações comprovam execução dos 48 testes, não nova cobertura estrutural.
-- **Validação funcional:** a v1 tem 14 testes no código, mas não existe resultado `test-results.json` ou `console.txt` de sua execução arquivado no repositório. O percentual de critérios mapeia **existência de asserções**, não aprovação instrumental. Recomenda-se arquivar um log de execução v1 isolada sem modificar o arquivo de teste.
-- **Oráculo e mocks:** alto percentual de cobertura não demonstra ausência de defeitos, rollback transacional nem garantia de que o estudante permaneceu fisicamente em sala. O código de oito letras pode ser compartilhado dentro do prazo.
+- **A v1 oficial é muito mais forte que a v1 anterior:** +53,09 pontos percentuais de linhas e +58,33 de branches, e passou de 14 para 117 testes, sem nenhuma rodada de correção.
+- **A v1 oficial e a v2 empatam na cobertura estrutural e na matriz.** O que as distingue não aparece nesses números: a precisão do oráculo (15 verificações genéricas contra 0) e a quantidade de verificações extras (a v1 oficial tem 69 testes além dos 48 casos da matriz).
+- **A única branch descoberta é a mesma nas duas suítes.** Está na linha 29 de `chamada-codigo.service.ts`, onde só há `@Injectable()`, e é uma expressão condicional (`cond-expr`) com contagem `[0, 1]`. Não há ternário na linha-fonte, então ela vem do código gerado na transpilação do decorator. Não identificamos teste que a exercite, e ela não representa uma decisão de negócio. Consequência: a meta "branches acima da v1" **não é alcançável contra a v1 oficial** (97,91% = 97,91%); contra a v1 anterior, a v2 melhora 58,33 pontos percentuais.
+- **Medições de 08/11 ficam como histórico.** Eram 43,42% de linhas e 39,58% de branches para a v1 anterior, sobre um código com 76 linhas e 93 statements; depois das refatorações o escopo tem 81 linhas e 98 statements, por isso os números mudaram.
+- **Limite dos testes:** todos usam mocks do Prisma. A cobertura **não comprova** concorrência real, transações/locks nem prevenção de fraude presencial. O código de oito letras pode ser repassado dentro do prazo.
+- **Nenhum defeito real foi encontrado**, e isso não prova que não existam: foi feita inspeção dos oráculos, não teste de mutação.

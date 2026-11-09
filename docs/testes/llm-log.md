@@ -1,12 +1,69 @@
 # Sprint 3 — Log de interação com LLM
 
+Este log tem duas partes. A **v1 oficial** (Parte 1) foi gerada em 09/11/2026 numa conversa nova, sem a matriz de rastreabilidade. A **v1 anterior** de 08/11 (Anexo A) foi gerada numa conversa que já continha a matriz; por isso deixou de ser a v1 oficial, mas continua preservada para comparação.
+
+| Suíte | LLM | Quando | Prompt | Resposta (sem edição) |
+|---|---|---|---|---|
+| **v1 oficial** | Claude Opus 5.5 (claude.ai, conversa normal) | 09/11/2026, por volta das 09h (Recife) | `docs/testes/prompt-v1.md` | `frequencia-back/tests/v1-llm/chamada-v1.test.ts` (117 testes) |
+| v1 anterior (descartada como oficial) | ChatGPT, GPT-6 | 08/11/2026 | Anexo A | `docs/testes/v1-anterior/chamada-v1-chatgpt-com-matriz.test.ts.txt` (14 testes) |
+| v2 | ChatGPT, GPT-6 | 08/11/2026 | Anexo A, rodada 2 | `frequencia-back/tests/v2/` (48 testes) |
+
+## Parte 1 — v1 oficial (Claude Opus 5.5)
+
+- Projeto: P07 — Controle de Frequência. Framework: Vitest 4, NestJS/TypeScript.
+- Modelo e data de uso, informados pela equipe: Claude Opus 5.5, conversa normal (não temporária) aberta do zero, em 09/11/2026 por volta das 09h.
+- Código fornecido à LLM: o da branch `sprint3/testes` no commit `6ce1ba2`, ou seja, **já com as três refatorações** (DT-01, DT-02, DT-04). A v1 anterior foi gerada sobre o código original (`d4c8050`).
+
+### Rodada 1 — geração da v1
+
+**Prompt (texto completo em `docs/testes/prompt-v1.md`, 455 linhas).** Ele reúne, num único bloco, as instruções abaixo, as quatro histórias com os 21 critérios de aceitação (copiados de `requisitos-e-criterios.md`, sem as linhas de referência), o código de `chamada-codigo.service.ts`, dos dois DTOs, de `frequencia.util.ts` e o `schema.prisma`. A parte de instruções foi:
+
+```text
+Você é um engenheiro de testes. Gere uma suíte de testes automatizados em **Vitest 4** (TypeScript) para o backend NestJS descrito abaixo.
+
+## Técnicas obrigatórias
+1. **Partições de equivalência:** para cada variável de entrada, identifique classes válidas e inválidas e teste um representante de cada uma.
+2. **Análise de valores-limite:** teste os valores dos dois lados de cada fronteira.
+3. **Cobertura dos critérios de aceitação:** todo critério (CAxx.y) deve ter pelo menos um teste.
+
+Em cada teste, coloque um comentário indicando **qual critério de aceitação** ele cobre e **qual técnica** usa (partição, valor-limite ou fluxo). Exemplo: `// US02 CA02.4 — valor-limite: 6ª tentativa`.
+
+## Regras
+- Entregue **um único arquivo** `chamada-v1.test.ts`, que ficará em `frequencia-back/tests/v1-llm/`. Os imports relativos partem daí (ex.: `../../src/modules/chamada-codigo/chamada-codigo.service`).
+- Use apenas `vitest` e as dependências que já aparecem no código abaixo (`@nestjs/common`, `zod`, `nestjs-zod`, `@prisma/client`). Não use banco de dados real: crie mocks do `PrismaService` com `vi.fn()`.
+- Os resultados esperados devem vir dos **critérios de aceitação**, não do comportamento atual do código.
+- Não altere o código de produção.
+- Responda apenas com o arquivo completo, em um bloco de código.
+```
+
+**Verificação de independência.** O prompt não contém a matriz nem os IDs T01–T48 (busca por "matriz" e por `T` seguido de dois dígitos: 0 ocorrências). A matriz também não foi colada na conversa. **Limite:** não foi verificado se recursos de memória ou de histórico do aplicativo estavam ativos nessa conversa, por isso a independência é "sem acesso à matriz pelo prompt", não uma garantia absoluta.
+
+**Resposta.** Um arquivo de 1.224 linhas com 117 testes, commitado em `49117f8` exatamente como recebido da equipe (comparação byte a byte, sem nenhuma alteração nossa). Cada teste traz o comentário de critério e técnica pedido no prompt.
+
+**Rodadas de correção:** nenhuma. A suíte importou e executou de primeira, sem nome ou caminho inventado.
+
+**Resultado da execução** (`docs/testes/relatorios/execucao/v1-execucao.txt`): 117 testes, **117 passando, 0 falhando, 0 que não compilam**.
+
+**Problemas observados na v1** (detalhados no relatório de análise crítica):
+
+1. **15 oráculos genéricos.** `rejects.toThrow()` sem dizer qual erro (linhas 365, 433, 643, 650, 659, 673, 675, 696, 722, 733, 741, 750, 759, 766 e 843). Em todos esses casos o requisito pede um erro específico (400, 409 ou 429), então qualquer exceção faria o teste passar.
+2. **Acoplamento à forma das consultas do Prisma.** Os testes das linhas 894–914 e 930–939 comparam o objeto `where`/`select` passado ao Prisma. Uma refatoração da consulta que mantivesse o comportamento quebraria esses testes.
+3. **Um teste probabilístico** (linha 218: ao menos 46 códigos distintos em 50 gerados). A chance de falhar é desprezível (espaço de 24⁸ códigos), mas o resultado não é determinístico.
+4. **Nenhuma falha de execução**, API inventada ou teste sem asserção (0 de 117 sem `expect`).
+
+---
+
+## Anexo A — log original de 08/11/2026 (ChatGPT, GPT-6)
+
+Texto preservado do log anterior. **Contexto adicional:** esta v1 foi gerada numa conversa que já continha a matriz, e a v2 foi construída em 08/11, antes de existir a v1 oficial. Por isso, as lacunas que a v2 resolve são as da matriz; o confronto entre a v2 e a v1 oficial foi feito depois, no relatório de análise crítica.
+
 - Projeto: P07 - Controle de frequência
 - Data: 08/11/2026
 - Modelo utilizado: ChatGPT, GPT-6
 - Framework: Vitest 4, NestJS/TypeScript
 - Código-base observado: branch `sprint3/testes`, originada do commit `d4c8050`.
 
-## Rodada 1 — geração original da v1
+### Rodada 1 — geração original da v1 (v1 anterior)
 
 **Solicitação do usuário (texto integral):**
 
@@ -16,15 +73,15 @@
 
 > Produzir testes automatizados com Vitest para o código do backend de Controle de Frequência, particularmente `chamada-codigo.service.ts`, `abrir-chamada-codigo.dto.ts`, `registrar-codigo.dto.ts` e `frequencia.util.ts`. Histórias selecionadas: professor abre e encerra chamada por código válido por 1 a 15 minutos; aluno autenticado e matriculado registra presença com código de oito letras e até cinco tentativas, enquanto a janela está ativa; aluno consulta chamadas abertas para suas turmas; professor acompanha risco de faltas segundo limites 15% e 25%. Usar partições de equivalência e valores-limite, com comentários identificando história, critério e técnica. Não alterar o código de produção. Criar uma primeira versão v1 antes de medir cobertura e mantê-la sem edição após o registro. Usar apenas nomes/métodos reais inspecionados no repositório e mocks de Prisma quando necessário.
 
-**Resposta:** arquivo `frequencia-back/tests/v1-llm/chamada-v1.test.ts` contendo **14 casos declarados**, separado da suíte preexistente. A v1 não foi retocada neste pacote após a geração.
+**Resposta:** arquivo `frequencia-back/tests/v1-llm/chamada-v1.test.ts` contendo **14 casos declarados**, separado da suíte preexistente. A v1 não foi retocada neste pacote após a geração. (Em 09/11 esse arquivo foi movido para `docs/testes/v1-anterior/` e substituído pela v1 oficial.)
 
 **Problemas/limitações antecipados:** a suíte cobre poucas fronteiras, não percorre abertura, encerramento, tentativas 5/6 ou sucesso por token; cobertura incompleta é esperada e deve ser confirmada por relatório real. Os testes existentes em `src/**/*.spec.ts` não entram na medição da v1.
 
-**Transparência sobre o protocolo:** como a conversa atual já continha a matriz anteriormente, a independência estrita entre a matriz e a geração por LLM **não pode ser garantida**. O assistente não inseriu os IDs T01–T48 no arquivo v1, mas a equipe pode regenerá-la em uma conversa nova que não receba a matriz para satisfazer a separação rigorosamente. Não declarar que a matriz ficou desconhecida para o modelo.
+**Transparência sobre o protocolo:** como a conversa atual já continha a matriz anteriormente, a independência estrita entre a matriz e a geração por LLM **não pode ser garantida**. O assistente não inseriu os IDs T01–T48 no arquivo v1, mas a equipe pode regenerá-la em uma conversa nova que não receba a matriz para satisfazer a separação rigorosamente. Não declarar que a matriz ficou desconhecida para o modelo. (Isso foi feito: ver Parte 1.)
 
-**Rodadas de correção da v1:** nenhuma neste pacote. Registrar aqui as rodadas adicionais somente se houver erro de importação/execução e, se necessário, preservando a resposta original.
+**Rodadas de correção da v1:** nenhuma neste pacote.
 
-## Rodada 2 — construção da v2
+### Rodada 2 — construção da v2
 
 **Instrução de melhoria (texto completo):**
 
@@ -32,4 +89,4 @@
 
 **Resposta:** `frequencia-back/tests/v2/chamada-v2.test.ts` e `frequencia-back/tests/v2/frequencia-v2.test.ts`; configuração isolada `vitest.sprint3.v2.config.ts`.
 
-**Validação:** resultados de Vitest e cobertura devem ser preenchidos a partir de `docs/testes/relatorios/{v1,v2}/` depois de executados na máquina da equipe. Nenhum percentual foi inventado.
+**Validação:** os resultados de Vitest e cobertura estão em `docs/testes/relatorios/{v1,v2}/` e em `docs/testes/relatorios/execucao/`, regenerados em 09/11/2026 (ver `indicadores-v1-v2.md`).

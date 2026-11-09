@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 /home/claude/trabalho-2.0/frequencia-back
+      Coverage enabled with v8
+
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > aceita duração de cinco minutos 2ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > rejeita duração zero 1ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > gera uma senha de oito letras sem I ou O 0ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > normaliza letras minúsculas e espaços externos 1ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > rejeita código de sete letras 0ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > rejeita presença se o aluno não tem email autenticado 1ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > rejeita aluno não matriculado 1ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > rejeita chamada expirada 1ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > devolve lista vazia sem email 1ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > rejeita consulta de status de aula inexistente 0ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > classifica zero por cento como regular 0ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > classifica vinte por cento como atenção 0ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > classifica trinta por cento como crítico 0ms
+ ✓ tests/_tmp-v1-antiga/chamada-v1.test.ts > calcula percentual zero sem aulas 0ms
+
+ Test Files  1 passed (1)
+      Tests  14 passed (14)
+   Start at  09:14:50
+   Duration  555ms (transform 107ms, setup 0ms, import 338ms, tests 10ms, environment 0ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   46.93 |    39.58 |   60.86 |   46.91 |                   
+ chamada-codigo    |   39.28 |    33.33 |      60 |   38.57 |                   
+  ...go.service.ts |   39.28 |    33.33 |      60 |   38.57 | ...57-167,180-202 
+ frequencia        |   91.66 |    83.33 |   66.66 |     100 |                   
+  ...encia.util.ts |   91.66 |    83.33 |   66.66 |     100 | 42                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 46.93% ( 46/98 )
+Branches     : 39.58% ( 19/48 )
+Functions    : 60.86% ( 14/23 )
+Lines        : 46.91% ( 38/81 )
+================================================================================
