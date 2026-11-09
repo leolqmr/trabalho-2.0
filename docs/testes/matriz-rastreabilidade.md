@@ -6,7 +6,7 @@ A matriz inicial foi commitada em `e2866be7` antes de qualquer suíte. Esta vers
 
 **Colunas de cobertura:**
 - **v1 (09/11):** a v1 gerada pelo Claude Opus 5.5 em conversa nova, sem a matriz (`frequencia-back/tests/v1-llm/chamada-v1.test.ts`). `Sim (Lnnn)` indica a linha do teste que exercita o caso com a mesma entrada e verifica o resultado esperado. Os 117 testes passam (`relatorios/execucao/v1-execucao.txt`).
-- **v2:** casos TNN em `frequencia-back/tests/v2/`, com 48/48 testes passando.
+- **v2:** os casos originais T01–T48 foram executados com **48/48 testes aprovados** na versão inicial. A ampliação posterior acrescentou EVO-01–EVO-11, totalizando **59/59 testes aprovados** na v2 atual (ver apêndice e log `relatorios/execucao/evolucao-pos-v1/v2-cinco-arquivos.txt`).
 
 | Critério | Variável | Partição ou limite | Caso planejado e resultado esperado | v1? | v2? |
 |---|---|---|---|---|---|

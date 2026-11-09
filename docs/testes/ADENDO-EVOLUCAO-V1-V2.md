@@ -30,10 +30,10 @@
 
 ## Resultado da rodada
 
-- **v1, cinco arquivos:** linhas 83,50%; branches 87,03%; funções 74,19%; statements 84,48%. A aprovação 117/117 foi comprovada no log histórico de quatro arquivos; o resumo final da execução ampliada não está visível na evidência recebida.
+- **v1, cinco arquivos:** linhas 83,50%; branches 87,03%; funções 74,19%; statements 84,48%. O log posterior `docs/testes/relatorios/execucao/evolucao-pos-v1/v1-cinco-arquivos.txt` comprova **117/117 testes aprovados e código 0** na configuração ampliada. O log histórico de quatro arquivos permanece separado.
 - **v2, cinco arquivos:** 59/59 aprovados, linhas 100%; branches 96,29%; funções 100%; statements 100%.
 - **Ganho medido:** +16,50 p.p. de linhas e +9,26 p.p. de branches, mesmo conjunto de arquivos e mesmo código-fonte.
-- **Limitação da evidência:** os prints foram apresentados ao ChatGPT. Os logs e JSON dos relatórios devem ser versionados separadamente para permitir auditoria; conferir seu conteúdo antes de publicar.
+- **Proveniência e limites da evidência:** os logs da v1 (117/117), da v2 (59/59), da suíte geral (58/58, 10 arquivos) e do build (código 0), além dos relatórios JSON/HTML de cobertura, estão versionados. As execuções foram feitas no computador da equipe, não pelo assistente. Os testes com mocks não substituem validação de integração com banco real nem CI automatizado.
 
 ## Instruções da rodada / log adicional
 
