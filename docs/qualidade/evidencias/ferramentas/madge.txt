@@ -1,0 +1,11 @@
+madge 8.0.0 (--extensions ts[,tsx] --circular) em 09/11/2026
+backend (src), codigo original a3d2338: No circular dependency found!
+backend (src), codigo atual:           No circular dependency found!
+frontend (src), codigo atual:          No circular dependency found!
+Dependencias de chamada-codigo.service.ts (iguais antes e depois das refatoracoes):
+  ../../common/exceptions/access-denied.exception.ts
+  ../../common/exceptions/app.exception.ts
+  ../../common/exceptions/error-code.enum.ts
+  ../../common/exceptions/resource-not-found.exception.ts
+  ../../database/prisma.service.ts
+  dto/abrir-chamada-codigo.dto.ts

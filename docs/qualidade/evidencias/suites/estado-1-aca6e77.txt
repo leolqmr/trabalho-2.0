@@ -1,0 +1,17 @@
+# Estado 1: commit aca6e77 — depois da DT-02 (= antes da DT-04)
+# Executado em 2026-11-09T12:19:53Z (UTC) com Vitest; v1 oficial copiada para tests/v1-llm/ neste estado
+
+## suíte v1 (vitest.sprint3.v1.config.ts)
+ RUN  v4.1.11 /tmp/wt-1/frequencia-back
+ Test Files  1 passed (1)
+      Tests  117 passed (117)
+   Start at  09:19:53
+   Duration  579ms (transform 144ms, setup 0ms, import 348ms, tests 106ms, environment 0ms)
+
+## suíte v2 (vitest.sprint3.v2.config.ts)
+ RUN  v4.1.11 /tmp/wt-1/frequencia-back
+ Test Files  2 passed (2)
+      Tests  48 passed (48)
+   Start at  09:19:55
+   Duration  694ms (transform 126ms, setup 0ms, import 393ms, tests 40ms, environment 0ms)
+
