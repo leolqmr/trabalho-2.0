@@ -7,7 +7,6 @@
 | Relatório HTML e JSON da v1 oficial | `docs/testes/relatorios/v1/` |
 | Relatório HTML e JSON da v2 | `docs/testes/relatorios/v2/` |
 | Relatório da v1 anterior, no código atual | `docs/testes/relatorios/v1-anterior-codigo-atual/` |
-| Relatório da v1 anterior, medida em 08/11 (antes das refatorações) | `docs/testes/relatorios/v1-anterior-chatgpt-com-matriz/` |
 | Saída do executor de testes (aprovados/falhos) | `docs/testes/relatorios/execucao/*.txt` |
 
 | Indicador | v1 anterior (ChatGPT, com matriz) | **v1 oficial** (Claude, sem matriz) | **v2** (melhorada) |
@@ -33,6 +32,6 @@ A medição funcional (requisitos, partições, limites e fluxos) vem de `matriz
 - **A v1 oficial é muito mais forte que a v1 anterior:** +53,09 pontos percentuais de linhas e +58,33 de branches, e passou de 14 para 117 testes, sem nenhuma rodada de correção.
 - **A v1 oficial e a v2 empatam na cobertura estrutural e na matriz.** O que as distingue não aparece nesses números: a precisão do oráculo (15 verificações genéricas contra 0) e a quantidade de verificações extras (a v1 oficial tem 69 testes além dos 48 casos da matriz).
 - **A única branch descoberta é a mesma nas duas suítes.** Está na linha 29 de `chamada-codigo.service.ts`, onde só há `@Injectable()`, e é uma expressão condicional (`cond-expr`) com contagem `[0, 1]`. Não há ternário na linha-fonte, então ela vem do código gerado na transpilação do decorator. Não identificamos teste que a exercite, e ela não representa uma decisão de negócio. Consequência: a meta "branches acima da v1" **não é alcançável contra a v1 oficial** (97,91% = 97,91%); contra a v1 anterior, a v2 melhora 58,33 pontos percentuais.
-- **Medições de 08/11 ficam como histórico.** Eram 43,42% de linhas e 39,58% de branches para a v1 anterior, sobre um código com 76 linhas e 93 statements; depois das refatorações o escopo tem 81 linhas e 98 statements, por isso os números mudaram.
+- **Medições de 08/11 (removidas do repositório; constam no histórico do git).** Eram 43,42% de linhas e 39,58% de branches para a v1 anterior, sobre um código com 76 linhas e 93 statements; depois das refatorações o escopo tem 81 linhas e 98 statements, por isso os números mudaram.
 - **Limite dos testes:** todos usam mocks do Prisma. A cobertura **não comprova** concorrência real, transações/locks nem prevenção de fraude presencial. O código de oito letras pode ser repassado dentro do prazo.
 - **Nenhum defeito real foi encontrado**, e isso não prova que não existam: foi feita inspeção dos oráculos, não teste de mutação.
