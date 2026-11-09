@@ -1,74 +1,56 @@
-# Sprint 3 — Relatório de análise crítica da suíte gerada por LLM
+# Sprint 3 — Relatório de análise crítica dos testes gerados por LLM
 
-Projeto P07 — Controle de Frequência · Branch `sprint3/testes` · Medições de 09/11/2026
+**Projeto:** P07 — Controle de Frequência · **Rodada de melhoria posterior à v1:** 09/11/2026  
+**Branch proposta:** `sprint3/evolucao-v1-v2-pos-v1`
 
-## 1. Contexto
+## 1. Contexto e método
 
-- **Stack:** NestJS, TypeScript, Prisma, Vitest 4.1.11 e cobertura V8. Testes com mocks do Prisma.
-- **User stories (4):** US01 abrir e administrar a chamada temporária; US02 registrar presença com o código; US03 consultar chamadas disponíveis; US04 classificar o risco de reprovação por faltas. Somam **21 critérios de aceitação** (CA01.1 a CA04.4), reconstruídos a partir do enunciado e do código com apoio do ChatGPT, pois não havia documento prévio de user stories.
-- **LLMs:** a **v1** foi gerada pelo Claude Opus 5.5 em 09/11/2026, numa conversa nova e sem a matriz. A **v2** vem do ChatGPT (GPT-6), de 08/11/2026.
-- **Escopo medido:** `chamada-codigo.service.ts`, os dois DTOs da chamada e `frequencia.util.ts`. Os testes antigos de `src/**/*.spec.ts` ficam fora da medição.
+O grupo selecionou quatro histórias: **US01**, abrir/administrar chamada por código temporário; **US02**, registrar presença mediante código; **US03**, consultar chamadas disponíveis; e **US04**, classificar e consultar a frequência de alunos. Os **21 critérios de aceitação** foram reconstruídos a partir do enunciado e código do P07 e desdobrados em uma matriz com **48 casos (T01–T48)**, 25 partições, 16 limites e 7 fluxos. A matriz foi commitada em `e2866be7`, antes da geração dos testes. Esses critérios foram acordados pelo grupo, mas não são um documento de user stories anterior à Sprint 3.
 
-## 2. Projeto manual
+A **v1 oficial**, gerada em 09/11 em conversa nova com Claude Opus 5.5, foi preservada em `frequencia-back/tests/v1-llm/chamada-v1.test.ts`. Seu prompt integral, que continha critérios e código mas não a matriz T01–T48, está em `docs/testes/prompt-v1.md`; a resposta possui **117 testes**. Não há garantia absoluta de isolamento de memória externa à conversa. A v1 foi gerada sobre o código já refatorado, embora também tenha passado no código original, conforme logs versionados.
 
-A matriz de rastreabilidade (`docs/testes/matriz-rastreabilidade.md`) lista **21 critérios, 25 partições de equivalência, 16 valores-limite e 7 fluxos**, que geram **48 casos de teste (T01–T48)**. Ela foi commitada em `e2866be7`, antes de qualquer suíte.
+A **v2 inicial**, produzida em 08/11 pelo ChatGPT a partir dos 48 casos da matriz, **precede cronologicamente a nova v1**. Essa limitação foi identificada na revisão de 09/11. Para produzir uma rodada *efetivamente posterior* à v1, foi criada uma branch independente que **manteve os 117 testes da v1 intocados**, preservou os 48 testes da v2 e acrescentou **11 testes de `FrequenciaService`**, após identificar que a v1 não exercitava esse serviço.
 
-## 3. Geração
+## 2. O que a v1 acertou e onde ficou a lacuna
 
-- **v1:** um único prompt (`docs/testes/prompt-v1.md`) com as técnicas exigidas, o texto dos 21 critérios, o código dos quatro arquivos e o `schema.prisma`. O prompt não contém a matriz (0 ocorrências). Foi **uma rodada, sem nenhuma correção**: 117 testes, 117 passando, nenhum nome ou caminho inventado.
-- **v2:** construída em 08/11 a partir da matriz de 48 casos, antes de existir a v1 (`docs/testes/llm-log.md`, Parte 2).
-- **Ressalva:** o prompt pediu explicitamente as técnicas e trouxe os critérios completos, então a amplitude da v1 não deve ser atribuída só ao modelo.
-- **Limite do protocolo:** não foi verificado se a memória do aplicativo estava ativa na conversa da v1.
+No escopo antigo de quatro arquivos, a v1 tinha 117/117 testes aprovados e cobria todos os 48 casos da matriz: 100% de linhas e 97,91% de branches. A v2 inicial tinha 48/48, com as mesmas métricas. Assim, a principal diferença **qualitativa** era a precisão dos oráculos: **15 testes da v1** usavam `rejects.toThrow()` genérico (qualquer exceção satisfaz a asserção); a v2 verifica os erros HTTP relevantes (por exemplo, 400, 409 e 429) e possuía **0** desses oráculos genéricos. A v1 continha ainda um teste probabilístico de unicidade de códigos e verificações acopladas à forma das consultas Prisma.
 
-## 4. Indicadores
+A lacuna remanescente da v1 é **funcional e de escopo**: ela testa as fórmulas (`frequencia.util.ts`), mas não testa `FrequenciaService`, que consulta o aluno por turma ou e-mail, conta aulas realizadas, ordena histórico e compõe o resumo. Essa camada é relevante à US04. Não foi identificada como defeito real do produto; trata-se de **ausência de teste**.
 
-| Indicador | **v1** | **v2** |
-|---|---:|---:|
-| Testes (passam / falham / não compilam) | **117 (117/0/0)** | 48 (48/0/0) |
-| Cobertura de linhas | **100%** | **100%** |
-| Cobertura de branches | **97,91%** | **97,91%** |
-| Cobertura de requisitos | 21/21 | 21/21 |
-| Partições / limites / fluxos | 25/25 · 16/16 · 7/7 | 25/25 · 16/16 · 7/7 |
-| Testes sem asserção | 0 | 0 |
-| Oráculo genérico (`rejects.toThrow()` sem o erro) | **15** | **0** |
-| Defeitos reais encontrados | 0 | 0 |
+## 3. Rodada nova: evolução da v2 posterior à v1
 
-As duas suítes foram medidas no mesmo código e no mesmo escopo (`indicadores-v1-v2.md`; relatórios HTML em `docs/testes/relatorios/`).
+A v2 ampliada inclui os casos **EVO-01 a EVO-11**, descritos em `docs/testes/ADENDO-EVOLUCAO-V1-V2.md`: sem e-mail, e-mail vazio, nenhuma matrícula, consulta de uma ou várias turmas, ordenação temporal, aluno sem marcação, zero aulas, restrição por turma, recurso inexistente e fronteira de 25% de faltas. Os testes usam mocks do Prisma e oráculos explícitos para os resultados observáveis e consultas essenciais.
 
-## 5. Análise crítica
+A **comparação foi feita com escopo ampliado idêntico** nas duas configurações do Vitest: `chamada-codigo.service.ts`, seus dois DTOs, `frequencia.util.ts` e `frequencia.service.ts`. O novo arquivo não foi incluído somente na v2, o que tornaria a comparação inválida. O código de produção não foi modificado nesta proposta.
 
-### 5.1 Técnicas funcionais: a LLM achou as mesmas partições e limites?
+## 4. Indicadores medidos
 
-A v1 exercitou **todos** os 48 casos da matriz (25/25 partições, 16/16 limites, 7/7 fluxos); não perdeu nenhum.
+| Indicador | v1 oficial (5 arquivos) | v2 ampliada (5 arquivos) | Ganho |
+|---|---:|---:|---:|
+| Testes declarados | 117 | 59 | v2 acrescentou 11 aos seus 48 testes anteriores |
+| Statements | 84,48% | 100% | +15,52 p.p. |
+| Branches | **87,03%** | **96,29%** | **+9,26 p.p.** |
+| Funções | 74,19% | 100% | +25,81 p.p. |
+| Linhas | **83,50%** | **100%** | **+16,50 p.p.** |
+| `FrequenciaService`: linhas | 0% | 100% | +100 p.p. |
+| `FrequenciaService`: branches | 0% | 83,33% | +83,33 p.p. |
 
-Além dos 48 casos, a v1 trouxe **69 testes que a matriz não previa**, e nenhum contradiz o requisito (todos passam). Exemplos que a equipe não tinha listado: e-mail vazio (L463), duração negativa (L170) e do tipo texto (L190), código com espaço interno (L583), com dígito (L578) e com letra acentuada (L589), 1 ms depois da expiração (L754), 15,1%, 24,9% e 100% de faltas (L1083, L1093, L1115) e "janela encerrada não consome tentativa" (L763).
+Os percentuais foram transcritos dos relatórios Vitest/V8 apresentados pela equipe em 09/11; a **v2 ampliada passou com 59/59 testes (3/3 arquivos)**. A v1 teve 117/117 na execução histórica de quatro arquivos; a tabela da execução ampliada da v1 foi mostrada, mas o print não contém seu resumo de aprovação. Deve-se arquivar esse resumo se a evidência instrumental for exigida.
 
-### 5.2 Requisitos: algum critério ficou sem teste? Algum teste ficou sem critério?
+**Não misturar os escopos:** no histórico de quatro arquivos, v1 e v2 empatavam em 100% de linhas e 97,91% de branches. No escopo ampliado de cinco arquivos, a diferença positiva foi gerada pela cobertura adicional de `FrequenciaService` na v2, e não pela perda de testes anteriores na v1.
 
-Na v1, cada um dos 21 critérios tem de 2 a 17 testes (CA02.2 é o mais testado). Todos os 117 testes trazem um comentário com um critério existente, sem nenhuma referência a critério inventado. Esse vínculo é declarado pela própria LLM; conferimos o conteúdo dos 48 testes ligados à matriz, mas não auditamos um a um os 69 extras.
+## 5. Análise crítica dos resultados
 
-### 5.3 Linhas versus branches
+**Técnicas e requisitos.** Na matriz T01–T48, ambas as suítes já cobriam 21/21 critérios e 48/48 casos. Os EVO-01–EVO-11 expandem a profundidade da US04 sem inventar novos requisitos. A maior quantidade de testes da v1 não é sinônimo de melhores oráculos: ela cobre muitos cenários, mas alguns apenas afirmam que uma exceção qualquer ocorreu.
 
-Uma linha conta como coberta se qualquer código dela executa; uma decisão na mesma linha tem dois caminhos, e basta um teste passar por um deles. Aqui isso não aparece: a v1 e a v2 têm **100% de linhas e 97,91% de branches**, e a única branch descoberta é a mesma nas duas, a linha 29 de `chamada-codigo.service.ts`, onde só há `@Injectable()`. A contagem `[0, 1]` de uma expressão condicional sem ternário no código-fonte indica código gerado na transpilação do decorator (inferência nossa). Não há decisão de negócio ali, e não identificamos teste que a exercite.
+**Linhas versus branches.** Uma linha pode ser executada sem percorrer todas as condições booleanas internas. Na medição nova, a v2 chegou a 100% de linhas mas **96,29% de branches**; a cobertura específica de `FrequenciaService` é 83,33% de branches. Uma branch residual do serviço de chamada ocorre perto de um decorator e pode depender da transpilação, hipótese que exige leitura do HTML gerado. Não afirmar cobertura total de decisões do negócio apenas com esses percentuais.
 
-### 5.4 Oráculos
+**Oráculos e acoplamento.** A melhoria da v2 é dupla: oráculos HTTP mais precisos para os 48 casos antigos e novos testes do serviço de frequência. As verificações sobre `where`/`select` do Prisma asseguram filtros importantes, mas podem ser sensíveis a refatorações semanticamente equivalentes. Um teste de integração com banco real daria evidência mais forte da persistência.
 
-- **Sem asserção:** 0 de 117 testes (conferido por script).
-- **Asserção genérica:** **15 testes** usam `rejects.toThrow()` sem dizer o erro (L365, 433, 643, 650, 659, 673, 675, 696, 722, 733, 741, 750, 759, 766 e 843). O requisito pede erros específicos (400 para código incorreto, 409 para janela encerrada ou expirada, 429 para a sexta tentativa), mas esses testes passariam com qualquer exceção, inclusive um erro de programação. O teste da L679 compara as mensagens da 5ª e da 6ª tentativa, mas não os status.
-- **Oráculo copiado do código:** não encontramos caso em que o código divergisse do critério, então o resultado dos testes não permite separar "oráculo do requisito" de "oráculo do código". Conferimos à mão as fronteiras sensíveis (5ª/6ª tentativa, instante exato da expiração, 15% e 25% de faltas) e o código segue o texto dos critérios. Nenhum teste valida um defeito conhecido.
-- **Acoplamento à implementação:** 11 testes inspecionam os argumentos das chamadas ao Prisma. Com mocks isso é em grande parte inevitável (é a única forma de observar a gravação), mas L894, L906 e L930 verificam a forma interna da consulta (`where`, `select`), e não o efeito observável. Uma consulta equivalente quebraria esses testes sem mudar o comportamento. Um teste de integração com banco real evitaria isso.
-- **Na v2:** T24, T26, T27 e T28 verificam o status HTTP (400, 429, 409 e 409) e o T28 também a mensagem; nenhum teste usa `toThrow()` genérico.
+**Defeitos observados.** Nenhum defeito de produção foi confirmado; houve melhoria **de testes**, não correção funcional. Mocks não demonstram transações reais, locks, rollback nem que um aluno estava fisicamente na aula. O código temporário ainda pode ser compartilhado.
 
-## 6. Melhorias da v2
+## 6. Conclusão e rastreabilidade
 
-| Lacuna da v1 | O que a v2 faz | Efeito medido |
-|---|---|---|
-| Oráculo genérico: 15 testes só verificam que "algo foi lançado" | T24, T26, T27 e T28 verificam o status HTTP do erro (e o T28 a mensagem) | 0 oráculos genéricos (a v1 tem 15) |
+A nova rodada resolve a principal fragilidade demonstrável do protocolo: existe agora uma **melhoria posterior à v1**, com ganhos de **+9,26 pontos percentuais em branches** e **+16,50 em linhas**, sob o mesmo escopo de cinco arquivos. O histórico anterior não foi reescrito: a v2 de 08/11 continua sendo identificada como versão inicial; a v2 ampliada, como rodada de melhoria de 09/11. A extensão confirma a utilidade de gerar cenários com LLM, mas evidencia a necessidade de revisar oráculos, selecionar escopo justo e preservar logs instrumentados.
 
-**Transparência:** a v2 foi escrita em 08/11 a partir da matriz, antes de a v1 existir. Contra a v1, a v2 **não aumenta a cobertura** (empate em 100% e 97,91%), só melhora a precisão do oráculo, e ela **não incorpora** os 69 testes extras da v1. A meta "branches acima da v1" **não foi atingida**, pois a única branch descoberta não é alcançável por teste (seção 5.3).
-
-## 7. Conclusão
-
-Uma LLM gera depressa uma suíte ampla: em uma rodada, sem correção, a v1 cobriu 100% das linhas e dos casos da matriz. Usaríamos uma LLM para **enumerar partições e valores-limite e montar o esqueleto dos testes**, com estes cuidados: (1) dar a ela os critérios completos e pedir as técnicas; (2) gerar numa conversa limpa, sem acesso ao gabarito; (3) revisar os oráculos, trocando `toThrow()` genérico por erro e status específicos; (4) medir com ferramenta, lembrando que 100% de linhas não significa que todas as decisões foram testadas; (5) complementar com testes de integração, pois mocks não provam concorrência, transações nem fraude presencial. O melhor resultado viria de **juntar a amplitude da v1 com a precisão de oráculo da v2**.
-
-**Apêndices (no repositório):** `docs/testes/llm-log.md` (prompts e respostas), `docs/testes/prompt-v1.md`, `docs/testes/matriz-rastreabilidade.md` e `docs/testes/relatorios/`.
+**Apêndices no repositório:** `prompt-v1.md`, `llm-log.md`, `matriz-rastreabilidade.md`, `ADENDO-EVOLUCAO-V1-V2.md`, `PLANO-EVOLUCAO-V1-V2.md`, `indicadores-v1-v2.md` e saídas do Vitest. A equipe deverá confirmar a conformidade com o roteiro original da disciplina antes do merge.
