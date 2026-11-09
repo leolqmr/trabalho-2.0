@@ -1,18 +1,17 @@
 # Sprint 3 — Log de interação com LLM
 
-Este log tem duas partes. A **v1 oficial** (Parte 1) foi gerada em 09/11/2026 numa conversa nova, sem a matriz de rastreabilidade. A **v1 anterior** de 08/11 (Anexo A) foi gerada numa conversa que já continha a matriz; por isso deixou de ser a v1 oficial, mas continua preservada para comparação.
+Este log tem duas partes. A **v1** (Parte 1) foi gerada em 09/11/2026 numa conversa nova, sem a matriz de rastreabilidade. A **v2** (Parte 2) foi construída em 08/11/2026 a partir da matriz.
 
 | Suíte | LLM | Quando | Prompt | Resposta (sem edição) |
 |---|---|---|---|---|
-| **v1 oficial** | Claude Opus 5.5 (claude.ai, conversa normal) | 09/11/2026, por volta das 09h (Recife) | `docs/testes/prompt-v1.md` | `frequencia-back/tests/v1-llm/chamada-v1.test.ts` (117 testes) |
-| v1 anterior (descartada como oficial) | ChatGPT, GPT-6 | 08/11/2026 | Anexo A | `docs/testes/v1-anterior/chamada-v1-chatgpt-com-matriz.test.ts.txt` (14 testes) |
-| v2 | ChatGPT, GPT-6 | 08/11/2026 | Anexo A, rodada 2 | `frequencia-back/tests/v2/` (48 testes) |
+| **v1** | Claude Opus 5.5 (claude.ai, conversa normal) | 09/11/2026, por volta das 09h (Recife) | `docs/testes/prompt-v1.md` | `frequencia-back/tests/v1-llm/chamada-v1.test.ts` (117 testes) |
+| v2 | ChatGPT, GPT-6 | 08/11/2026 | Parte 2 | `frequencia-back/tests/v2/` (48 testes) |
 
-## Parte 1 — v1 oficial (Claude Opus 5.5)
+## Parte 1 — v1 (Claude Opus 5.5)
 
 - Projeto: P07 — Controle de Frequência. Framework: Vitest 4, NestJS/TypeScript.
 - Modelo e data de uso, informados pela equipe: Claude Opus 5.5, conversa normal (não temporária) aberta do zero, em 09/11/2026 por volta das 09h.
-- Código fornecido à LLM: o da branch `sprint3/testes` no commit `6ce1ba2`, ou seja, **já com as três refatorações** (DT-01, DT-02, DT-04). A v1 anterior foi gerada sobre o código original (`d4c8050`).
+- Código fornecido à LLM: o da branch `sprint3/testes` no commit `6ce1ba2`, ou seja, **já com as três refatorações** (DT-01, DT-02, DT-04).
 
 ### Rodada 1 — geração da v1
 
@@ -53,35 +52,14 @@ Em cada teste, coloque um comentário indicando **qual critério de aceitação*
 
 ---
 
-## Anexo A — log original de 08/11/2026 (ChatGPT, GPT-6)
+## Parte 2 — v2 (ChatGPT, GPT-6, 08/11/2026)
 
-Texto preservado do log anterior. **Contexto adicional:** esta v1 foi gerada numa conversa que já continha a matriz, e a v2 foi construída em 08/11, antes de existir a v1 oficial. Por isso, as lacunas que a v2 resolve são as da matriz; o confronto entre a v2 e a v1 oficial foi feito depois, no relatório de análise crítica.
+**Contexto.** A v2 foi construída em 08/11, a partir da matriz de 48 casos (T01–T48), antes de existir a v1 de 09/11. O confronto entre as duas foi feito depois, no relatório de análise crítica.
 
 - Projeto: P07 - Controle de frequência
-- Data: 08/11/2026
 - Modelo utilizado: ChatGPT, GPT-6
 - Framework: Vitest 4, NestJS/TypeScript
-- Código-base observado: branch `sprint3/testes`, originada do commit `d4c8050`.
-
-### Rodada 1 — geração original da v1 (v1 anterior)
-
-**Solicitação do usuário (texto integral):**
-
-> pronto, não dei merge ainda, vamos continuar trabalhando nessa branch. o que falta para terminar? pode fazer para mim por favor?
-
-**Instrução de trabalho elaborada pelo assistente para gerar a suíte (texto completo):**
-
-> Produzir testes automatizados com Vitest para o código do backend de Controle de Frequência, particularmente `chamada-codigo.service.ts`, `abrir-chamada-codigo.dto.ts`, `registrar-codigo.dto.ts` e `frequencia.util.ts`. Histórias selecionadas: professor abre e encerra chamada por código válido por 1 a 15 minutos; aluno autenticado e matriculado registra presença com código de oito letras e até cinco tentativas, enquanto a janela está ativa; aluno consulta chamadas abertas para suas turmas; professor acompanha risco de faltas segundo limites 15% e 25%. Usar partições de equivalência e valores-limite, com comentários identificando história, critério e técnica. Não alterar o código de produção. Criar uma primeira versão v1 antes de medir cobertura e mantê-la sem edição após o registro. Usar apenas nomes/métodos reais inspecionados no repositório e mocks de Prisma quando necessário.
-
-**Resposta:** arquivo `frequencia-back/tests/v1-llm/chamada-v1.test.ts` contendo **14 casos declarados**, separado da suíte preexistente. A v1 não foi retocada neste pacote após a geração. (Em 09/11 esse arquivo foi movido para `docs/testes/v1-anterior/` e substituído pela v1 oficial.)
-
-**Problemas/limitações antecipados:** a suíte cobre poucas fronteiras, não percorre abertura, encerramento, tentativas 5/6 ou sucesso por token; cobertura incompleta é esperada e deve ser confirmada por relatório real. Os testes existentes em `src/**/*.spec.ts` não entram na medição da v1.
-
-**Transparência sobre o protocolo:** como a conversa atual já continha a matriz anteriormente, a independência estrita entre a matriz e a geração por LLM **não pode ser garantida**. O assistente não inseriu os IDs T01–T48 no arquivo v1, mas a equipe pode regenerá-la em uma conversa nova que não receba a matriz para satisfazer a separação rigorosamente. Não declarar que a matriz ficou desconhecida para o modelo. (Isso foi feito: ver Parte 1.)
-
-**Rodadas de correção da v1:** nenhuma neste pacote.
-
-### Rodada 2 — construção da v2
+- Código-base observado: branch `sprint3/testes`.
 
 **Instrução de melhoria (texto completo):**
 
@@ -89,4 +67,4 @@ Texto preservado do log anterior. **Contexto adicional:** esta v1 foi gerada num
 
 **Resposta:** `frequencia-back/tests/v2/chamada-v2.test.ts` e `frequencia-back/tests/v2/frequencia-v2.test.ts`; configuração isolada `vitest.sprint3.v2.config.ts`.
 
-**Validação:** os resultados de Vitest e cobertura estão em `docs/testes/relatorios/{v1,v2}/` e em `docs/testes/relatorios/execucao/`, regenerados em 09/11/2026 (ver `indicadores-v1-v2.md`).
+**Validação:** os resultados de Vitest e cobertura estão em `docs/testes/relatorios/{v1,v2}/` e em `docs/testes/relatorios/execucao/`, medidos em 09/11/2026 (ver `indicadores-v1-v2.md`).

@@ -6,16 +6,16 @@
 
 ## Resumo por estado do código
 
-Executado em 09/11/2026, com a v1 oficial (`tests/v1-llm/`, 117 testes) e a v2 (`tests/v2/`, 48 testes):
+Executado em 09/11/2026, com a v1 (`tests/v1-llm/`, 117 testes) e a v2 (`tests/v2/`, 48 testes):
 
-| Estado | Commit | v1 oficial | v2 |
+| Estado | Commit | v1 | v2 |
 |---|---|---:|---:|
 | 0 — original (antes da DT-02) | `a3d2338` | 117/117 | 48/48 |
 | 1 — depois da DT-02 | `aca6e77` | 117/117 | 48/48 |
 | 2 — depois da DT-04 | `95779b6` | 117/117 | 48/48 |
 | 3 — depois da DT-01 (final) | `e5136f6` | 117/117 | 48/48 |
 
-A v1 oficial foi gerada sobre o código já refatorado e passa também no original, o que reforça que o comportamento descrito pelos critérios foi preservado.
+A v1 foi gerada sobre o código já refatorado e passa também no original, o que reforça que o comportamento descrito pelos critérios foi preservado.
 
 ## Efeito medido por ferramenta (`evidencias/ferramentas/`)
 

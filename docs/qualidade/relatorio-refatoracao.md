@@ -12,7 +12,7 @@ O inventário (`docs/qualidade/divida-tecnica.md`) tem nove itens: oito identifi
 | **DT-04** (relógio espalhado) | Quatro leituras diretas do relógio impediam testes determinísticos; centralizá-las dá um único ponto para controlar o tempo. |
 | **DT-01** (`registrar` longo) | Era o método mais longo e que mais misturava responsabilidades do serviço (55 linhas pelo ESLint). |
 
-Em todos os casos as suítes foram rodadas **antes e depois** (logs em `docs/qualidade/evidencias/suites/`): a **v1 oficial** com 117 testes e a **v2** com 48. Nenhum teste quebrou em nenhum estado, nem no código original (117/117 e 48/48).
+Em todos os casos as suítes foram rodadas **antes e depois** (logs em `docs/qualidade/evidencias/suites/`): a **v1** com 117 testes e a **v2** com 48. Nenhum teste quebrou em nenhum estado, nem no código original (117/117 e 48/48).
 
 ## 2. DT-02 — SQL de bloqueio duplicado · commit `aca6e77`
 
@@ -32,7 +32,7 @@ const aulas = await tx.$queryRaw<{ id: string }[]>`SELECT "id" FROM "aulas" WHER
 
 **Antes:** `Date.now()` em `estaAtiva` e `new Date()` em `abrir`, `encerrar` e `listarAtivas`. **Depois:** `private agora(): Date { return new Date(); }` e todas as leituras viram `this.agora()`.
 
-- **Refatoração:** Extract Function (encapsular o relógio). **Melhora:** baixo acoplamento ao tempo do sistema e testabilidade; a v1 oficial controla o instante com um relógio falso (`vi.setSystemTime`) e testa a fronteira exata da expiração.
+- **Refatoração:** Extract Function (encapsular o relógio). **Melhora:** baixo acoplamento ao tempo do sistema e testabilidade; a v1 controla o instante com um relógio falso (`vi.setSystemTime`) e testa a fronteira exata da expiração.
 - **Testes:** v1 117/117 → 117/117; v2 48/48 → 48/48.
 - **Ferramenta:** nenhuma regra do ESLint ou do jscpd detecta esse problema; ele só apareceu na leitura.
 

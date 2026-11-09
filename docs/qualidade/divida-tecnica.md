@@ -16,9 +16,9 @@ Projeto P07 — Controle de Frequência. O diagnóstico original foi registrado 
 
 ## Evidências para as três refatorações
 
-Em 09/11/2026 a **v1 oficial** (117 testes) e a **v2** (48 testes) foram executadas em cada estado do código, com worktrees temporários. Os logs estão em `docs/qualidade/evidencias/suites/`.
+Em 09/11/2026 a **v1** (117 testes) e a **v2** (48 testes) foram executadas em cada estado do código, com worktrees temporários. Os logs estão em `docs/qualidade/evidencias/suites/`.
 
-| Estado | Commit | v1 oficial | v2 | Log |
+| Estado | Commit | v1 | v2 | Log |
 |---|---|---:|---:|---|
 | 0 — original, antes da DT-02 | `a3d2338` | 117/117 | 48/48 | `estado-0-a3d2338.txt` |
 | 1 — depois da DT-02 (= antes da DT-04) | `aca6e77` | 117/117 | 48/48 | `estado-1-aca6e77.txt` |
@@ -32,7 +32,7 @@ Em 09/11/2026 a **v1 oficial** (117 testes) e a **v2** (48 testes) foram executa
 | DT-01 | [`e5136f6`](https://github.com/leolqmr/trabalho-2.0/commit/e5136f61452020ccdc9ef513b9a4adf57fd00dce) | 2 → 3 | v1 117/117 → 117/117; v2 48/48 → 48/48 | `nest build` sem erro no log de 08/11 |
 
 - O log "antes" da DT-02, que faltava, passou a existir (estado 0). Entre os estados 2 e 3 há também o commit `2a6571a`, que só acrescenta a dependência de cobertura e não altera código de produção.
-- A v1 oficial foi gerada sobre o código já refatorado e **passa também no código original**, o que reforça que as refatorações preservaram o comportamento descrito pelos critérios.
+- A v1 foi gerada sobre o código já refatorado e **passa também no código original**, o que reforça que as refatorações preservaram o comportamento descrito pelos critérios.
 - Os logs de 08/11 (`dt01-*`, `dt02-*`, `dt04-*`) continuam em `docs/qualidade/evidencias/`. Eles registram a invocação `nest build` sem erros; na sessão de execução, o usuário mostrou código de saída `0` para a DT-02. Os logs em texto, isoladamente, não preservam `$LASTEXITCODE` em todos os casos. Isso deve ser exposto, não ocultado. O build **não foi reexecutado** em 09/11.
 
 **Método:** leitura de código apoiada por ChatGPT em 08/11, cruzada em 09/11 com ESLint, jscpd e madge (resultados em `log-analise.md` e `evidencias/ferramentas/`). Os itens ainda abertos continuam registrados para sprints posteriores. A equipe precisa revisar se concorda com os nove diagnósticos e com a escolha dos três.
