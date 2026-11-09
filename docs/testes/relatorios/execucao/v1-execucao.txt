@@ -1,0 +1,126 @@
+
+ RUN  v4.1.11 /home/claude/trabalho-2.0/frequencia-back
+
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > aceita 1 minuto 3ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita 0 minutos 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > aceita 15 minutos 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita 16 minutos 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > aceita valor intermediário (8) 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita valor negativo 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita valor muito acima da faixa 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita número não inteiro 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita fração próxima do limite inferior 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita tipo não numérico 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.1 — duração entre 1 e 15 minutos (inteiro) > rejeita ausência da duração 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.2 — código de 8 letras maiúsculas sem I/O e expiração > a abertura devolve código com 8 letras do alfabeto permitido 2ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.2 — código de 8 letras maiúsculas sem I/O e expiração > nenhum código gerado contém I, O ou caracteres fora do alfabeto 50ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.2 — código de 8 letras maiúsculas sem I/O e expiração > os códigos são aleatórios (não se repetem em sequência) 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.2 — código de 8 letras maiúsculas sem I/O e expiração > expira após 1 minuto quando a duração é 1 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.2 — código de 8 letras maiúsculas sem I/O e expiração > expira após 15 minutos quando a duração é 15 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.2 — código de 8 letras maiúsculas sem I/O e expiração > fica ativa 1 ms antes do prazo e inativa exatamente no prazo 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.3 — o código só aparece na resposta da abertura > a resposta da abertura expõe o código, mas não hash nem salt 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.3 — o código só aparece na resposta da abertura > o código não é persistido em texto puro 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.3 — o código só aparece na resposta da abertura > a consulta de status não expõe código, hash ou salt 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.4 — reabrir substitui código e prazo, reativa e zera tentativas > remove os contadores de tentativa da janela anterior 2ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.4 — reabrir substitui código e prazo, reativa e zera tentativas > substitui hash, salt e prazo e limpa encerradoEm 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.4 — reabrir substitui código e prazo, reativa e zera tentativas > duas aberturas seguidas geram códigos diferentes 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.4 — reabrir substitui código e prazo, reativa e zera tentativas > o código antigo deixa de valer após a reabertura 2ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.4 — reabrir substitui código e prazo, reativa e zera tentativas > primeira abertura não tenta apagar tentativas inexistentes 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.5 — erros para aula inexistente ou janela inexistente > abrir chamada para aula inexistente gera erro 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.5 — erros para aula inexistente ou janela inexistente > encerrar chamada de aula inexistente gera erro 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.5 — erros para aula inexistente ou janela inexistente > encerrar aula sem janela existente gera erro 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.5 — erros para aula inexistente ou janela inexistente > encerrar aula com janela existente não gera erro 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.6 — encerrar fixa encerradoEm e impede registro posterior > encerrar grava encerradoEm com o instante atual 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US01 — Abrir e administrar uma chamada temporária > CA01.6 — encerrar fixa encerradoEm e impede registro posterior > após o encerramento, registro com código correto é recusado 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.1 — apenas aluno identificado e matriculado > sem e-mail identificado o registro é negado 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.1 — apenas aluno identificado e matriculado > com e-mail vazio o registro é negado 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.1 — apenas aluno identificado e matriculado > aluno não matriculado na turma da aula é negado 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.1 — apenas aluno identificado e matriculado > a matrícula é verificada na turma da aula com o e-mail informado 2ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.1 — apenas aluno identificado e matriculado > aluno matriculado com e-mail identificado consegue registrar 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.1 — apenas aluno identificado e matriculado > chamada inexistente gera erro 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > aceita 8 letras maiúsculas do alfabeto 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > aceita letras minúsculas, normalizando para maiúsculas 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > aceita espaços periféricos, removendo-os 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > aceita espaços periféricos combinados com caixa mista 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita 7 letras 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita 9 letras 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita 7 letras mesmo com espaços completando 8 caracteres 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita código vazio 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita a letra I 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita a letra O 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > aceita as letras vizinhas de I e O (H, J, N, P) 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > aceita as letras extremas do alfabeto (A e Z) 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita dígitos 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita espaço interno 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita letras acentuadas e símbolos 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > rejeita valor que não é texto 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.2 — formato do código informado > o serviço aceita o código correto em minúsculas e com espaços periféricos 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.3 — código correto em chamada ativa registra presença > registra a presença do aluno com present: true 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.3 — código correto em chamada ativa registra presença > registra quando faltam 1 ms para expirar 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > código incorreto gera erro e não registra presença 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > código incorreto consome uma tentativa 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > 5ª tentativa (após 4 erros) com código correto ainda registra 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > 6ª tentativa (após 5 erros) é bloqueada mesmo com código correto 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > o bloqueio da 6ª tentativa é um erro distinto do de código incorreto 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > com 5 tentativas já consumidas, nova tentativa correta é bloqueada 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > com 4 tentativas já consumidas, nova tentativa correta registra 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.4 — código incorreto consome tentativa; 6ª é bloqueada > a tentativa incorreta é efetivada (a transação não é revertida por exceção) 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.5 — chamada encerrada ou expirada não aceita registro > chamada encerrada recusa código correto 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.5 — chamada encerrada ou expirada não aceita registro > chamada expirada há tempo recusa código correto 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.5 — chamada encerrada ou expirada não aceita registro > o instante exato da expiração já é inválido 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.5 — chamada encerrada ou expirada não aceita registro > 1 ms após a expiração também é inválido 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.5 — chamada encerrada ou expirada não aceita registro > janela encerrada/expirada não consome tentativa 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.6 — presença já registrada > retorna sucesso sem duplicar presença nem consumir tentativa 2ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.6 — presença já registrada > registrar duas vezes seguidas consome tentativa apenas uma vez 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.6 — presença já registrada > presença já registrada não é afetada pelo limite de tentativas 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.7 — falta anterior pode virar presença > atualiza a linha existente para present: true sem criar outra 2ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US02 — Registrar presença com código > CA02.7 — falta anterior pode virar presença > falta anterior com código incorreto continua falta 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.1 — sem e-mail, lista vazia sem consultar o banco > e-mail undefined retorna [] sem consulta 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.1 — sem e-mail, lista vazia sem consultar o banco > e-mail vazio retorna [] sem consulta 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.1 — sem e-mail, lista vazia sem consultar o banco > com e-mail, o banco é consultado 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.2 — filtro por janelas abertas, não expiradas e da turma do aluno > a consulta filtra por expiraEm > agora, encerradoEm nulo e matrícula do aluno 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.2 — filtro por janelas abertas, não expiradas e da turma do aluno > a fronteira de expiração é estrita (gt), excluindo expiraEm === agora 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.3 — resposta sem segredos e com indicador de registro > não expõe código, hash ou salt 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.3 — resposta sem segredos e com indicador de registro > a consulta não seleciona código, hash ou salt 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.3 — resposta sem segredos e com indicador de registro > informa registrada: true quando há presença do aluno 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.3 — resposta sem segredos e com indicador de registro > informa registrada: false quando não há marcação 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.3 — resposta sem segredos e com indicador de registro > informa registrada: false quando a marcação é falta 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.3 — resposta sem segredos e com indicador de registro > devolve id, expiraEm e dados da aula e turma 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > aula inexistente gera erro 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > retorna null quando a aula não tem janela 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > janela aberta e não expirada é ativa e informa presentes 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > janela encerrada é inativa 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > janela expirada é inativa 1ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > janela que expira exatamente agora é inativa 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > janela que expira 1 ms após agora é ativa 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US03 — Consultar chamadas disponíveis > CA03.4 — status da aula > conta apenas presenças (present: true) da aula 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.1 — abaixo de 15% é REGULAR > 0% é REGULAR 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.1 — abaixo de 15% é REGULAR > 7% é REGULAR 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.1 — abaixo de 15% é REGULAR > 14,9% é REGULAR 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.2 — entre 15% e 25%, inclusive, é ATENCAO > 15% é ATENCAO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.2 — entre 15% e 25%, inclusive, é ATENCAO > 15,1% é ATENCAO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.2 — entre 15% e 25%, inclusive, é ATENCAO > 20% é ATENCAO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.2 — entre 15% e 25%, inclusive, é ATENCAO > 24,9% é ATENCAO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.2 — entre 15% e 25%, inclusive, é ATENCAO > 25% é ATENCAO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.3 — acima de 25% é CRITICO > 25,1% é CRITICO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.3 — acima de 25% é CRITICO > 50% é CRITICO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.3 — acima de 25% é CRITICO > 100% é CRITICO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > sem aulas realizadas o percentual é zero 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > com 1 aula realizada e 1 falta, o percentual é 100 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > sem faltas o percentual é zero 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > arredonda para uma casa decimal (1/3 → 33,3) 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > arredonda para uma casa decimal (2/3 → 66,7) 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > arredonda para uma casa decimal (1/7 → 14,3) 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > o denominador é o total de aulas realizadas, não o de marcações 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > 3 faltas em 20 aulas = 15% → ATENCAO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > 5 faltas em 20 aulas = 25% → ATENCAO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > 2 faltas em 14 aulas = 14,3% → REGULAR 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > 1 falta em 4 aulas = 25% → ATENCAO, 2 faltas em 7 aulas = 28,6% → CRITICO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > 25,3% (≈ 19/75) é CRITICO 0ms
+ ✓ tests/v1-llm/chamada-v1.test.ts > US04 — Classificar risco de reprovação > CA04.4 — cálculo do percentual sobre aulas realizadas > o resumo informa presenças, faltas e limite de 25% 0ms
+
+ Test Files  1 passed (1)
+      Tests  117 passed (117)
+   Start at  09:09:03
+   Duration  656ms (transform 163ms, setup 0ms, import 394ms, tests 121ms, environment 0ms)
+
