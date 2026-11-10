@@ -164,10 +164,17 @@
       "publicClient": true,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": false,
-      "rootUrl": "http://localhost:5173",
-      "adminUrl": "http://localhost:5173",
-      "redirectUris": ["http://localhost:5173/*"],
-      "webOrigins": ["http://localhost:5173"],
+      "rootUrl": "http://localhost",
+      "adminUrl": "http://localhost",
+      "redirectUris": [
+        "http://localhost/*",
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "+",
+        "http://localhost",
+        "http://localhost:5173"
+      ],
       "nodeReRegistrationTimeout": -1,
       "protocolMappers": [
         {
