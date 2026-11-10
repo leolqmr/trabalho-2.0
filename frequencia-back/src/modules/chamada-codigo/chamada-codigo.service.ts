@@ -125,6 +125,16 @@ export class ChamadaCodigoService {
     }));
   }
 
+  /** Extraído: confirmação de matrícula por chave composta; sem alterar o contrato público. */
+  private async buscarAlunoMatriculado(turmaId: string, email: string) {
+    const aluno = await this.prisma.aluno.findUnique({
+      where: { turma_id_email: { turma_id: turmaId, email } },
+      select: { id: true },
+    });
+    if (!aluno) throw new AccessDeniedException('Você não está matriculado nesta turma.');
+    return aluno;
+  }
+
   async registrar(chamadaId: string, email: string | undefined, codigo: string) {
     if (!email) throw new AccessDeniedException('Confirme seu e-mail no Keycloak para registrar presença.');
 
@@ -134,11 +144,7 @@ export class ChamadaCodigoService {
     });
     if (!chamada) throw new ResourceNotFoundException('Chamada por código', chamadaId);
 
-    const aluno = await this.prisma.aluno.findUnique({
-      where: { turma_id_email: { turma_id: chamada.aula.turma_id, email } },
-      select: { id: true },
-    });
-    if (!aluno) throw new AccessDeniedException('Você não está matriculado nesta turma.');
+    const aluno = await this.buscarAlunoMatriculado(chamada.aula.turma_id, email);
 
     // Resultados de erro são valores para que tentativas inválidas sejam COMMITADAS.
     const resultado = await this.prisma.$transaction(async (tx) => {
