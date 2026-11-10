@@ -10,6 +10,7 @@ import type { AbrirChamadaCodigoDto } from './dto/abrir-chamada-codigo.dto';
 const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const TAMANHO_CODIGO = 8;
 const MAX_TENTATIVAS = 5;
+const MILISSEGUNDOS_POR_MINUTO = 60_000;
 
 export function gerarCodigo(): string {
   return Array.from({ length: TAMANHO_CODIGO }, () => ALFABETO[randomInt(ALFABETO.length)]).join('');
@@ -56,7 +57,7 @@ export class ChamadaCodigoService {
     const salt = randomBytes(16).toString('hex');
     const codigoHash = hashCodigo(codigo, salt).toString('hex');
     const agora = new Date();
-    const expiraEm = new Date(agora.getTime() + dto.duracaoMinutos * 60_000);
+    const expiraEm = new Date(agora.getTime() + dto.duracaoMinutos * MILISSEGUNDOS_POR_MINUTO);
 
     const chamada = await this.prisma.$transaction(async (tx) => {
       // Todas as operações por aula bloqueiam a mesma linha, evitando corrida
