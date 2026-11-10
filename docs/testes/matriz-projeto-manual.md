@@ -68,4 +68,79 @@ As classes abaixo representam entradas e estados relevantes. A classificação v
 | P08 | Aula inexistente | Inválida | Chamada não criada | Pendente | Pendente |
 | P09 | E-mail ausente no registro | Inválida | Presença não registrada | Pendente | Pendente |
 | P10 | Chamada inexistente | Inválida | Presença não registrada | Pendente | Pendente |
-| P11 | Aluno
+| P11 | Aluno não matriculado na turma | Inválida | Presença não registrada | Pendente | Pendente |
+| P12 | Chamada expirada | Inválida | Registro recusado | Pendente | Pendente |
+| P13 | Código incorreto | Inválida | Registro recusado e tentativa contabilizada conforme regra | Pendente | Pendente |
+| P14 | Código correto, aluno apto e chamada ativa | Válida | Presença registrada | Pendente | Pendente |
+| P15 | Listagem sem e-mail | Entrada incompleta | Lista vazia | Pendente | Pendente |
+| P16 | Listagem com e-mail de aluno matriculado | Válida | Somente chamadas das turmas pertinentes | Pendente | Pendente |
+| P17 | Faltas inferiores a 15% | Válida | REGULAR | Pendente | Pendente |
+| P18 | Faltas entre 15% e 25%, inclusive | Válida | ATENCAO | Pendente | Pendente |
+| P19 | Faltas superiores a 25% | Válida | CRITICO | Pendente | Pendente |
+| P20 | Nenhuma aula realizada | Válida | Percentual definido sem divisão por zero | Pendente | Pendente |
+| P21 | Quinta tentativa permitida | Válida | Tentativa processada conforme código e estado da chamada | Pendente | Pendente |
+| P22 | Sexta tentativa após atingir o limite | Inválida | Tentativa bloqueada | Pendente | Pendente |
+| P23 | Chamada encerrada manualmente | Inválida para registro | Presença não registrada | Pendente | Pendente |
+| P24 | Presença já registrada | Válida | Nenhuma presença duplicada | Pendente | Pendente |
+| P25 | Consulta de status sem chamada | Válida | Estado sem chamada informado | Pendente | Pendente |
+| P26 | Consulta de status no instante de expiração | Válida para consulta | Estado expirado informado | Pendente | Pendente |
+| P27 | Consulta de aluno inexistente | Inválida | Retorno de ausência ou erro apropriado | Pendente | Pendente |
+| P28 | Consulta de aluno existente | Válida | Detalhes de frequência correspondentes ao aluno e à turma | Pendente | Pendente |
+| P29 | Consulta pessoal sem e-mail | Entrada incompleta | Não retornar dados pessoais de outros alunos | Pendente | Pendente |
+| P30 | Consulta pessoal com e-mail válido | Válida | Frequências correspondentes ao aluno | Pendente | Pendente |
+
+## 5. Análise de valores-limite
+
+| ID | Entrada ou estado | Resultado esperado | Coberto v1? | Coberto v2? |
+|---|---|---|---|---|
+| L01 | Duração = 0 minuto | Rejeitar | Pendente | Pendente |
+| L02 | Duração = 1 minuto | Aceitar | Pendente | Pendente |
+| L03 | Duração = 15 minutos | Aceitar | Pendente | Pendente |
+| L04 | Duração = 16 minutos | Rejeitar | Pendente | Pendente |
+| L05 | Código com 7 letras | Rejeitar | Pendente | Pendente |
+| L06 | Código com 8 letras permitidas | Aceitar quando corresponder ao código correto | Pendente | Pendente |
+| L07 | Código com 9 letras | Rejeitar | Pendente | Pendente |
+| L08 | Faltas = 14,9% | REGULAR | Pendente | Pendente |
+| L09 | Faltas = 15% | ATENCAO | Pendente | Pendente |
+| L10 | Faltas = 25% | ATENCAO | Pendente | Pendente |
+| L11 | Faltas = 25,1% | CRITICO | Pendente | Pendente |
+| L12 | Total de aulas = 0 | Não dividir por zero | Pendente | Pendente |
+| L13 | Instante atual igual à expiração | Não permitir novo registro | Pendente | Pendente |
+| L14 | Quinta tentativa | Processar tentativa, respeitando demais validações | Pendente | Pendente |
+| L15 | Sexta tentativa após cinco erros | Bloquear | Pendente | Pendente |
+
+## 6. Revisão técnica da matriz
+
+A revisão técnica identificou e tratou os seguintes pontos:
+
+1. Separação conceitual entre geração de código e validação da entrada fornecida pelo aluno.
+2. Explicitação dos resultados esperados para todas as partições.
+3. Definição dos intervalos de classificação de faltas, incluindo as fronteiras de 15% e 25%.
+4. Distinção entre quinta tentativa permitida e sexta tentativa bloqueada.
+5. Definição do comportamento no instante exato da expiração.
+6. Distinção entre consultas válidas sem resultados e operações de registro inválidas.
+7. Preservação das colunas de cobertura para preenchimento somente após a execução das suítes.
+
+### Limitações da revisão
+
+A revisão foi realizada sobre os requisitos e a matriz disponibilizados, sem execução do código-fonte nesta etapa. Portanto, a correspondência de todos os resultados esperados com a implementação real ainda precisa ser verificada.
+
+Em caso de divergência entre regra de negócio e implementação, a equipe deverá avaliar se existe um defeito no código ou se o requisito precisa ser esclarecido. Não se deve alterar silenciosamente os resultados esperados apenas para fazer os testes passarem.
+
+## 7. Registro de autoria e validação
+
+- Responsável(eis): **Saulo, Tiago, Leonardo, Fernando e Daniel — integrantes do grupo; confirmação individual da revisão pendente.**
+- Data da validação: **Revisão técnica assistida em 09/11/2026; aprovação humana pendente.**
+- Ferramenta utilizada na revisão técnica: **ChatGPT (GPT-6).**
+- Ajustes decididos pelo grupo: **A confirmar pelos integrantes.**
+- Ajustes propostos na revisão técnica: **Detalhamento dos oráculos, tratamento das fronteiras e esclarecimento das partições.**
+- SHA do commit inicial da matriz: **`8a4efe0`**
+- SHA do commit desta revisão: **A registrar após o commit.**
+
+### Declaração metodológica
+
+A proposta inicial da matriz e sua revisão técnica utilizaram assistência de inteligência artificial. O documento não é apresentado como resultado de elaboração exclusivamente humana.
+
+O conteúdo foi preparado antes da instalação da suíte v1 nesta reconstrução da Sprint 3. As medições de cobertura, os resultados de execução e a análise das lacunas serão registrados posteriormente.
+
+**Situação da etapa:** Revisão técnica documental concluída; aprovação dos integrantes e verificação contra a implementação ainda pendentes.
