@@ -1,91 +1,71 @@
-# Projeto manual de testes — matriz PREPARATÓRIA da Sprint 3
+# P07 — Sprint 3 | Projeto manual de testes
 
-**STATUS: RASCUNHO PARA REVISÃO HUMANA.** Uma LLM elaborou a proposta a partir dos critérios da feature. Antes de gerar v1, alguém do grupo deve revisar os critérios, preencher entradas/esperados, corrigir os números e commitar este arquivo. Esta matriz não contém resultados da LLM nem da v1/v2, preservando a sequência metodológica pedida pela professora.
+**Projeto:** Controle de Frequência  
+**Disciplina:** Desenvolvimento de Software  
+**Data da revisão técnica:** 09/11/2026  
+**Branch:** `sprint3/refeita-token-2026`  
+**Commit-base:** `c9028b6acd31e72cb804a034149aab6ae34cedb5`
 
-Base: `feat/chamada-codigo-temporario`, commit `c9028b6`; requisitos em `requisitos-e-criterios.md`.
+**Integrantes:** Saulo, Tiago, Leonardo, Fernando e Daniel.
 
-## Critérios selecionados e cenários esperados (gabarito antes da IA)
+**Status:** Projeto manual revisado tecnicamente com auxílio do ChatGPT. Confirmação dos integrantes pendente.
 
-| Requisito | Entrada/estado relevante | Resultado esperado | Caso manual esperado | Coberto pela v1? | Coberto pela v2? |
+## 1. Objetivo e metodologia
+
+Este documento apresenta o projeto de testes das funcionalidades de chamada por código temporário e consulta de frequência do sistema P07.
+
+Foram selecionadas quatro histórias de usuário e definidos previamente os comportamentos esperados, utilizando duas técnicas principais:
+
+- **Particionamento de equivalência:** divisão das entradas e estados em classes que devem produzir comportamentos semelhantes.
+- **Análise de valores-limite:** verificação dos valores imediatamente abaixo, exatamente sobre e imediatamente acima das fronteiras das regras de negócio.
+
+O projeto contém 15 critérios de aceitação, 15 cenários manuais, 30 partições de equivalência e 15 valores-limite.
+
+A matriz constitui um gabarito de referência para a análise posterior das suítes v1 e v2. Seus resultados esperados não representam testes já executados.
+
+## 2. Histórias de usuário
+
+| ID | História |
+|---|---|
+| US01 | Como professor, quero abrir uma chamada com código temporário para registrar a presença dos alunos durante um período limitado. |
+| US02 | Como aluno matriculado, quero informar o código de uma chamada ativa para registrar minha presença. |
+| US03 | Como aluno, quero consultar as chamadas das minhas turmas sem acessar informações sigilosas. |
+| US04 | Como professor ou aluno, quero consultar a frequência e a classificação do risco de faltas. |
+
+## 3. Critérios de aceitação e cenários manuais
+
+| Requisito | Entrada ou estado | Resultado esperado | Caso | Coberto v1? | Coberto v2? |
 |---|---|---|---|---|---|
-| US01-CA01 | código com 8 letras válidas; código com I/O/7/9 caracteres | Geração válida, entradas proibidas rejeitadas | M01 | A preencher | A preencher |
-| US01-CA02 | duração 0, 1, 15, 16 e 2,5 minutos | aceita inteiros 1..15; recusa os demais | M02 | A preencher | A preencher |
-| US01-CA03 | abertura bem-sucedida | resposta revela código uma vez; persistência guarda hash e salt | M03 | A preencher | A preencher |
-| US01-CA04 | aula que não existe | nenhuma chamada criada e erro | M04 | A preencher | A preencher |
-| US02-CA01 | email ausente; matrícula inexistente; matrícula válida | registro autorizado só com email e matrícula | M05 | A preencher | A preencher |
-| US02-CA02 | janela ativa; expirada; encerrada | só janela ativa admite registro | M06 | A preencher | A preencher |
-| US02-CA03 | código incorreto, minúsculas e espaços | incorreto não registra; normalizado confere | M07 | A preencher | A preencher |
-| US02-CA04 | tentativa 5 e 6 | quinta ainda aceita; sexta é bloqueada | M08 | A preencher | A preencher |
-| US02-CA05 | primeira marcação e marcação duplicada | registra e não duplica; sem consumo extra se já presente | M09 | A preencher | A preencher |
-| US03-CA01 | lista sem e-mail | lista vazia, não consulta dados de aluno | M10 | A preencher | A preencher |
-| US03-CA02 | e-mail matriculado; presença registrada/não registrada | só suas turmas e sem hash/salt | M11 | A preencher | A preencher |
-| US03-CA03 | status sem chamada, expirado, presente | status e contagem coerentes | M12 | A preencher | A preencher |
-| US04-CA01 | 14,9;15;25;25,1% | REGULAR, ATENCAO, ATENCAO, CRITICO | M13 | A preencher | A preencher |
-| US04-CA02 | zero aulas, faltas e presenças | percentual sem divisão por zero e arredondado | M14 | A preencher | A preencher |
-| US04-CA03 | detalhe aluno inexistente/existente; minhas sem/com email | restrição por turma/e-mail, ordem decrescente | M15 | A preencher | A preencher |
+| US01-CA01 | Geração de código temporário | Gerar exatamente oito letras maiúsculas, sem I e O. Códigos digitados com caracteres proibidos ou comprimento incorreto não devem ser aceitos. | M01 | Pendente | Pendente |
+| US01-CA02 | Duração 0, 1, 15, 16 ou 2,5 minutos | Aceitar apenas inteiros entre 1 e 15, inclusive. Rejeitar os demais valores. | M02 | Pendente | Pendente |
+| US01-CA03 | Abertura de chamada válida | Retornar o código ao professor na abertura e persistir somente os dados necessários à sua verificação, incluindo hash e salt, sem armazenar o código puro. | M03 | Pendente | Pendente |
+| US01-CA04 | Identificador de aula inexistente | Recusar a abertura sem criar uma chamada associada à aula inexistente. | M04 | Pendente | Pendente |
+| US02-CA01 | E-mail ausente, aluno não matriculado ou aluno matriculado | Somente o aluno identificado e matriculado na turma pode registrar presença. | M05 | Pendente | Pendente |
+| US02-CA02 | Chamada ativa, expirada ou encerrada | Permitir registro somente durante a janela ativa. | M06 | Pendente | Pendente |
+| US02-CA03 | Código incorreto ou código correto com minúsculas e espaços externos | Rejeitar código incorreto. Normalizar a entrada conforme a regra prevista e aceitar o código correto. | M07 | Pendente | Pendente |
+| US02-CA04 | Quinta e sexta tentativas | Permitir a quinta tentativa, respeitadas as demais regras; bloquear a sexta tentativa quando o limite de erros for atingido. | M08 | Pendente | Pendente |
+| US02-CA05 | Primeira presença e tentativa repetida | Registrar a primeira presença e impedir duplicidade, preservando a idempotência da operação. | M09 | Pendente | Pendente |
+| US03-CA01 | Consulta sem e-mail | Retornar lista vazia, sem consultar dados de um aluno não identificado. | M10 | Pendente | Pendente |
+| US03-CA02 | Aluno matriculado consultando chamadas | Retornar somente chamadas pertinentes às suas turmas, sem expor hash ou salt. | M11 | Pendente | Pendente |
+| US03-CA03 | Chamada ausente, expirada ou com presença registrada | Informar estado e quantidade de presentes de forma consistente com os dados registrados. | M12 | Pendente | Pendente |
+| US04-CA01 | Percentuais de faltas 14,9%, 15%, 25% e 25,1% | Classificar respectivamente como REGULAR, ATENCAO, ATENCAO e CRITICO. | M13 | Pendente | Pendente |
+| US04-CA02 | Zero aulas ou aulas com presenças e faltas | Calcular o percentual corretamente, com arredondamento de uma casa decimal e sem divisão por zero. | M14 | Pendente | Pendente |
+| US04-CA03 | Consulta por aluno/turma e consulta pessoal por e-mail | Respeitar os filtros de aluno, turma e e-mail, tratar registros inexistentes e ordenar o histórico do mais recente para o mais antigo. | M15 | Pendente | Pendente |
 
-**15 critérios, 15 casos manuais esperados**, sujeito a revisão do grupo. Estas entradas não garantem que uma suíte passe.
+## 4. Partições de equivalência
 
-## Partições de equivalência previstas
+As classes abaixo representam entradas e estados relevantes. A classificação válida ou inválida refere-se à operação analisada, não à validade geral dos dados.
 
-| ID | Variável / partição ou fronteira | Classe/valor | Coberto v1? | Coberto v2? |
-|---|---|---|---|---|
-| P01 | código: 8 letras válidas sem I/O | Válida | A preencher | A preencher |
-| P02 | código: I/O ou tamanho incompatível | Inválida | A preencher | A preencher |
-| P03 | código com minúsculas e espaços | Válida | A preencher | A preencher |
-| P04 | duração inteira 1–15 | Válida | A preencher | A preencher |
-| P05 | duração abaixo de 1 | Inválida | A preencher | A preencher |
-| P06 | duração acima de 15 | Inválida | A preencher | A preencher |
-| P07 | duração fracionária | Inválida | A preencher | A preencher |
-| P08 | aula inexistente | Inválida | A preencher | A preencher |
-| P09 | email ausente no registro | Inválida | A preencher | A preencher |
-| P10 | chamada inexistente | Inválida | A preencher | A preencher |
-| P11 | aluno não matriculado | Inválida | A preencher | A preencher |
-| P12 | chamada expirada | Inválida | A preencher | A preencher |
-| P13 | código incorreto | Inválida | A preencher | A preencher |
-| P14 | código válido e aluno apto | Válida | A preencher | A preencher |
-| P15 | listagem sem email | Inválida | A preencher | A preencher |
-| P16 | listagem com matrícula | Válida | A preencher | A preencher |
-| P17 | faltas abaixo de 15% | Válida | A preencher | A preencher |
-| P18 | faltas de 15% a 25% | Válida | A preencher | A preencher |
-| P19 | faltas acima de 25% | Válida | A preencher | A preencher |
-| P20 | nenhuma aula realizada | Válida | A preencher | A preencher |
-| P21 | exatamente 5 tentativas | Válida | A preencher | A preencher |
-| P22 | 6 ou mais tentativas | Inválida | A preencher | A preencher |
-| P23 | chamada encerrada manualmente | Inválida | A preencher | A preencher |
-| P24 | presença preexistente | Válida | A preencher | A preencher |
-| P25 | status sem chamada | Válida | A preencher | A preencher |
-| P26 | status expirado na fronteira | Válida | A preencher | A preencher |
-| P27 | detalhe de aluno inexistente | Inválida | A preencher | A preencher |
-| P28 | detalhe de aluno existente | Válida | A preencher | A preencher |
-| P29 | minhas frequências sem e-mail | Inválida | A preencher | A preencher |
-| P30 | minhas frequências com e-mail | Válida | A preencher | A preencher |
-
-## Valores-limite previstos
-
-| ID | Variável / partição ou fronteira | Classe/valor | Coberto v1? | Coberto v2? |
-|---|---|---|---|---|
-| L01 | duração 0 | limite | A preencher | A preencher |
-| L02 | duração 1 | limite | A preencher | A preencher |
-| L03 | duração 15 | limite | A preencher | A preencher |
-| L04 | duração 16 | limite | A preencher | A preencher |
-| L05 | código com 7 letras | limite | A preencher | A preencher |
-| L06 | código com 8 letras | limite | A preencher | A preencher |
-| L07 | código com 9 letras | limite | A preencher | A preencher |
-| L08 | faltas 14,9% | limite | A preencher | A preencher |
-| L09 | faltas 15% | limite | A preencher | A preencher |
-| L10 | faltas 25% | limite | A preencher | A preencher |
-| L11 | faltas 25,1% | limite | A preencher | A preencher |
-| L12 | aulas realizadas = 0 | limite | A preencher | A preencher |
-| L13 | expiração exatamente agora | limite | A preencher | A preencher |
-| L14 | quinta tentativa | limite | A preencher | A preencher |
-| L15 | sexta tentativa | limite | A preencher | A preencher |
-
-## Aprovação do projeto manual (preenchimento por integrantes)
-
-- Responsável(eis): **A preencher pelo grupo**
-- Data da validação: **A preencher pelo grupo**
-- Ajustes decididos pelo grupo: **A preencher pelo grupo**
-- SHA do commit da matriz (deve anteceder o commit da v1): **A preencher após commit**
-
-As partições e limites são hipóteses/critério prévio da equipe e não resultados calculados retrospectivamente. Se o grupo alterar critérios depois da v1, registrar um adendo e motivo, sem reescrever a versão inicial do histórico.
+| ID | Partição | Classe | Resultado esperado | Coberto v1? | Coberto v2? |
+|---|---|---|---|---|---|
+| P01 | Código com oito letras permitidas | Válida | Código aceito quando correto e chamada ativa | Pendente | Pendente |
+| P02 | Código com I/O ou comprimento incorreto | Inválida | Código rejeitado | Pendente | Pendente |
+| P03 | Código correto em minúsculas ou com espaços externos | Válida | Entrada normalizada e validada | Pendente | Pendente |
+| P04 | Duração inteira de 1 a 15 minutos | Válida | Chamada criada com duração solicitada | Pendente | Pendente |
+| P05 | Duração menor que 1 minuto | Inválida | Abertura rejeitada | Pendente | Pendente |
+| P06 | Duração maior que 15 minutos | Inválida | Abertura rejeitada | Pendente | Pendente |
+| P07 | Duração fracionária | Inválida | Abertura rejeitada | Pendente | Pendente |
+| P08 | Aula inexistente | Inválida | Chamada não criada | Pendente | Pendente |
+| P09 | E-mail ausente no registro | Inválida | Presença não registrada | Pendente | Pendente |
+| P10 | Chamada inexistente | Inválida | Presença não registrada | Pendente | Pendente |
+| P11 | Aluno
