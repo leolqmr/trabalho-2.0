@@ -8,7 +8,7 @@
 
 **Integrantes:** Saulo, Tiago, Leonardo, Fernando e Daniel.
 
-**Status:** Projeto manual revisado tecnicamente com auxílio do ChatGPT. Confirmação dos integrantes pendente.
+**Status do artefato:** matriz preparatória registrada antes da V1 e revisada tecnicamente com assistência do ChatGPT. A confirmação independente dos integrantes permanece pendente. As colunas “Pendente” abaixo são preservadas como retrato do planejamento original; a cobertura posterior está em `matriz-rastreabilidade.md`.
 
 ## 1. Objetivo e metodologia
 
@@ -135,12 +135,12 @@ Em caso de divergência entre regra de negócio e implementação, a equipe deve
 - Ajustes decididos pelo grupo: **A confirmar pelos integrantes.**
 - Ajustes propostos na revisão técnica: **Detalhamento dos oráculos, tratamento das fronteiras e esclarecimento das partições.**
 - SHA do commit inicial da matriz: **`8a4efe0`**
-- SHA do commit desta revisão: **A registrar após o commit.**
+- SHA do commit da revisão técnica: **`f0f8138`** (revisões anteriores em `6ffe06a`).
 
 ### Declaração metodológica
 
 A proposta inicial da matriz e sua revisão técnica utilizaram assistência de inteligência artificial. O documento não é apresentado como resultado de elaboração exclusivamente humana.
 
-O conteúdo foi preparado antes da instalação da suíte v1 nesta reconstrução da Sprint 3. As medições de cobertura, os resultados de execução e a análise das lacunas serão registrados posteriormente.
+O conteúdo foi preparado antes do commit da suíte V1 nesta reconstrução. As medições e análises posteriores foram registradas em `indicadores-medidos.md`, `matriz-rastreabilidade.md`, `llm-log.md` e `llm-log-v2.md`. Os resultados atuais não são retroativamente atribuídos às colunas de planejamento deste arquivo.
 
-**Situação da etapa:** Revisão técnica documental concluída; aprovação dos integrantes e verificação contra a implementação ainda pendentes.
+**Situação da etapa em 13/11/2026:** revisão técnica documental registrada; 24/24 testes V1 e 39/39 V2 executados posteriormente, conforme logs. Aprovação independente dos integrantes e verificação semântica de todos os oráculos ainda não documentadas.

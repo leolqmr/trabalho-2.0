@@ -2,7 +2,7 @@
 
 **BASE EXATA:** `feat/chamada-codigo-temporario` no commit `c9028b6acd31e72cb804a034149aab6ae34cedb5`, de 08/11/2026. O merge `d4c8050` contém a mesma árvore Git. As suítes e refatorações antigas da Sprint 3 NÃO são o ponto de partida.
 
-**Status:** proposta de projeto manual para a **equipe revisar e aprovar ANTES da primeira geração de testes**. A matriz em `matriz-projeto-manual.md` é um rascunho produzido com assistência de LLM; não deve ser apresentada como autoria exclusivamente humana. O grupo deve verificar e eventualmente corrigir os critérios abaixo, commitar separadamente e registrar no histórico a data e o responsável pela revisão.
+**Status atual:** documento preparatório registrado no Git antes da suíte V1 (commits `8a4efe0`, `6ffe06a` e `f0f8138`; V1 em `ce7b2bb`). Foi elaborado e revisado tecnicamente com assistência de GPT-6; não há evidência de elaboração exclusivamente humana ou aprovação independente de todos os integrantes antes da geração. A equipe ainda deve conferir os critérios como contrato de negócio, sem reescrever a cronologia.
 
 ## Histórias selecionadas da Sprint 2
 
@@ -29,3 +29,10 @@ Os esperados para 1/15 minutos, 5/6 tentativas, 15%/25% faltas e segurança de m
 4. Gerar/revisar v2 para lacunas reais → medir v2 no mesmo escopo.
 5. Inventariar dívida, validar achados manualmente, refatorar pelo menos 3 itens separadamente com testes pré/pós.
 6. Entregar os dois PDFs finais, nunca preencher métricas estimadas como se fossem medidas.
+
+## Encerramento documental — 13/11/2026
+
+- **Integrantes informados:** Saulo, Tiago, Fernando, Leonardo e Daniel. A indicação dos nomes não constitui assinatura individual da matriz.
+- **Testes executados:** V1 24/24; V2 39/39; baseline 58/58, conforme registros em `docs/testes/relatorios/reconstrucao/execucoes/` e `indicadores-medidos.md`.
+- **Rastreabilidade posterior:** `matriz-rastreabilidade.md` registra os casos CT/EVO relacionados a cada critério; esta versão inicial permanece como documento de definição de escopo.
+- **Validação restante:** confirmar independentemente a adequação dos requisitos e oráculos. A execução bem-sucedida não supre essa confirmação.

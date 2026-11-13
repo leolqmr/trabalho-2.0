@@ -1,10 +1,10 @@
-# Matriz de rastreabilidade — MATRIZ FINAL — VALIDAR EXECUÇÕES
+# Matriz de rastreabilidade — associação dos casos e execuções V1/V2
 
-**Histórico:** o projeto manual anterior foi commitado em `matriz-projeto-manual.md`. Este arquivo final é produzido após a medição da v1 e a criação da v2. Colunas v1/v2 registram a **cobertura planejada pelos testes fornecidos no pacote**, não são evidências de execução. Após rodar, confirmar com os testes e os logs.
+**Histórico e evidência:** a matriz preparatória foi registrada antes da V1. Os casos CT01–CT24 e EVO01–EVO15 foram executados nos arquivos de teste respectivos: V1 **24/24** e V2 **39/39**, com logs e cobertura V8/HTML/JSON em `docs/testes/relatorios/reconstrucao/`. As colunas a seguir indicam o **mapeamento por inspeção do teste**; execução do teste não equivale, por si só, à confirmação independente de seu oráculo.
 
 ## Critérios por história
 
-| Critério | Testes previstos v1 | Novos testes previstos v2 | V1 planejada | V2 planejada |
+| Critério | Testes mapeados V1 | Novos testes mapeados V2 | V1 por inspeção | V2 por inspeção |
 |---|---|---|---|---|
 | US01-CA01 (formato) | CT01 | EVO15 | Sim | Sim |
 | US01-CA02 (duração) | CT02–CT06, CT09 | — | Sim | Sim |
@@ -22,7 +22,7 @@
 | US04-CA02 (cálculo) | CT23–CT24 | EVO14 | Sim | Sim |
 | US04-CA03 (consultas de frequência) | — | EVO10–EVO13 | Não | Sim |
 
-**Cobertura de critérios estrita** (somente se todos os CT/EVO mapeados executarem corretamente): v1 = 12/15 = 80%; v2 = 15/15 = 100%. O percentual de requisitos é uma métrica de rastreabilidade, distinta da cobertura estrutural medida pelo Vitest. Para critérios marcados 'Parcial' na v1, contar como coberto apenas se o grupo entender que o cenário v1 verifica a condição completa; este projeto os conta provisoriamente como cobertos na soma 12/15 por existir pelo menos um teste relacionado.
+**Leitura correta do indicador:** a V1 tem testes associados a **12/15 critérios (80%)**, dos quais **2 são apenas parciais** (`US02-CA05` e `US03-CA02`); portanto, só **10/15 estão classificados como integralmente exercitados** por este mapeamento. Na V2, a associação alcança **15/15 (100%)**. Os percentuais 12/15 e 15/15 apresentados no relatório são indicadores *provisórios de associação/rastreabilidade*, não prova de conformidade integral de cada requisito. A equipe deve revisar especialmente os dois critérios parciais e a adequação dos oráculos. A cobertura de linhas e branches é uma métrica diferente, medida pelo Vitest/V8.
 
 ## Partições definidas na Etapa 1 (classes válidas e inválidas)
 
@@ -61,7 +61,7 @@ Cada ID identifica uma classe/estado distinto; o percentual depende de verificar
 | P29 | minhas frequências sem e-mail | Inválida | — | EVO12 |
 | P30 | minhas frequências com e-mail | Válida | — | EVO13 |
 
-**Total proposto:** 30 partições: 20 v1 (66,7%) e 30 v2 (100%), desde que os testes sejam efetivamente executados. Não confundir P24 com o estado de tentativa 5/6.
+**Total associado após inspeção:** 30 partições: 20 relacionadas à V1 (66,7%) e 30 relacionadas à V2 (100%). Os respectivos arquivos de testes foram executados com sucesso; o vínculo semântico com as classes ainda depende de conferência do grupo. Não confundir P24 com a quinta/sexta tentativa.
 
 ## Valores-limite definidos na Etapa 1
 
@@ -83,7 +83,7 @@ Cada ID identifica uma classe/estado distinto; o percentual depende de verificar
 | L14 | quinta tentativa | — | EVO01 |
 | L15 | sexta tentativa | — | EVO02 |
 
-**Total proposto:** 15 limites, 10 v1 (66,7%) e 15 v2 (100%), condicionados à confirmação da equipe e da execução. Limites adicionais não computados: timestamps um milissegundo antes/depois, já cobertos parcialmente pela partição expirada e válida.
+**Total associado após inspeção:** 15 limites, 10 ligados à V1 (66,7%) e 15 à V2 (100%). A execução dos arquivos foi registrada; a verificação semântica independente continua pendente. Timestamps um milissegundo antes/depois não foram contabilizados como limites adicionais.
 
 ## Lacuna → melhoria
 
@@ -98,4 +98,6 @@ Cada ID identifica uma classe/estado distinto; o percentual depende de verificar
 | serviço de frequência ausente da v1 | EVO10–EVO14 | US04-CA02/CA03 |
 | limites 7 e 9 letras não exercitados | EVO15 | US01-CA01 |
 
-As lacunas acima são verificadas por **inspeção estática dos arquivos de teste**. Sua confirmação empírica exige executar a v1 antes de gerar/commitar a v2, seguindo o fluxo real estabelecido no roteiro.
+As lacunas acima foram identificadas pela inspeção dos arquivos de teste. Os logs locais registram execução da V1 em **09/11/2026 às 21:46** e da V2 às **21:50** (horário local); os arquivos foram versionados nos commits `ce7b2bb` e `91ee329`. Essa sequência de execução não prova por si só a independência da geração por LLM.
+
+**Responsáveis pela conferência de requisitos:** integrantes informados — Saulo, Tiago, Fernando, Leonardo e Daniel. O histórico não contém confirmação individual da revisão semântica integral desta matriz; não se atribuem assinaturas automaticamente.

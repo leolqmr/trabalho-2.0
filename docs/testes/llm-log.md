@@ -4,8 +4,8 @@
 
 - **Modelo:** OpenAI GPT-6, assistência nesta conversa, 09/11/2026.
 - **Branch-base:** `feat/chamada-codigo-temporario`, commit `c9028b6` (mesmo conteúdo do merge `d4c8050`).
-- **Framework:** Vitest 4.x e V8 coverage para NestJS/TypeScript; execução deverá ocorrer no computador da equipe.
-- **Rodada da geração nesta reconstrução:** uma rodada de composição dos arquivos em `tests/v1-llm/`. A quantidade de testes executados e eventuais reparos de compilação ainda não foi medida aqui.
+- **Framework:** Vitest 4.1.11 com cobertura V8 para NestJS/TypeScript. A execução foi realizada localmente e registrada em `docs/testes/relatorios/reconstrucao/execucoes/v1.txt`.
+- **Rodada da geração nesta reconstrução:** uma rodada de composição dos arquivos em `tests/v1-llm/`. O log local registra **24 testes executados, 24 aprovados, zero falhas e zero erros de carregamento**. Não há reparos de compilação da V1 documentados; isso não comprova ausência de ajustes anteriores à primeira execução registrada.
 - **Independência:** esta é uma reconstrução com assistência da mesma LLM que já conheceu partes da Sprint 3 anterior. **Não declarar que houve geração cega**. O protocolo requer que o projeto manual seja aprovado antes da geração. A equipe deve avaliar se deseja uma geração adicional em nova conversa/sessão sem mostrar a matriz e preservar o resultado bruto para fortalecer esse requisito.
 
 ## Solicitação do usuário — registro literal
@@ -42,10 +42,14 @@ Este bloco descreve a especificação usada para compor o pacote; **não é apre
 - Sem cenário de presença já registrada.
 - Uma asserção de hash hexadecimal de 64 caracteres (`CT09`) decorre da implementação SHA-256, **não de requisito que especifica o algoritmo**: exemplo de oráculo acoplado a detalhe interno.
 
-## Registro de execução — preencher depois de rodar
+## Registro de execução — resultado observado
 
 | Momento | Comando | Testes passando | Falhando | Não compilando | Ajuste de compilação (se houve) | Log |
 |---|---|---:|---:|---:|---|---|
-| v1 original | `npx.exe vitest run --config vitest.sprint3.v1.config.ts --coverage` | A medir | A medir | A medir | Não inventar | `docs/testes/relatorios/reconstrucao/execucoes/v1.txt` |
+| V1 preservada | `npx.exe vitest run --config vitest.sprint3.v1.config.ts --coverage` | 24 | 0 | 0 | Nenhum ajuste de compilação registrado na execução capturada | `docs/testes/relatorios/reconstrucao/execucoes/v1.txt` |
 
-Se ocorrer falha na v1, investigar primeiro se é um teste incorreto ou defeito real; NÃO apagar nem editar a v1 silenciosamente. Registrar até 3 rodadas **apenas para compilar/executar** e preservar a revisão no Git. Não alegar que testes passaram antes de existir log válido.
+**Medição do Vitest/V8:** linhas **66,30%**, branches **64,81%**; total de **24/24** testes aprovados, código de saída **0**. A V1 foi registrada no commit `ce7b2bb`, antes da V2 (`91ee329`). Os artefatos de cobertura HTML/JSON e o histórico permitem auditar esses valores. A V1 não deve ser editada retrospectivamente para ocultar limitações.
+
+**Limite metodológico:** a assistência usada para criar a V1 não foi comprovadamente cega à matriz/ao histórico do projeto. A especificação operativa acima é uma reconstrução reproduzível, não uma transcrição de prompt e resposta integral de serviço externo. Não atribuir autoria humana exclusiva ao projeto manual.
+
+**Verificação posterior (13/11/2026):** o integrante que executou os comandos relatou nova passagem das suítes e do build no terminal; essa confirmação não substitui os logs históricos anexados de 09/11/2026 nem constitui novo log de cobertura.
