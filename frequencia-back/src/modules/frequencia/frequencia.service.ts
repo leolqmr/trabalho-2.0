@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ResourceNotFoundException } from '@/common/exceptions/resource-not-found.exception';
 import { PrismaService } from '@/database/prisma.service';
-import { montarFrequencia } from './frequencia.util';
+import { calcularResumo } from './frequencia.util';
 
 const ALUNO_COM_HISTORICO = {
   turma: { select: { id: true, name: true } },
@@ -19,7 +19,7 @@ export class FrequenciaService {
       include: ALUNO_COM_HISTORICO,
     });
     if (!aluno) throw new ResourceNotFoundException('Aluno', alunoId);
-    return montarFrequencia(aluno, await this.aulasRealizadas(turmaId));
+    return this.montar(aluno, await this.aulasRealizadas(turmaId));
   }
 
   /**
@@ -35,7 +35,7 @@ export class FrequenciaService {
       orderBy: { createdAt: 'asc' },
     });
     return Promise.all(
-      alunos.map(async (a) => montarFrequencia(a, await this.aulasRealizadas(a.turma_id))),
+      alunos.map(async (a) => this.montar(a, await this.aulasRealizadas(a.turma_id))),
     );
   }
 
@@ -44,4 +44,25 @@ export class FrequenciaService {
     return this.prisma.aula.count({ where: { turma_id: turmaId, presencas: { some: {} } } });
   }
 
+  private montar(
+    aluno: {
+      id: string;
+      name: string;
+      email: string;
+      turma: { id: string; name: string };
+      presencas: { present: boolean; aula: { id: string; date: Date } }[];
+    },
+    aulasRealizadas: number,
+  ) {
+    const historico = aluno.presencas
+      .map((p) => ({ aula_id: p.aula.id, date: p.aula.date, present: p.present }))
+      .sort((a, b) => b.date.getTime() - a.date.getTime());
+
+    return {
+      aluno: { id: aluno.id, name: aluno.name, email: aluno.email },
+      turma: aluno.turma,
+      resumo: calcularResumo(aluno.presencas, aulasRealizadas),
+      historico,
+    };
+  }
 }
