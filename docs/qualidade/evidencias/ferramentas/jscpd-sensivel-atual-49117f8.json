@@ -1,0 +1,147 @@
+{
+  "duplicates": [
+    {
+      "firstFile": {
+        "end": 7,
+        "endLoc": {
+          "column": 8,
+          "line": 7,
+          "position": 464
+        },
+        "name": "chamada-codigo.controller.ts",
+        "start": 2,
+        "startLoc": {
+          "column": 36,
+          "line": 2,
+          "position": 138
+        }
+      },
+      "format": "typescript",
+      "fragment": "import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';\nimport { AccessRole } from '@/common/auth/access-role.enum';\nimport type { CurrentUser } from '@/common/auth/current-user.interface';\nimport { GetCurrentUser } from '@/common/auth/decorators/current-user.decorator';\nimport { Roles } from '@/common/auth/decorators/roles.decorator';\nimport { ChamadaCodigoService } from './chamada-codigo.service';",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 6,
+      "secondFile": {
+        "end": 7,
+        "endLoc": {
+          "column": 8,
+          "line": 7,
+          "position": 447
+        },
+        "name": "frequencia.controller.ts",
+        "start": 2,
+        "startLoc": {
+          "column": 49,
+          "line": 2,
+          "position": 121
+        }
+      },
+      "tokens": 37
+    },
+    {
+      "firstFile": {
+        "end": 51,
+        "endLoc": {
+          "column": 53,
+          "line": 51,
+          "position": 2029
+        },
+        "name": "chamada-codigo.service.spec.ts",
+        "start": 46,
+        "startLoc": {
+          "column": 47,
+          "line": 46,
+          "position": 1808
+        }
+      },
+      "format": "typescript",
+      "fragment": "  it('nega registro para quem não é da turma', async () => {\n    const prisma = {\n      chamadaCodigo: { findUnique: vi.fn().mockResolvedValue({\n        aula_id: AULA_ID, aula: { turma_id: TURMA_ID },\n      }) },\n      aluno: { findUnique: vi.fn().mockResolvedValue(null) },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 6,
+      "secondFile": {
+        "end": 64,
+        "endLoc": {
+          "column": 53,
+          "line": 64,
+          "position": 2561
+        },
+        "name": "chamada-codigo.service.spec.ts",
+        "start": 59,
+        "startLoc": {
+          "column": 40,
+          "line": 59,
+          "position": 2340
+        }
+      },
+      "tokens": 53
+    },
+    {
+      "firstFile": {
+        "end": 80,
+        "endLoc": {
+          "column": 11,
+          "line": 80,
+          "position": 3366
+        },
+        "name": "chamada-codigo.service.ts",
+        "start": 74,
+        "startLoc": {
+          "column": 20,
+          "line": 74,
+          "position": 3018
+        }
+      },
+      "format": "typescript",
+      "fragment": "    const chamada = await this.prisma.$transaction(async (tx) => {\n      // Todas as operações por aula bloqueiam a mesma linha, evitando corrida\n      // entre reabertura, encerramento e registro de um estudante.\n      const aulas = await this.bloquearAula(tx, aulaId);\n      if (aulas.length === 0) throw new ResourceNotFoundException('Aula', aulaId);\n\n      const anterior = await tx.chamadaCodigo.findUnique({ where: { aula_id: aulaId } });",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 99,
+        "endLoc": {
+          "column": 11,
+          "line": 99,
+          "position": 4272
+        },
+        "name": "chamada-codigo.service.ts",
+        "start": 96,
+        "startLoc": {
+          "column": 4,
+          "line": 96,
+          "position": 4074
+        }
+      },
+      "tokens": 44
+    }
+  ],
+  "statistics": {
+    "detectionDate": "2026-11-09T12:21:08.177Z",
+    "formats": {
+      "typescript": {
+        "clones": 3,
+        "duplicatedLines": 19,
+        "duplicatedTokens": 134,
+        "lines": 660,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 2.878787878787879,
+        "percentageTokens": 2.8462192013593883,
+        "sources": 12,
+        "tokens": 4708
+      }
+    },
+    "total": {
+      "clones": 3,
+      "duplicatedLines": 19,
+      "duplicatedTokens": 134,
+      "lines": 660,
+      "newClones": 0,
+      "newDuplicatedLines": 0,
+      "percentage": 2.878787878787879,
+      "percentageTokens": 2.8462192013593883,
+      "sources": 12,
+      "tokens": 4708
+    }
+  }
+}

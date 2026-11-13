@@ -1,24 +1,26 @@
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-/** O mesmo escopo de cinco arquivos será usado na v2. */
+// Configuração isolada: executa apenas a v1 e mede exatamente o escopo selecionado.
 export default defineConfig({
-  resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
   test: {
     globals: true,
     environment: 'node',
     include: ['tests/v1-llm/**/*.test.ts'],
+    exclude: ['node_modules', 'dist'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json-summary', 'json', 'html'],
-      reportsDirectory: '../docs/testes/relatorios/reconstrucao/v1',
+      reporter: ['text', 'json', 'json-summary', 'html'],
+      reportOnFailure: true,
+      reportsDirectory: '../docs/testes/relatorios/v1',
       include: [
         'src/modules/chamada-codigo/chamada-codigo.service.ts',
         'src/modules/chamada-codigo/dto/abrir-chamada-codigo.dto.ts',
         'src/modules/chamada-codigo/dto/registrar-codigo.dto.ts',
         'src/modules/frequencia/frequencia.util.ts',
-        'src/modules/frequencia/frequencia.service.ts',
       ],
+      exclude: [],
     },
   },
+  resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
 });

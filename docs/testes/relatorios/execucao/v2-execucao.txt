@@ -1,0 +1,73 @@
+
+ RUN  v4.1.11 /home/claude/trabalho-2.0/frequencia-back
+      Coverage enabled with v8
+
+ ✓ tests/v2/chamada-v2.test.ts > T01 [VL 0] rejeita 0 minuto 6ms
+ ✓ tests/v2/chamada-v2.test.ts > T02 [VL 1] aceita 1 minuto 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T03 [PE interior] aceita 8 minutos 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T04 [VL 15] aceita 15 minutos 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T05 [VL 16] rejeita 16 minutos 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T06 [PE não inteiro] rejeita fração de minuto 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T07 [PE formato] gera somente oito letras permitidas 4ms
+ ✓ tests/v2/chamada-v2.test.ts > T08 [VL duração mínima] abre janela com prazo de exatamente 60 segundos 2ms
+ ✓ tests/v2/chamada-v2.test.ts > T09 [PE segredo] status não expõe código, hash ou salt 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T10 [FL primeira abertura] cria janela usando upsert e retorna a chave apenas na abertura 3ms
+ ✓ tests/v2/chamada-v2.test.ts > T11 [FL reabertura] limpa contadores, altera hash, desbloqueia e renova prazo 2ms
+ ✓ tests/v2/chamada-v2.test.ts > T12 [PE aula inexistente] recusa abertura em aula inexistente 3ms
+ ✓ tests/v2/chamada-v2.test.ts > T13 [PE janela inexistente] recusa encerramento sem chamada 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T14 [FL encerramento] salva timestamp do encerramento 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T15 [PE email ausente] recusa sem consultar banco 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T16 [PE não matriculado] impede acesso e não abre transação 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T17 [PE matriculado] verifica matrícula na turma correta 2ms
+ ✓ tests/v2/chamada-v2.test.ts > T18 [PE normalização] aceita minúsculas e espaços periféricos 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T19 [VL 7] rejeita sete caracteres 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T20 [VL 8] aceita oito caracteres 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T21 [VL 9] rejeita nove caracteres 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T22 [PE proibido] rejeita letras I e O 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T23 [PE correto] faz upsert com present true e sucesso 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T24 [PE incorreto] consome tentativa e emite erro 400 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T25 [VL 5] aceita código correto na quinta tentativa 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T26 [VL 6] bloqueia código correto na sexta tentativa com 429 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T27 [PE encerrada] rejeita janela encerrada com 409 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T28 [VL instante exato] rejeita chamada no exato momento da expiração 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T29 [PE ativa] janela ativa permite validar código e contar tentativa 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T30 [FL já presente] retorna sucesso sem contar tentativa ou duplicar 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T31 [FL falta anterior] converte presença false para true sem duplicação 4ms
+ ✓ tests/v2/chamada-v2.test.ts > T32 [PE sem email] não consulta chamadas se usuário não tem email 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T33 [PE matriculado/ativo] consulta exige vínculo, tempo e janela não encerrada 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T34 [PE não registrada] devolve registrada false e nenhum segredo 1ms
+ ✓ tests/v2/chamada-v2.test.ts > T35 [PE registrada] devolve registrada true e nenhum segredo 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T36 [PE aula inexistente] recusa status 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T37 [PE chamada inexistente] retorna null 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T38 [FL ativa] exibe atividade e quantidade de presentes 0ms
+ ✓ tests/v2/chamada-v2.test.ts > T39 [FL inativa] identifica encerramento e expiração 0ms
+ ✓ tests/v2/frequencia-v2.test.ts > T40 [PE regular] zero por cento 2ms
+ ✓ tests/v2/frequencia-v2.test.ts > T41 [VL 14.9] imediatamente abaixo de atenção 0ms
+ ✓ tests/v2/frequencia-v2.test.ts > T42 [VL 15] início inclusivo da atenção 0ms
+ ✓ tests/v2/frequencia-v2.test.ts > T43 [PE atenção] vinte por cento 0ms
+ ✓ tests/v2/frequencia-v2.test.ts > T44 [VL 25] limite inclusivo da atenção 0ms
+ ✓ tests/v2/frequencia-v2.test.ts > T45 [VL 25.1] acima do limite de faltas 0ms
+ ✓ tests/v2/frequencia-v2.test.ts > T46 [PE crítico] cinquenta por cento 0ms
+ ✓ tests/v2/frequencia-v2.test.ts > T47 [PE fração] arredonda 1 falta / 3 aulas para 33,3% 1ms
+ ✓ tests/v2/frequencia-v2.test.ts > T48 [VL zero] sem aulas registra zero e não divide por zero 0ms
+
+ Test Files  2 passed (2)
+      Tests  48 passed (48)
+   Start at  09:13:58
+   Duration  862ms (transform 143ms, setup 0ms, import 439ms, tests 52ms, environment 0ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |     100 |    97.91 |     100 |     100 |                   
+ chamada-codigo    |     100 |    97.61 |     100 |     100 |                   
+  ...go.service.ts |     100 |    97.61 |     100 |     100 | 29                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 100% ( 98/98 )
+Branches     : 97.91% ( 47/48 )
+Functions    : 100% ( 23/23 )
+Lines        : 100% ( 81/81 )
+================================================================================

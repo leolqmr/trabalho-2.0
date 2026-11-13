@@ -1,0 +1,83 @@
+{
+  "duplicates": [
+    {
+      "firstFile": {
+        "end": 51,
+        "endLoc": {
+          "column": 53,
+          "line": 51,
+          "position": 2029
+        },
+        "name": "chamada-codigo.service.spec.ts",
+        "start": 46,
+        "startLoc": {
+          "column": 47,
+          "line": 46,
+          "position": 1808
+        }
+      },
+      "format": "typescript",
+      "fragment": "  it('nega registro para quem não é da turma', async () => {\n    const prisma = {\n      chamadaCodigo: { findUnique: vi.fn().mockResolvedValue({\n        aula_id: AULA_ID, aula: { turma_id: TURMA_ID },\n      }) },\n      aluno: { findUnique: vi.fn().mockResolvedValue(null) },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 6,
+      "secondFile": {
+        "end": 64,
+        "endLoc": {
+          "column": 53,
+          "line": 64,
+          "position": 2561
+        },
+        "name": "chamada-codigo.service.spec.ts",
+        "start": 59,
+        "startLoc": {
+          "column": 40,
+          "line": 59,
+          "position": 2340
+        }
+      },
+      "tokens": 53
+    }
+  ],
+  "statistics": {
+    "detectionDate": "2026-11-09T12:21:08.134Z",
+    "formats": {
+      "tsx": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 229,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 2,
+        "tokens": 2130
+      },
+      "typescript": {
+        "clones": 1,
+        "duplicatedLines": 6,
+        "duplicatedTokens": 53,
+        "lines": 407,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 1.4742014742014742,
+        "percentageTokens": 1.7118863049095607,
+        "sources": 6,
+        "tokens": 3096
+      }
+    },
+    "total": {
+      "clones": 1,
+      "duplicatedLines": 6,
+      "duplicatedTokens": 53,
+      "lines": 636,
+      "newClones": 0,
+      "newDuplicatedLines": 0,
+      "percentage": 0.9433962264150944,
+      "percentageTokens": 1.01415996938385,
+      "sources": 8,
+      "tokens": 5226
+    }
+  }
+}

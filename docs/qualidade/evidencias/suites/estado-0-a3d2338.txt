@@ -1,0 +1,17 @@
+# Estado 0: commit a3d2338 — ORIGINAL (antes da DT-02)
+# Executado em 2026-11-09T12:19:50Z (UTC) com Vitest; v1 oficial copiada para tests/v1-llm/ neste estado
+
+## suíte v1 (vitest.sprint3.v1.config.ts)
+ RUN  v4.1.11 /tmp/wt-0/frequencia-back
+ Test Files  1 passed (1)
+      Tests  117 passed (117)
+   Start at  09:19:51
+   Duration  793ms (transform 167ms, setup 0ms, import 530ms, tests 112ms, environment 0ms)
+
+## suíte v2 (vitest.sprint3.v2.config.ts)
+ RUN  v4.1.11 /tmp/wt-0/frequencia-back
+ Test Files  2 passed (2)
+      Tests  48 passed (48)
+   Start at  09:19:52
+   Duration  590ms (transform 131ms, setup 0ms, import 333ms, tests 45ms, environment 0ms)
+

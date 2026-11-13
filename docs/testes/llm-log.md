@@ -1,51 +1,70 @@
-# Log LLM — Sprint 3 reconstruída, geração da V1
+# Sprint 3 — Log de interação com LLM
 
-## Metadados
+Este log tem duas partes. A **v1** (Parte 1) foi gerada em 09/11/2026 numa conversa nova, sem a matriz de rastreabilidade. A **v2** (Parte 2) foi construída em 08/11/2026 a partir da matriz.
 
-- **Modelo:** OpenAI GPT-6, assistência nesta conversa, 09/11/2026.
-- **Branch-base:** `feat/chamada-codigo-temporario`, commit `c9028b6` (mesmo conteúdo do merge `d4c8050`).
-- **Framework:** Vitest 4.x e V8 coverage para NestJS/TypeScript; execução deverá ocorrer no computador da equipe.
-- **Rodada da geração nesta reconstrução:** uma rodada de composição dos arquivos em `tests/v1-llm/`. A quantidade de testes executados e eventuais reparos de compilação ainda não foi medida aqui.
-- **Independência:** esta é uma reconstrução com assistência da mesma LLM que já conheceu partes da Sprint 3 anterior. **Não declarar que houve geração cega**. O protocolo requer que o projeto manual seja aprovado antes da geração. A equipe deve avaliar se deseja uma geração adicional em nova conversa/sessão sem mostrar a matriz e preservar o resultado bruto para fortalecer esse requisito.
+| Suíte | LLM | Quando | Prompt | Resposta (sem edição) |
+|---|---|---|---|---|
+| **v1** | Claude Opus 5.5 (claude.ai, conversa normal) | 09/11/2026, por volta das 09h (Recife) | `docs/testes/prompt-v1.md` | `frequencia-back/tests/v1-llm/chamada-v1.test.ts` (117 testes) |
+| v2 | ChatGPT, GPT-6 | 08/11/2026 | Parte 2 | `frequencia-back/tests/v2/` (48 testes) |
 
-## Solicitação do usuário — registro literal
+## Parte 1 — v1 (Claude Opus 5.5)
 
-> Eu quero que voce refaça toda a sprint 3 para mim considerando todos os erros cometidos ao longo do caminho. Faça como ponto de partida aquela branch em que implementamos a feature de tokens temporário que fizemos em um outro chat. Lembre-se de ler novamente com muita atenção o enunciado de novo da sprint 3 e faça a partir dessa branch que eu disse, pois ela foi a mais recente antes do início da sprint 3.
+- Projeto: P07 — Controle de Frequência. Framework: Vitest 4, NestJS/TypeScript.
+- Modelo e data de uso, informados pela equipe: Claude Opus 5.5, conversa normal (não temporária) aberta do zero, em 09/11/2026 por volta das 09h.
+- Código fornecido à LLM: o da branch `sprint3/testes` no commit `6ce1ba2`, ou seja, **já com as três refatorações** (DT-01, DT-02, DT-04).
 
-## Contexto técnico fornecido à geração
+### Rodada 1 — geração da v1
 
-Inspeção dos arquivos no commit `c9028b6`:
-- `src/modules/chamada-codigo/chamada-codigo.service.ts`
-- `src/modules/chamada-codigo/dto/abrir-chamada-codigo.dto.ts`
-- `src/modules/chamada-codigo/dto/registrar-codigo.dto.ts`
-- `src/modules/frequencia/frequencia.util.ts`
-- `src/modules/frequencia/frequencia.service.ts`
-- `vitest.config.ts` e `package.json`.
+**Prompt (texto completo em `docs/testes/prompt-v1.md`, 455 linhas).** Ele reúne, num único bloco, as instruções abaixo, as quatro histórias com os 21 critérios de aceitação (copiados de `requisitos-e-criterios.md`, sem as linhas de referência), o código de `chamada-codigo.service.ts`, dos dois DTOs, de `frequencia.util.ts` e o `schema.prisma`. A parte de instruções foi:
 
-## Especificação operativa reproduzível para LLM
+```text
+Você é um engenheiro de testes. Gere uma suíte de testes automatizados em **Vitest 4** (TypeScript) para o backend NestJS descrito abaixo.
 
-> Gere somente uma v1 de testes Vitest (sem alterar o código de produção) para as histórias: abertura pelo professor de token temporário com duração inteira 1 a 15 minutos e oito letras sem I/O; armazenamento de hash+salt sem expor segredo; registro por aluno matriculado com e-mail, código e janela ativa; consulta de chamadas do aluno sem segredo; cálculo de frequência, faltas e limiar de risco. Use partições de equivalência, limites, cenários válidos e inválidos, e anote `US`, critério, partição ou limite nos nomes/comentários dos testes. Use mocks do Prisma sem acessar Postgres. Preserve arquivos da v1 para posterior comparação. Não receba a matriz detalhada de casos antes da geração. Produza código compatível com imports e assinaturas reais do commit-base.
+## Técnicas obrigatórias
+1. **Partições de equivalência:** para cada variável de entrada, identifique classes válidas e inválidas e teste um representante de cada uma.
+2. **Análise de valores-limite:** teste os valores dos dois lados de cada fronteira.
+3. **Cobertura dos critérios de aceitação:** todo critério (CAxx.y) deve ter pelo menos um teste.
 
-Este bloco descreve a especificação usada para compor o pacote; **não é apresentado como transcrição de uma chamada independente a um serviço externo**.
+Em cada teste, coloque um comentário indicando **qual critério de aceitação** ele cobre e **qual técnica** usa (partição, valor-limite ou fluxo). Exemplo: `// US02 CA02.4 — valor-limite: 6ª tentativa`.
 
-## Arquivos produzidos
+## Regras
+- Entregue **um único arquivo** `chamada-v1.test.ts`, que ficará em `frequencia-back/tests/v1-llm/`. Os imports relativos partem daí (ex.: `../../src/modules/chamada-codigo/chamada-codigo.service`).
+- Use apenas `vitest` e as dependências que já aparecem no código abaixo (`@nestjs/common`, `zod`, `nestjs-zod`, `@prisma/client`). Não use banco de dados real: crie mocks do `PrismaService` com `vi.fn()`.
+- Os resultados esperados devem vir dos **critérios de aceitação**, não do comportamento atual do código.
+- Não altere o código de produção.
+- Responda apenas com o arquivo completo, em um bloco de código.
+```
 
-- `tests/v1-llm/chamada-v1.test.ts`: 18 `it(...)`.
-- `tests/v1-llm/frequencia-v1.test.ts`: 6 `it(...)`.
-- `vitest.sprint3.v1.config.ts`: cobertura limitada aos mesmos cinco arquivos usados na v2.
+**Verificação de independência.** O prompt não contém a matriz nem os IDs T01–T48 (busca por "matriz" e por `T` seguido de dois dígitos: 0 ocorrências). A matriz também não foi colada na conversa. **Limite:** não foi verificado se recursos de memória ou de histórico do aplicativo estavam ativos nessa conversa, por isso a independência é "sem acesso à matriz pelo prompt", não uma garantia absoluta.
 
-## Diagnóstico inicial por inspeção
+**Resposta.** Um arquivo de 1.224 linhas com 117 testes, commitado em `49117f8` exatamente como recebido da equipe (comparação byte a byte, sem nenhuma alteração nossa). Cada teste traz o comentário de critério e técnica pedido no prompt.
 
-- Sem testes do método `FrequenciaService.detalhe/minhas` na v1.
-- Sem limites explícitos da 5ª e 6ª tentativas.
-- Sem status na fronteira exata de expiração ou chamada fechada manualmente.
-- Sem cenário de presença já registrada.
-- Uma asserção de hash hexadecimal de 64 caracteres (`CT09`) decorre da implementação SHA-256, **não de requisito que especifica o algoritmo**: exemplo de oráculo acoplado a detalhe interno.
+**Rodadas de correção:** nenhuma. A suíte importou e executou de primeira, sem nome ou caminho inventado.
 
-## Registro de execução — preencher depois de rodar
+**Resultado da execução** (`docs/testes/relatorios/execucao/v1-execucao.txt`): 117 testes, **117 passando, 0 falhando, 0 que não compilam**.
 
-| Momento | Comando | Testes passando | Falhando | Não compilando | Ajuste de compilação (se houve) | Log |
-|---|---|---:|---:|---:|---|---|
-| v1 original | `npx.exe vitest run --config vitest.sprint3.v1.config.ts --coverage` | A medir | A medir | A medir | Não inventar | `docs/testes/relatorios/reconstrucao/execucoes/v1.txt` |
+**Problemas observados na v1** (detalhados no relatório de análise crítica):
 
-Se ocorrer falha na v1, investigar primeiro se é um teste incorreto ou defeito real; NÃO apagar nem editar a v1 silenciosamente. Registrar até 3 rodadas **apenas para compilar/executar** e preservar a revisão no Git. Não alegar que testes passaram antes de existir log válido.
+1. **15 oráculos genéricos.** `rejects.toThrow()` sem dizer qual erro (linhas 365, 433, 643, 650, 659, 673, 675, 696, 722, 733, 741, 750, 759, 766 e 843). Em todos esses casos o requisito pede um erro específico (400, 409 ou 429), então qualquer exceção faria o teste passar.
+2. **Acoplamento à forma das consultas do Prisma.** Os testes das linhas 894–914 e 930–939 comparam o objeto `where`/`select` passado ao Prisma. Uma refatoração da consulta que mantivesse o comportamento quebraria esses testes.
+3. **Um teste probabilístico** (linha 218: ao menos 46 códigos distintos em 50 gerados). A chance de falhar é desprezível (espaço de 24⁸ códigos), mas o resultado não é determinístico.
+4. **Nenhuma falha de execução**, API inventada ou teste sem asserção (0 de 117 sem `expect`).
+
+---
+
+## Parte 2 — v2 (ChatGPT, GPT-6, 08/11/2026)
+
+**Contexto.** A v2 foi construída em 08/11, a partir da matriz de 48 casos (T01–T48), antes de existir a v1 de 09/11. O confronto entre as duas foi feito depois, no relatório de análise crítica.
+
+- Projeto: P07 - Controle de frequência
+- Modelo utilizado: ChatGPT, GPT-6
+- Framework: Vitest 4, NestJS/TypeScript
+- Código-base observado: branch `sprint3/testes`.
+
+**Instrução de melhoria (texto completo):**
+
+> A partir da matriz de 48 casos T01–T48, ampliar a suíte de Vitest para verificar todas as partições de equivalência e limites de cada critério das quatro histórias, inclusive 0/1/15/16 minutos; tamanho 7/8/9; encerramento e reabertura; matrícula; erro 400/409/429; quinta e sexta tentativa; janela exatamente na expiração; presença existente; status de chamada sem revelar hash; limiares de faltas 14,9/15/25/25,1 e arredondamento 1/3. Identificar cada caso com seu ID, preservar a v1 sem edição, testar asserções de negócio, manter o mesmo escopo de cobertura e comparar resultados instrumentados.
+
+**Resposta:** `frequencia-back/tests/v2/chamada-v2.test.ts` e `frequencia-back/tests/v2/frequencia-v2.test.ts`; configuração isolada `vitest.sprint3.v2.config.ts`.
+
+**Validação:** os resultados de Vitest e cobertura estão em `docs/testes/relatorios/{v1,v2}/` e em `docs/testes/relatorios/execucao/`, medidos em 09/11/2026 (ver `indicadores-v1-v2.md`).

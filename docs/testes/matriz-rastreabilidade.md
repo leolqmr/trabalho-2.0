@@ -1,101 +1,77 @@
-# Matriz de rastreabilidade — MATRIZ FINAL — VALIDAR EXECUÇÕES
+# Sprint 3 — Matriz de rastreabilidade (consolidada)
 
-**Histórico:** o projeto manual anterior foi commitado em `matriz-projeto-manual.md`. Este arquivo final é produzido após a medição da v1 e a criação da v2. Colunas v1/v2 registram a **cobertura planejada pelos testes fornecidos no pacote**, não são evidências de execução. Após rodar, confirmar com os testes e os logs.
+**Projeto:** P07 — Controle de Frequência · **Branch:** `sprint3/testes` · **Atualização:** 09/11/2026 (colunas da v1 e da v2).
 
-## Critérios por história
+A matriz inicial foi commitada em `e2866be7` antes de qualquer suíte. Esta versão **preenche as colunas** a partir da leitura das asserções dos testes; não é uma matriz manual nova. **PE** = partição de equivalência; **VL** = valor-limite; **FL** = fluxo/estado.
 
-| Critério | Testes previstos v1 | Novos testes previstos v2 | V1 planejada | V2 planejada |
-|---|---|---|---|---|
-| US01-CA01 (formato) | CT01 | EVO15 | Sim | Sim |
-| US01-CA02 (duração) | CT02–CT06, CT09 | — | Sim | Sim |
-| US01-CA03 (segredo) | CT09 | — | Sim | Sim |
-| US01-CA04 (aula inexistente) | CT10 | — | Sim | Sim |
-| US02-CA01 (identidade/matrícula) | CT11–CT13 | — | Sim | Sim |
-| US02-CA02 (expiração/encerramento) | CT14 | EVO03–EVO04 | Sim | Sim |
-| US02-CA03 (código inválido/normalização) | CT07–CT08, CT15 | EVO06 | Sim | Sim |
-| US02-CA04 (limite de tentativas) | — | EVO01–EVO02 | Não | Sim |
-| US02-CA05 (presença/idempotência) | CT16 | EVO05 | Parcial | Sim |
-| US03-CA01 (sem e-mail) | CT17 | — | Sim | Sim |
-| US03-CA02 (listagem/segredos) | CT18 | EVO09 | Parcial | Sim |
-| US03-CA03 (status/presentes) | — | EVO07–EVO08 | Não | Sim |
-| US04-CA01 (classificação) | CT19–CT22 | — | Sim | Sim |
-| US04-CA02 (cálculo) | CT23–CT24 | EVO14 | Sim | Sim |
-| US04-CA03 (consultas de frequência) | — | EVO10–EVO13 | Não | Sim |
+**Colunas de cobertura:**
+- **v1 (09/11):** a v1 gerada pelo Claude Opus 5.5 em conversa nova, sem a matriz (`frequencia-back/tests/v1-llm/chamada-v1.test.ts`). `Sim (Lnnn)` indica a linha do teste que exercita o caso com a mesma entrada e verifica o resultado esperado. Os 117 testes passam (`relatorios/execucao/v1-execucao.txt`).
+- **v2:** casos TNN em `frequencia-back/tests/v2/`, com 48/48 testes passando.
 
-**Cobertura de critérios estrita** (somente se todos os CT/EVO mapeados executarem corretamente): v1 = 12/15 = 80%; v2 = 15/15 = 100%. O percentual de requisitos é uma métrica de rastreabilidade, distinta da cobertura estrutural medida pelo Vitest. Para critérios marcados 'Parcial' na v1, contar como coberto apenas se o grupo entender que o cenário v1 verifica a condição completa; este projeto os conta provisoriamente como cobertos na soma 12/15 por existir pelo menos um teste relacionado.
+| Critério | Variável | Partição ou limite | Caso planejado e resultado esperado | v1? | v2? |
+|---|---|---|---|---|---|
+| CA01.1 | duração | VL 0 | T01: `0` → rejeita | Sim (L150) | Sim (T01) |
+| CA01.1 | duração | VL 1 | T02: `1` → aceita | Sim (L145) | Sim (T02) |
+| CA01.1 | duração | PE interior | T03: `8` → aceita | Sim (L165) | Sim (T03) |
+| CA01.1 | duração | VL 15 | T04: `15` → aceita | Sim (L155) | Sim (T04) |
+| CA01.1 | duração | VL 16 | T05: `16` → rejeita | Sim (L160) | Sim (T05) |
+| CA01.1 | duração | PE não inteiro | T06: `1.5` → rejeita | Sim (L185) | Sim (T06) |
+| CA01.2 | código gerado | PE formato | T07: código → 8 letras `[A-HJ-NP-Z]` | Sim (L202) | Sim (T07) |
+| CA01.2 | expiração | VL duração mínima | T08: abrir com 1 minuto → prazo ≈ abertura + 60.000 ms | Sim (L224) | Sim (T08) |
+| CA01.3 | resposta de status | PE segredo | T09: status existente → sem `codigo`, `codigoHash`, `salt` | Sim (L280) | Sim (T09) |
+| CA01.4 | janela anterior | FL inexistente | T10: primeira abertura → cria janela | Sim (L369) | Sim (T10) |
+| CA01.4 | janela anterior | FL existente | T11: reabrir → nova chave/hash, limpa tentativas e `encerradoEm: null` | Sim (L334) | Sim (T11) |
+| CA01.5 | aula | PE inexistente | T12: abrir em aula inexistente → erro de recurso | Sim (L377) | Sim (T12) |
+| CA01.5 | chamada | PE inexistente | T13: encerrar aula sem chamada → erro de recurso | Sim (L395) | Sim (T13) |
+| CA01.6 | encerramento | FL sucesso | T14: encerrar → salva `encerradoEm` | Sim (L412) | Sim (T14) |
+| CA02.1 | e-mail | PE ausente | T15: `undefined` → acesso negado, sem banco | Sim (L456) | Sim (T15) |
+| CA02.1 | matrícula | PE inexistente | T16: e-mail não matriculado → acesso negado | Sim (L470) | Sim (T16) |
+| CA02.1 | matrícula | PE existente | T17: aluno matriculado → segue à validação da chamada | Sim (L487) | Sim (T17) |
+| CA02.2 | código submetido | PE normalizado | T18: minúsculas e espaços periféricos → código válido normalizado | Sim (L601) | Sim (T18) |
+| CA02.2 | comprimento | VL 7 | T19: sete letras → erro DTO | Sim (L535) | Sim (T19) |
+| CA02.2 | comprimento | VL 8 | T20: oito letras válidas → aceita DTO | Sim (L507) | Sim (T20) |
+| CA02.2 | comprimento | VL 9 | T21: nove letras → erro DTO | Sim (L540) | Sim (T21) |
+| CA02.2 | caracteres | PE proibido | T22: inclui `I` ou `O` → erro DTO | Sim (L556) | Sim (T22) |
+| CA02.3 | código | PE correto | T23: correto, ativa e matriculado → upsert presença e sucesso | Sim (L613) | Sim (T23) |
+| CA02.4 | código | PE incorreto | T24: incorreto → erro e contador incrementado | Sim (L647) | Sim (T24) |
+| CA02.4 | tentativas | VL 5 | T25: quinta tentativa com código certo → registra presença | Sim (L655) | Sim (T25) |
+| CA02.4 | tentativas | VL 6 | T26: sexta tentativa com código certo → bloqueia, não grava presença | Sim (L669) | Sim (T26) |
+| CA02.5 | janela | PE encerrada | T27: `encerradoEm` definido → conflito | Sim (L729) | Sim (T27) |
+| CA02.5 | janela | VL instante exato | T28: `expiraEm === agora` → conflito | Sim (L745) | Sim (T28) |
+| CA02.5 | janela | PE ativa | T29: `expiraEm > agora` e aberta → permite validação | Sim (L626) | Sim (T29) |
+| CA02.6 | presença anterior | FL já presente | T30: `present: true` → sucesso sem contador/upsert | Sim (L772) | Sim (T30) |
+| CA02.7 | presença anterior | FL falta | T31: `present: false` com chave correta → atualiza para true | Sim (L817) | Sim (T31) |
+| CA03.1 | e-mail | PE ausente | T32: sem e-mail → `[]` sem findMany | Sim (L870) | Sim (T32) |
+| CA03.2 | consulta | PE matriculado/ativo | T33: filtro exige matrícula, data futura e não encerrada | Sim (L894) | Sim (T33) |
+| CA03.3 | estado de registro | PE presença false/ausente | T34: lista → `registrada: false`, sem segredos | Sim (L949) | Sim (T34) |
+| CA03.3 | estado de registro | PE presença true | T35: lista → `registrada: true`, sem segredos | Sim (L941) | Sim (T35) |
+| CA03.4 | aula | PE inexistente | T36: status de aula inexistente → erro | Sim (L999) | Sim (T36) |
+| CA03.4 | chamada | PE inexistente | T37: status sem janela → `null` | Sim (L1006) | Sim (T37) |
+| CA03.4 | chamada | FL ativa | T38: janela ativa → `ativa: true`, quantidade de presentes | Sim (L1012) | Sim (T38) |
+| CA03.4 | chamada | FL encerrada/expirada | T39: janela inativa → `ativa: false` | Sim (L1019) | Sim (T39) |
+| CA04.1 | faltas % | PE regular | T40: `0` → REGULAR | Sim (L1061) | Sim (T40) |
+| CA04.1 | faltas % | VL 14,9 | T41: `14.9` → REGULAR | Sim (L1071) | Sim (T41) |
+| CA04.2 | faltas % | VL 15 | T42: `15` → ATENCAO | Sim (L1078) | Sim (T42) |
+| CA04.2 | faltas % | PE atenção | T43: `20` → ATENCAO | Sim (L1088) | Sim (T43) |
+| CA04.2 | faltas % | VL 25 | T44: `25` → ATENCAO | Sim (L1098) | Sim (T44) |
+| CA04.3 | faltas % | VL 25,1 | T45: `25.1` → CRITICO | Sim (L1105) | Sim (T45) |
+| CA04.3 | faltas % | PE crítico | T46: `50` → CRITICO | Sim (L1110) | Sim (T46) |
+| CA04.4 | faltas/aulas | PE fração | T47: 1 falta/3 aulas → 33,3% | Sim (L1151) | Sim (T47) |
+| CA04.4 | aulas realizadas | VL zero | T48: 0 aulas → 0%, sem divisão por zero | Sim (L1127) | Sim (T48) |
 
-## Partições definidas na Etapa 1 (classes válidas e inválidas)
 
-Cada ID identifica uma classe/estado distinto; o percentual depende de verificar que o teste citado realmente exercitou a classe.
+**Notas sobre a v1:** T10 é verificado em L369 junto com o auxiliar `abrirChamada` (caminho de criação da janela). T34 é verificado em L949; a ausência de segredos na lista está em L918. T06 usa 1,5 (L185); o valor 7,5 está em L180.
 
-| ID | Variável / partição | Tipo | V1 | V2 |
-|---|---|---|---|---|
-| P01 | código: 8 letras válidas sem I/O | Válida | CT01 | = |
-| P02 | código: I/O ou tamanho incompatível | Inválida | CT08 | EVO15 |
-| P03 | código com minúsculas e espaços | Válida | CT07 | EVO06 |
-| P04 | duração inteira 1–15 | Válida | CT02, CT03 | = |
-| P05 | duração abaixo de 1 | Inválida | CT04 | = |
-| P06 | duração acima de 15 | Inválida | CT05 | = |
-| P07 | duração fracionária | Inválida | CT06 | = |
-| P08 | aula inexistente | Inválida | CT10 | = |
-| P09 | email ausente no registro | Inválida | CT11 | = |
-| P10 | chamada inexistente | Inválida | CT12 | = |
-| P11 | aluno não matriculado | Inválida | CT13 | = |
-| P12 | chamada expirada | Inválida | CT14 | EVO03 |
-| P13 | código incorreto | Inválida | CT15 | = |
-| P14 | código válido e aluno apto | Válida | CT16 | = |
-| P15 | listagem sem email | Inválida | CT17 | = |
-| P16 | listagem com matrícula | Válida | CT18 | EVO09 |
-| P17 | faltas abaixo de 15% | Válida | CT19 | = |
-| P18 | faltas de 15% a 25% | Válida | CT20, CT21 | = |
-| P19 | faltas acima de 25% | Válida | CT22 | = |
-| P20 | nenhuma aula realizada | Válida | CT24 | EVO14 |
-| P21 | exatamente 5 tentativas | Válida | — | EVO01 |
-| P22 | 6 ou mais tentativas | Inválida | — | EVO02 |
-| P23 | chamada encerrada manualmente | Inválida | — | EVO04 |
-| P24 | presença preexistente | Válida | — | EVO05 |
-| P25 | status sem chamada | Válida | — | EVO07 |
-| P26 | status expirado na fronteira | Válida | — | EVO08 |
-| P27 | detalhe de aluno inexistente | Inválida | — | EVO10 |
-| P28 | detalhe de aluno existente | Válida | — | EVO11 |
-| P29 | minhas frequências sem e-mail | Inválida | — | EVO12 |
-| P30 | minhas frequências com e-mail | Válida | — | EVO13 |
+## Indicadores funcionais
 
-**Total proposto:** 30 partições: 20 v1 (66,7%) e 30 v2 (100%), desde que os testes sejam efetivamente executados. Não confundir P24 com o estado de tentativa 5/6.
+| Indicador | v1 | v2 |
+|---|---:|---:|
+| Critérios de aceitação com ao menos um caso coberto | 21/21 (100,00%) | 21/21 (100,00%) |
+| Partições de equivalência (PE) | 25/25 (100,00%) | 25/25 (100,00%) |
+| Valores-limite (VL) | 16/16 (100,00%) | 16/16 (100,00%) |
+| Fluxos/estados (FL) | 7/7 (100,00%) | 7/7 (100,00%) |
 
-## Valores-limite definidos na Etapa 1
 
-| ID | Fronteira | Caso exercitado v1 | v2 |
-|---|---|---|---|
-| L01 | duração 0 | CT04 | = |
-| L02 | duração 1 | CT02 | = |
-| L03 | duração 15 | CT03 | = |
-| L04 | duração 16 | CT05 | = |
-| L05 | código com 7 letras | — | EVO15 |
-| L06 | código com 8 letras | CT01 | EVO15 |
-| L07 | código com 9 letras | — | EVO15 |
-| L08 | faltas 14,9% | CT19 | = |
-| L09 | faltas 15% | CT20 | = |
-| L10 | faltas 25% | CT21 | = |
-| L11 | faltas 25,1% | CT22 | = |
-| L12 | aulas realizadas = 0 | CT24 | = |
-| L13 | expiração exatamente agora | — | EVO03, EVO08 |
-| L14 | quinta tentativa | — | EVO01 |
-| L15 | sexta tentativa | — | EVO02 |
-
-**Total proposto:** 15 limites, 10 v1 (66,7%) e 15 v2 (100%), condicionados à confirmação da equipe e da execução. Limites adicionais não computados: timestamps um milissegundo antes/depois, já cobertos parcialmente pela partição expirada e válida.
-
-## Lacuna → melhoria
-
-| Lacuna constatável no código de teste v1 | Teste específico adicionado na v2 | Requisito |
-|---|---|---|
-| 5ª e 6ª tentativas ausentes | EVO01, EVO02 | US02-CA04 |
-| expiração pontual e encerramento manual | EVO03, EVO04 | US02-CA02 |
-| idempotência da presença ausente | EVO05 | US02-CA05 |
-| normalização no serviço não verificada | EVO06 | US02-CA03 |
-| status sem chamada, expiração e contagem ausentes | EVO07, EVO08 | US03-CA03 |
-| listagem com presença já registrada | EVO09 | US03-CA02 |
-| serviço de frequência ausente da v1 | EVO10–EVO14 | US04-CA02/CA03 |
-| limites 7 e 9 letras não exercitados | EVO15 | US01-CA01 |
-
-As lacunas acima são verificadas por **inspeção estática dos arquivos de teste**. Sua confirmação empírica exige executar a v1 antes de gerar/commitar a v2, seguindo o fluxo real estabelecido no roteiro.
+- "Coberto" mede **existência de um teste com a entrada e o resultado esperado do caso**, não a qualidade do oráculo. Os 15 testes da v1 com `rejects.toThrow()` genérico cobrem o caso, mas só verificam que *algum* erro ocorreu (ver `relatorio-analise-critica.md`).
+- Os testes da v1 e da v2 usam mocks do Prisma: a cobertura **não comprova** concorrência real, transações/locks nem prevenção de fraude presencial. O código de oito letras pode ser repassado dentro do prazo.
+- A matriz inicial ficou preservada no histórico do Git; este documento só acrescenta colunas.

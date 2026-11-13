@@ -1,24 +1,26 @@
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
-/** V2 = reprodução íntegra dos testes da V1 + testes EVO, no mesmo escopo de cobertura. */
+// Mesma seleção de fontes da v1; somente o conjunto de testes muda.
 export default defineConfig({
-  resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
   test: {
     globals: true,
     environment: 'node',
     include: ['tests/v2/**/*.test.ts'],
+    exclude: ['node_modules', 'dist'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json-summary', 'json', 'html'],
-      reportsDirectory: '../docs/testes/relatorios/reconstrucao/v2',
+      reporter: ['text', 'json', 'json-summary', 'html'],
+      reportOnFailure: true,
+      reportsDirectory: '../docs/testes/relatorios/v2',
       include: [
         'src/modules/chamada-codigo/chamada-codigo.service.ts',
         'src/modules/chamada-codigo/dto/abrir-chamada-codigo.dto.ts',
         'src/modules/chamada-codigo/dto/registrar-codigo.dto.ts',
         'src/modules/frequencia/frequencia.util.ts',
-        'src/modules/frequencia/frequencia.service.ts',
       ],
+      exclude: [],
     },
   },
+  resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
 });

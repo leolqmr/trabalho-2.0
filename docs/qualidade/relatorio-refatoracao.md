@@ -1,42 +1,62 @@
-﻿# Sprint 3 | Parte 2 — Qualidade e refatoração do P07
+# Sprint 3 — Relatório de refatoração
 
-**Projeto:** Controle de Frequência, token temporário · **Base:** `feat/chamada-codigo-temporario` (`c9028b6`).
+Projeto P07 — Controle de Frequência · Branch `sprint3/testes` · Atualizado em 09/11/2026
 
-## 1. Escopo e método de identificação
+## 1. Contexto e escolha dos itens
 
-Analisaram-se `ChamadaCodigoService`, `FrequenciaService`, utilitários de frequência e DTOs da feature. A inspeção com GPT-6 produziu **8 candidatos** em `divida-tecnica.md`, distribuídos por propriedades de projeto, SOLID e code smells. Não se afirma que ferramentas externas (jscpd/madge/ESLint) foram executadas sem os logs correspondentes. A equipe confirmou os achados em `validacao-humana.md` (com responsável e data registrados). Falsos positivos são mantidos como candidatos recusados com justificativa; a quantidade de itens não supera a qualidade do diagnóstico.
+O inventário (`docs/qualidade/divida-tecnica.md`) tem nove itens: oito identificados por leitura manual apoiada por ChatGPT em 08/11 e um (DT-09) proposto por ferramenta em 09/11. Foram refatorados três, em commits separados e com o ID do item:
 
-## 2. Relatório de dívida técnica
+| Item | Por que foi escolhido (uma frase) |
+|---|---|
+| **DT-02** (`FOR UPDATE` repetido) | Trecho dentro do módulo mais coberto (100% de linhas do serviço) e correção mecânica, de baixo risco. |
+| **DT-04** (relógio espalhado) | Quatro leituras diretas do relógio impediam testes determinísticos; centralizá-las dá um único ponto para controlar o tempo. |
+| **DT-01** (`registrar` longo) | Era o método mais longo e que mais misturava responsabilidades do serviço (55 linhas pelo ESLint). |
 
-O inventário identifica ID, arquivo/função, problema, categoria, consequência concreta, **como foi encontrado** e status. Permanecem abertas a DT-05 (duplicação de SQL de bloqueio) e a DT-08 (ausência de testes reais de concorrência com PostgreSQL). A DT-04 foi descartada na revisão humana. Algumas sugestões (ex.: DT-06) dependem de avaliar se a abstração traria benefício ou complexidade artificial. Consulte a tabela e assinaturas da equipe nos anexos.
+Em todos os casos as suítes foram rodadas **antes e depois** (logs em `docs/qualidade/evidencias/suites/`): a **v1** com 117 testes e a **v2** com 48. Nenhum teste quebrou em nenhum estado, nem no código original (117/117 e 48/48).
 
-## 3. Refatorações realizadas — três técnicas distintas
+## 2. DT-02 — SQL de bloqueio duplicado · commit `aca6e77`
 
-| ID | Técnica | Local | Por que foi escolhida | Commit | V2 antes → depois |
-|---|---|---|---|---|---|
-| DT-01 | Replace Magic Literal | `ChamadaCodigoService.abrir` | `60_000` tinha unidade implícita, agora `MILISSEGUNDOS_POR_MINUTO` | `d5a055d` | 39/39 → 39/39 |
-| DT-02 | Extract Function | `ChamadaCodigoService.registrar` | separou verificação da matrícula da orquestração da transação | `ad37b20` | 39/39 → 39/39 |
-| DT-03 | Move Function | `FrequenciaService.montar` → `frequencia.util.montarFrequencia` | separou acesso Prisma de transformação pura de histórico e resumo | `828138c` | 39/39 → 39/39 |
+**Antes** (3 cópias, em `abrir`, `encerrar` e `registrar`):
 
-As refatorações foram feitas em commits independentes com ID literal na mensagem. **Todas devem passar com testes antes e depois**, usando os arquivos `docs/testes/relatorios/reconstrucao/execucoes/DTxx-{antes,depois}-v2.txt` e logs de build. As três não implicam mudança do contrato público; asserções e teste de build sustentam preservação dos comportamentos examinados, sem provar equivalência universal.
+```ts
+const aulas = await tx.$queryRaw<{ id: string }[]>`SELECT "id" FROM "aulas" WHERE "id" = ${aulaId}::uuid FOR UPDATE`;
+```
 
-## 4. Trechos antes e depois
+**Depois:** `private async bloquearAula(tx, aulaId)` e `const aulas = await this.bloquearAula(tx, aulaId);` nos três métodos.
 
-**DT-01 (Replace Magic Literal):** antes `dto.duracaoMinutos * 60_000`; depois `dto.duracaoMinutos * MILISSEGUNDOS_POR_MINUTO`. Sem alteração numérica da duração.
+- **Refatoração:** Extract Function. **Melhora:** *Duplicated Code* e consistência; a regra de bloqueio passa a ter um único lugar para mudar.
+- **Testes:** v1 117/117 → 117/117; v2 48/48 → 48/48.
+- **Ferramenta:** o jscpd apontava um clone de 9 linhas entre `abrir` e `encerrar` no original; ele some no limiar padrão. Com limiar sensível, restam 7 linhas repetidas (a verificação `if (aulas.length === 0) throw ...`), registradas como **DT-09**.
 
-**DT-02 (Extract Function):** antes `registrar` chamava `this.prisma.aluno.findUnique(...)` e validava matrícula inline. Depois `const aluno = await this.buscarAlunoMatriculado(chamada.aula.turma_id, email)`. A busca e sua exceção continuam iguais; o helper é privado.
+## 3. DT-04 — relógio espalhado · commit `95779b6`
 
-**DT-03 (Move Function):** antes o método `private montar(...)` integrava `FrequenciaService`. Depois o serviço chama `montarFrequencia(aluno, aulasRealizadas)` de `frequencia.util.ts`, sem acesso ao Prisma. Mantém ordenação decrescente da data, campos expostos e `calcularResumo`.
+**Antes:** `Date.now()` em `estaAtiva` e `new Date()` em `abrir`, `encerrar` e `listarAtivas`. **Depois:** `private agora(): Date { return new Date(); }` e todas as leituras viram `this.agora()`.
 
-## 5. Comparação manual, ferramentas e LLM
+- **Refatoração:** Extract Function (encapsular o relógio). **Melhora:** baixo acoplamento ao tempo do sistema e testabilidade; a v1 controla o instante com um relógio falso (`vi.setSystemTime`) e testa a fronteira exata da expiração.
+- **Testes:** v1 117/117 → 117/117; v2 48/48 → 48/48.
+- **Ferramenta:** nenhuma regra do ESLint ou do jscpd detecta esse problema; ele só apareceu na leitura.
 
-A LLM acelerou a identificação de funções longas, constante numérica e mistura entre consulta e transformação. Sua sugestão de mover lógica não prova que o desenho original era ruim: a equipe deve julgar a consequência prática. Análise manual é indispensável para interpretar locks transacionais, falsos positivos e comportamento esperado. Ferramentas estáticas são úteis para duplicação e complexidade, mas **não há logs de execução nesta reconstrução**; portanto, nenhuma descoberta é indevidamente atribuída a elas. A ausência desses logs limita a comparação empírica com ferramentas estáticas.
+## 4. DT-01 — responsabilidades do `registrar` · commit `e5136f6`
 
-## 6. Riscos e conclusão
+**Antes:** um único método (~60 linhas) fazia a busca da chamada, a verificação da matrícula, a transação de tentativas e a tradução do resultado em erros HTTP. **Depois:**
 
-Os testes usam mocks; faltam testes de integração com PostgreSQL para `FOR UPDATE`, rollback e concorrência entre abrir, encerrar e registrar. Permanecem itens abertos no inventário, cuja aceitação depende de validação da equipe. O pacote não reescreve commits antigos nem reaproveita refatorações da Sprint 3 anterior. V2 e build devem passar após cada uma das três refatorações. A alteração de estrutura não garante correção fora dos ramos testados.
+```ts
+const { aulaId, alunoId } = await this.buscarMatricula(chamadaId, email);
+const resultado = await this.prisma.$transaction(/* tentativas e presença */);
+return this.interpretarRegistro(resultado, aulaId);
+```
 
-**Anexos verificáveis:** `divida-tecnica.md`, `log-analise.md`, `validacao-humana.md`, os commits identificados com `DT-xx` e logs pré/pós. A revisão humana está documentada em `validacao-humana.md`; os resultados de testes e builds estão registrados nos logs da reconstrução.
+- **Refatoração:** Extract Method (`buscarMatricula` e `interpretarRegistro`). **Melhora:** *Long Method*, coesão e SRP; a transação continua inteira em `registrar`, preservando o bloqueio e a gravação das tentativas inválidas.
+- **Testes:** v1 117/117 → 117/117; v2 48/48 → 48/48.
+- **Ferramenta:** o ESLint (`max-lines-per-function`, limite 50) apontava `registrar` com **55 linhas** no original; no código atual são **31** e ele deixou de ser apontado.
 
+## 5. Comparação das formas de identificação
 
+- **Só a leitura manual/LLM encontrou:** DT-04 (relógio), DT-05 (normalização duplicada) e o acoplamento do serviço ao Prisma (DT-03). O madge apenas lista a dependência de `database/prisma.service` e não a classifica como problema. A leitura também explicou por que `FOR UPDATE` **não** é defeito (só a duplicação o é), enquanto uma regra automática não distingue isso.
+- **Só a ferramenta quantificou:** o tamanho e a complexidade de `registrar` (55 linhas) e de `ChamadaCodigoProfessor` (108 linhas, complexidade 16; DT-07), e o resíduo de duplicação da DT-09, que a leitura não havia registrado. As ferramentas também permitiram **medir o efeito das refatorações** (55 → 31 linhas; clone de 9 linhas eliminado).
+- **Ruído das ferramentas:** o `no-magic-numbers` deu 29 achados, boa parte irrelevante (status `204`, o `1000` e o `10` do arredondamento, a lista de opções de duração). O jscpd não achou a duplicação entre os dois componentes React (DT-08), porque o código é parecido mas não idêntico.
+- **LLM versus ferramenta:** violações de SOLID e de *information hiding* (por exemplo, as responsabilidades misturadas de `registrar`) vieram da leitura apoiada por LLM; as regras de complexidade só pegaram o sintoma de tamanho.
 
+## 6. Limites
+
+Os testes usam mocks do Prisma e não provam concorrência real, rollback ou o comportamento do `FOR UPDATE` no PostgreSQL; a passagem das suítes é evidência de regressão dentro do escopo testado, não prova de equivalência. O build (`nest build`) não foi reexecutado em 09/11; valem os logs de 08/11. Seis dívidas seguem abertas (DT-03, DT-05, DT-06, DT-07, DT-08 e DT-09). A classificação dos achados de ferramenta foi feita pelo Claude e deve ser revisada pela equipe.
