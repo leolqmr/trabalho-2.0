@@ -1,0 +1,22 @@
+﻿Executado: C:\Users\saulo\AppData\Local\Author Software\nvm\.nodejs\npx.exe vitest run --config vitest.sprint3.v2.config.ts
+Data local: 2026-11-09T21:57:57.4382400-03:00
+Base Git: 2b816a0316134e83de227be926e2d04d63915606
+--- STDOUT ---
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/saulo/OneDrive/Documentos/DS/trabalho-2.0/frequencia-back[39m
+
+ [32mâœ“[39m tests/v2/base/frequencia-v1.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32mâœ“[39m tests/v2/frequencia-service-v2.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mâœ“[39m tests/v2/chamada-limites-v2.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32mâœ“[39m tests/v2/base/chamada-v1.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m      Tests [22m [1m[32m39 passed[39m[22m[90m (39)[39m
+[2m   Start at [22m 21:57:54
+[2m   Duration [22m 2.40s[2m (transform 168ms, setup 0ms, import 1.67s, tests 34ms, environment 0ms)[22m
+
+--- STDERR ---
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.sprint3.v2.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+CODIGO_DE_SAIDA=0

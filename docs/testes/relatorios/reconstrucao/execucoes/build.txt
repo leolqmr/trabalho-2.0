@@ -1,0 +1,10 @@
+﻿Executado: C:\Users\saulo\AppData\Local\Author Software\nvm\.nodejs\npm.exe run build
+Data local: 2026-11-09T22:23:13.1703333-03:00
+Base Git: 828138c4ba3b7be0322e2db06259ec669206824e
+--- STDOUT ---
+
+> sistema@1.0.0 build
+> nest build
+
+--- STDERR ---
+CODIGO_DE_SAIDA=0

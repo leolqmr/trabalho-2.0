@@ -50,3 +50,25 @@ export function calcularResumo(
     limite_percentual: LIMITE_FALTAS_PERCENTUAL,
   };
 }
+
+/** DTO local de leitura, explicitando os dados necessários à montagem do resumo. */
+export interface AlunoComHistorico {
+  id: string;
+  name: string;
+  email: string;
+  turma: { id: string; name: string };
+  presencas: { present: boolean; aula: { id: string; date: Date } }[];
+}
+
+/** Move Function: transformação pura, sem acesso ao Prisma ou efeitos colaterais. */
+export function montarFrequencia(aluno: AlunoComHistorico, aulasRealizadas: number) {
+  const historico = aluno.presencas
+    .map((p) => ({ aula_id: p.aula.id, date: p.aula.date, present: p.present }))
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
+  return {
+    aluno: { id: aluno.id, name: aluno.name, email: aluno.email },
+    turma: aluno.turma,
+    resumo: calcularResumo(aluno.presencas, aulasRealizadas),
+    historico,
+  };
+}

@@ -17,6 +17,14 @@ RUN npm ci --ignore-scripts
 # Copia o código-fonte restante do front-end
 COPY . .
 
+ARG VITE_KEYCLOAK_JSON
+ARG VITE_API_URL
+ARG VITE_BASE_URL
+
+ENV VITE_KEYCLOAK_JSON=$VITE_KEYCLOAK_JSON
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
 # Gera o build de produção (os arquivos finais vão para a pasta /app/dist)
 RUN npm run build
 
