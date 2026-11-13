@@ -54,3 +54,7 @@ não métricas produzidas automaticamente pelo Vitest.
 Os testes V1 e V2 utilizam mocks do Prisma. Não demonstram
 a correção de transações concorrentes em PostgreSQL real.
 Cobertura estrutural elevada não garante ausência de defeitos.
+
+## Conferência posterior
+
+Em 13/11/2026 foi relatada nova execução bem-sucedida de baseline, V1, V2 e build do backend no terminal local. **Não foi anexado um novo log desta reexecução**, de modo que as métricas reproduzidas acima continuam fundamentadas nos logs e relatórios preservados de 09/11/2026. Os percentuais de requisitos representam associação de casos por inspeção; dois critérios da V1 estão marcados como parciais na matriz e requerem revisão específica.
